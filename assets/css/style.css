@@ -1,0 +1,8 @@
+#login {
+  text-align: center;
+  margin: auto;
+  border-radius: 5px;
+  border: 2px solid black;
+  background-image: url("~/assets/images/fruit.jpg");
+  width: fit-content;
+}
