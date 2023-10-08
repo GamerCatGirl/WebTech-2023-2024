@@ -68,3 +68,50 @@ These files will be ran before going to another route/page (e.g. `<site>/user`),
 #### API
 
 If you want to create an API.
+
+## Database
+
+### SQLite
+
+Chosen because it is easy to set up and we don't need a complicated database.
+
+### Drizzle
+
+We are using an ORM (Object Relation Mapper) called [Drizzle](https://orm.drizzle.team/), this is so we can write our queries in typescript instead of in `SQL`.
+
+Drizzle also automatically creates migrations, these are `SQL` files that tell the database what needs to be changed to change the old database to the new database (e.g. remove this table, add another table).
+The migrations are already created so this step is only necessary when you changed the database schema in `database/`.
+When you updated the schema (in `database/`), you can run
+```bash
+npm run generateMigrations
+```
+to create these migrations.
+
+If you want to remove a migration, run
+```bash
+npx drizzle-kit drop
+```
+do this only for migrations that have not been added to the database/pushed to GitHub!!!
+
+Once you created migrations you can update the database using
+```bash
+npm run updateDB
+```
+After this you can use the database by running the app.
+
+If you want to look at the database you can use
+```bash
+npm run showDB
+```
+This gives an interface to look at all the data in the database.
+
+### Using the database
+
+We are only going to access the database from inside the server,
+that means that all the database related code should be in [`server/`](https://nuxt.com/docs/guide/directory-structure/server),
+and probably in `server/api/`.
+
+The database is already initialized inside of `server/utils/`,
+and because everything in `server/utils/` is automatically imported,
+you can use `database` inside of your server files without having to import this.
+See [Drizzle](https://orm.drizzle.team/docs/rqb) for more info on querying the database.

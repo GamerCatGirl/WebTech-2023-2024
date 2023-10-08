@@ -1,3 +1,5 @@
+sqlite.db
+
 # Nuxt dev/build outputs
 .output
 .nuxt
@@ -11,3 +13,7 @@ logs
 
 # Misc
 .DS_Store
+
+# Local configs
+.run
+.config.vim

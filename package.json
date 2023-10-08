@@ -7,15 +7,22 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "generateMigrations": "drizzle-kit generate:sqlite",
+    "updateDB": "drizzle-kit push:sqlite",
+    "showDB": "drizzle-kit studio"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
+    "@types/better-sqlite3": "^7.6.5",
+    "drizzle-kit": "^0.19.13",
     "nuxt": "^3.7.4",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
-    "@nuxtjs/ngrok": "^2.0.0"
+    "better-sqlite3": "^8.7.0",
+    "drizzle-orm": "^0.28.6",
+    "ngrok": "^5.0.0-beta.2"
   }
 }
