@@ -20,6 +20,7 @@ const { data } = await useFetch("/api/test");
 
         <p>I want it to update automatically</p>
         <p>Is this added automatically?</p>
+        <p>Next trial</p>
     </div>
 </template>
 
