@@ -8,6 +8,13 @@
       "when": 1696750080438,
       "tag": "0000_aspiring_orphan",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1696924119458,
+      "tag": "0001_amusing_spot",
+      "breakpoints": true
     }
   ]
 }

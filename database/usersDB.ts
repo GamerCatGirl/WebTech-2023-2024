@@ -7,4 +7,4 @@ export const usersDB = sqliteTable("usersDB", {
 });
 
 export type usersDB = InferSelectModel<typeof usersDB>;
-export type InsertTest = InferInsertModel<typeof usersDB>;
+export type InsertUsers = InferInsertModel<typeof usersDB>;
