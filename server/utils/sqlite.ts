@@ -1,5 +1,7 @@
-import { drizzle, BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import * as recipe from "@/database/recipe";
+import * as auth from "@/database/auth";
 import Database from "better-sqlite3";
 
 export const sqlite = new Database("sqlite.db");
-export const database: BetterSQLite3Database = drizzle(sqlite);
+export const database = drizzle(sqlite, { schema: { ...recipe, ...auth } });
