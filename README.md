@@ -105,6 +105,17 @@ npm run showDB
 ```
 This gives an interface to look at all the data in the database.
 
+### Auth 
+Make in root ".env" file and paste in
+GOOGLE_CLIENT_ID = __INSERT_CLIENT_ID_HERE__
+GOOGLE_CLIENT_SECRET=__INSERT_CLIENT_SECRET_HERE__
+
+```bash
+npm install next-auth
+npm install drizzle-orm @auth/drizzle-adapter
+npm install dotenv
+```
+
 ### Using the database
 
 We are only going to access the database from inside the server,

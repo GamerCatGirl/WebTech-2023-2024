@@ -17,3 +17,6 @@ logs
 # Local configs
 .run
 .config.vim
+
+#google credentials
+.env
