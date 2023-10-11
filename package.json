@@ -11,6 +11,8 @@
     "generateMigrations": "drizzle-kit generate:sqlite",
     "updateDB": "drizzle-kit push:sqlite",
     "showDB": "drizzle-kit studio",
+    "updateTestDB": "DATABASE_URL=test/sqlite.db drizzle-kit push:sqlite",
+    "showTestDB": "DATABASE_URL=test/sqlite.db drizzle-kit studio",
     "test": "vitest"
   },
   "devDependencies": {
