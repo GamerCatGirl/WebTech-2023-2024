@@ -1,11 +1,12 @@
-import NextAuth from "next-auth";
+// import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { NuxtAuthHandler } from "#auth";
 
 //import { db } from "./schema"
 
-// @ts-expect-error
-export default NextAuth.default({
+export default NuxtAuthHandler({
+    // @ts-expect-error
     adapter: DrizzleAdapter(database),
     providers: [
         // @ts-expect-error
