@@ -8,6 +8,9 @@ import { NuxtAuthHandler } from "#auth";
 //import { db } from "./schema"
 
 export default NuxtAuthHandler({
+    pages: {
+        signIn: '/register'
+    },
     // @ts-expect-error
     adapter: DrizzleAdapter(database),
     providers: [
@@ -16,13 +19,15 @@ export default NuxtAuthHandler({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
+        // @ts-expect-error
        GitHubProvider.default({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            clientId: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
         }),
+        // @ts-expect-error
        FacebookProvider.default({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        clientId: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         }),
     ],
 });

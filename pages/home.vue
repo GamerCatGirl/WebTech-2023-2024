@@ -7,9 +7,7 @@ const { data } = await useFetch("/api/test");
         <title>Good Food</title>
         <pre>{{ data }}</pre>
 
-        <p>I want it to update automatically</p>
-        <p>Is this added automatically?</p>
-        <p>Next trial</p>
+        Home, a place where you belong! 
     </div>
 </template>
 

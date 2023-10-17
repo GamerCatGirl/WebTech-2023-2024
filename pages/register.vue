@@ -10,7 +10,7 @@ const { signIn, signOut, status, getProviders } = useAuth()
         <pre>{{ data }}</pre>
 
         <form id="login">
-            <h1>Login</h1>
+            <h1>Register</h1>
             <label for="Username"> Username:</label>
             <input type="text" id="Username" name="fname" />
 
@@ -20,11 +20,13 @@ const { signIn, signOut, status, getProviders } = useAuth()
             <input type="password" />
 
             <br />
-            <button @click="signIn('github', { callbackUrl: '/home'})"> login (github) </button>
+            <label>Repeat password: </label>
+            <input type="password" />
+
+            <br />
+            <button @click="signIn('github', { callbackUrl: '/' })"> login (github) </button>
             <button @click="signIn('google', { callbackUrl: '/'})"> login (google) </button>
             <button @click="signIn('facebook', { callbackUrl: '/'})"> login (facebook) </button>
-
-            <button @click="signOut()">sign out</button>
             <br />
 
         </form>
