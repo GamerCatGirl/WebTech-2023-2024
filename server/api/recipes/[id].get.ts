@@ -12,5 +12,5 @@ export default defineEventHandler(async (event) => {
             statusMessage: "ID should be an integer",
         });
     }
-    return database.query.recipes.findMany({ where: (recipe, { eq }) => eq(recipe.id, id), with: { images: true } });
+    return database.query.recipes.findFirst({ where: (recipe, { eq }) => eq(recipe.id, id), with: { images: true } });
 });

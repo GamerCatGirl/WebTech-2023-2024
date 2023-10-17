@@ -105,12 +105,6 @@ npm run showDB
 ```
 This gives an interface to look at all the data in the database.
 
-### Auth 
-
-Make in root ".env" file and paste in
-GOOGLE_CLIENT_ID = __INSERT_CLIENT_ID_HERE__
-GOOGLE_CLIENT_SECRET=__INSERT_CLIENT_SECRET_HERE__
-
 ### Using the database
 
 We are only going to access the database from inside the server,
@@ -121,3 +115,34 @@ The database is already initialized inside of `server/utils/`,
 and because everything in `server/utils/` is automatically imported,
 you can use `database` inside of your server files without having to import this.
 See [Drizzle](https://orm.drizzle.team/docs/rqb) for more info on querying the database.
+
+## Testing
+
+For testing we use a separate database that is cleared and repopulated before each test using data from `test/data.ts`,
+because of this you also have to initialize/update the testing database using
+```bash
+npm run updateTestDB
+```
+
+If you want to look inside of the testing database you can use
+```bash
+npm run showTestDB
+```
+Please remember that any changes you make here will be discarded when you rerun your tests,
+if you want to change the data inside of the test database change the `test/data.ts` file instead.
+
+To actually run the tests you can use
+```bash
+npm run test
+```
+
+## .env
+
+Make a `.env` file in your root folder,
+this file should contain the following variable definitions.
+```sh
+GOOGLE_CLIENT_ID=__CLIENT_ID__
+GOOGLE_CLIENT_SECRET=__CLIENT_SECRET__
+DATABASE_URL=__DATABASE_URL__
+```
+You can get your google client ID and secret [here](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid), and for `DATABASE_URL`, you can use the default value of `./sqlite.db`
