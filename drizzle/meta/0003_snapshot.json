@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "b77e5d01-641e-4812-82a9-aec32ed5f30d",
+  "id": "e2cf62d0-4b29-4738-8fc6-931ef13fbf14",
   "prevId": "387de09e-19a5-465f-b728-854459284166",
   "tables": {
     "account": {
@@ -335,37 +335,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "test": {
-      "name": "test",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "text": {
-          "name": "text",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "CURRENT_TIMESTAMP"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

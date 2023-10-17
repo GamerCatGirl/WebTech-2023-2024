@@ -1,3 +1,4 @@
+DROP TABLE `test`;--> statement-breakpoint
 /*
  SQLite does not support "Set not null to column" out of the box, we do not generate automatic migration for that, so it has to be done manually
  Please refer to: https://www.techonthenet.com/sqlite/tables/alter_table.php
