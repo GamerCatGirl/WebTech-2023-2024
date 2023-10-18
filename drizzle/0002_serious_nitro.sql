@@ -39,7 +39,7 @@ CREATE TABLE `verificationToken` (
 CREATE TABLE `image` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`url` text NOT NULL,
-	`recipe_id` integer,
+	`recipe_id` integer NOT NULL,
 	FOREIGN KEY (`recipe_id`) REFERENCES `recipe`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -48,6 +48,6 @@ CREATE TABLE `recipe` (
 	`name` text NOT NULL,
 	`location` text NOT NULL,
 	`description` text NOT NULL,
-	`user` integer,
+	`user` integer NOT NULL,
 	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );

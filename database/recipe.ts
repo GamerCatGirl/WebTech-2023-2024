@@ -1,6 +1,5 @@
-import { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
-import { relations } from "drizzle-orm";
+import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
+import { sqliteTable, text, integer, sqliteView } from "drizzle-orm/sqlite-core";
 import { users } from "./auth";
 
 export const images = sqliteTable("image", {
@@ -26,6 +25,7 @@ export const recipes = sqliteTable("recipe", {
     user: integer("user")
         .references(() => users.id)
         .notNull(),
+    thumbnail: text("thumbnail"),
 });
 
 export type Recipe = InferSelectModel<typeof recipes>;
@@ -39,3 +39,9 @@ export const recipesRelations = relations(recipes, ({ many, one }) => ({
 export const usersRelations = relations(users, ({ many }) => ({
     recipes: many(recipes),
 }));
+
+export const recipeFts = sqliteView("recipe_fts", {
+    id: text("id"),
+    name: text("name"),
+    description: text("description"),
+}).existing();

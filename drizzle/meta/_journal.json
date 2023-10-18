@@ -29,6 +29,20 @@
       "when": 1697538458027,
       "tag": "0003_redundant_skrulls",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1697556426952,
+      "tag": "0004_empty_killer_shrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1697556432308,
+      "tag": "0005_ambiguous_captain_america",
+      "breakpoints": true
     }
   ]
 }
