@@ -1,7 +1,7 @@
 <template>
      <div>
         <title>Good Food</title>
-        <button @click="openLoginPage"> Login </button>
-        <button @click="openRegisterPage"> Register </button>
+        Give an overview what this site is, and what you can do 
+        Make it possible that users can view recipies without logged in 
     </div>
 </template>

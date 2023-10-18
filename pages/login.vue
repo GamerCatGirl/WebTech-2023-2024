@@ -21,8 +21,8 @@ const { signIn, signOut, status, getProviders } = useAuth()
 
             <br />
             <button @click="signIn('github', { callbackUrl: '/home'})"> login (github) </button>
-            <button @click="signIn('google', { callbackUrl: '/'})"> login (google) </button>
-            <button @click="signIn('facebook', { callbackUrl: '/'})"> login (facebook) </button>
+            <button @click="signIn('google', { callbackUrl: '/home'})"> login (google) </button>
+            <button @click="signIn('facebook', { callbackUrl: '/home'})"> login (facebook) </button>
 
             <button @click="signOut()">sign out</button>
             <br />

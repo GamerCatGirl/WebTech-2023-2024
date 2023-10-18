@@ -1,12 +1,12 @@
 <script setup lang="ts">
-const { data } = await useFetch("/api/test");
+const {data, status} = useAuth();
+const user = data.value?.user?.name;
 </script>
 
 <template>
     <div>
         <title>Good Food</title>
-        <pre>{{ data }}</pre>
-
+        **** {{ user }} ****
         Home, a place where you belong! 
     </div>
 </template>
