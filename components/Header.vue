@@ -4,15 +4,17 @@ import { Container } from 'postcss';
 import { Container } from 'postcss';
 <template>
 	<header>
-		 Amazing Header	
 		 <div id="headerBar"> 
+
 			<Container id="headerLeft">
-				<button> Page redirection - dynamic screen </button>
+				<a> Logo with menu </a> 
 			</Container>
+
 			<Container id="headerRight">
-				<input type="text" placeholder="Search recipies..." />
-				<button @click="openLoginPage"> Login </button>  <!-- If logged in change to profile pic -->
+				<input type="text" placeholder="Search..." />
+				<button @click="openLoginPage"> Sign In </button>  <!-- If logged in change to profile pic -->
 			</Container>
+
 		 </div>
 	</header>
 </template>

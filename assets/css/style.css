@@ -1,3 +1,11 @@
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+ /*  background-color: #24252A; */
+}
+
 #login {
   text-align: center;
   margin: auto;
@@ -7,16 +15,63 @@
   width: fit-content;
 }
 
-/* #hearderLeft{ /* doen't work yet 
-  justify-content: flex-start;
+ #hearderLeft{ 
+  float: left;
 }
 
-#headerRigth{ /* doen't work yet 
-  justify-content: flex-end;
+#headerRight{ 
   float: right;
+  justify-content: space-between; /* dit doet nog niets */
 }
 
-#headerBar{ /* doen't work yet 
-  justify-content: flex-end;
-} 
-*/
+#headerRight button{
+  background-color: darkblue;
+  color: whitesmoke;
+  border: 1px solid whitesmoke;
+  padding: 6px 20px;
+  border-radius: 5px;
+}
+
+#headerRight input{
+  background-color: gray;
+  opacity: 80%;
+  color: white;
+  border: 1px solid whitesmoke;
+  padding: 6px 20px;
+  border-radius: 5px;
+}
+
+#headerRight input:hover{
+  background-color: white;
+  opacity: 80%;
+  color: darkblue;
+  border: 1px solid whitesmoke;
+  padding: 6px 20px;
+  border-radius: 5px;
+}
+
+#headerRight button:hover{
+  background-color: darkblue;
+  color: gray;
+  border: 1px solid gray;
+  padding: 6px 20px;
+  border-radius: 5px;
+}
+
+#headerLeft a:hover {
+  color: gray;
+  cursor: pointer;
+}
+
+header{   /* doesn't work yet */
+  background-color: darkblue;
+  color: whitesmoke;
+  /* display: flex; */
+  padding: 30px 5%; /* size header */
+}
+
+footer {
+  background-color: darkblue;
+  color: whitesmoke;
+  padding: 30px 5%; /* size footer */
+}
