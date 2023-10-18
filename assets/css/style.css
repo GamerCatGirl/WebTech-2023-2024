@@ -6,3 +6,17 @@
   background-image: url("~/assets/images/fruit.jpg");
   width: fit-content;
 }
+
+/* #hearderLeft{ /* doen't work yet 
+  justify-content: flex-start;
+}
+
+#headerRigth{ /* doen't work yet 
+  justify-content: flex-end;
+  float: right;
+}
+
+#headerBar{ /* doen't work yet 
+  justify-content: flex-end;
+} 
+*/
