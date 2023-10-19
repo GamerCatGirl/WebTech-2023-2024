@@ -9,7 +9,7 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "generateMigrations": "drizzle-kit generate:sqlite",
-    "updateDB": "drizzle-kit push:sqlite && sqlite3 ./sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
+    "updateDB": "drizzle-kit push:sqlite; sqlite3 ./sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
     "showDB": "drizzle-kit studio",
     "updateTestDB": "database_url=test/sqlite.db drizzle-kit push:sqlite && sqlite3 ./test/sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
     "showTestDB": "DATABASE_URL=test/sqlite.db drizzle-kit studio",

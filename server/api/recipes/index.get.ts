@@ -1,4 +1,4 @@
-import { recipes, recipeFts } from "@/database/recipe";
+import { recipes, recipeFts } from "@/database/schema";
 import { eq, sql } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {

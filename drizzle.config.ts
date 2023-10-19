@@ -1,7 +1,7 @@
 import type { Config } from "drizzle-kit";
 
 export default {
-    schema: "./database/*",
+    schema: "./database/schema.ts",
     out: "./drizzle",
     driver: "better-sqlite",
     // Ignore the tables used for `fts`
