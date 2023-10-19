@@ -10,8 +10,8 @@ export const seed = async (seedData: any, removeDrizzleMigrationsTable: boolean 
     if (fs.existsSync(databaseUrl)) fs.rmSync(databaseUrl);
     const sqlite = new Database(databaseUrl);
     const database = drizzle(sqlite, { schema });
-    if (removeDrizzleMigrationsTable) migrate(database, { migrationsFolder: "./drizzle" });
-    database.run(sql`DROP TABLE __drizzle_migrations`);
+    migrate(database, { migrationsFolder: "./drizzle" });
+    if (removeDrizzleMigrationsTable) database.run(sql`DROP TABLE __drizzle_migrations`);
     await database.transaction(async (tx) => {
         for (const tableName in seedData) {
             // @ts-ignore
