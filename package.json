@@ -11,6 +11,7 @@
     "generateMigrations": "drizzle-kit generate:sqlite",
     "updateDB": "drizzle-kit push:sqlite; sqlite3 ./sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
     "showDB": "drizzle-kit studio",
+    "seed": "npx tsx -e \"require('./seed/seed.ts').seed(require('./seed/seedData.ts').seedData, true);\"",
     "updateTestDB": "database_url=test/sqlite.db drizzle-kit push:sqlite && sqlite3 ./test/sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
     "showTestDB": "DATABASE_URL=test/sqlite.db drizzle-kit studio",
     "test": "vitest"
@@ -22,6 +23,7 @@
     "@types/better-sqlite3": "^7.6.5",
     "drizzle-kit": "^0.19.13",
     "nuxt": "^3.7.4",
+    "tsx": "^3.14.0",
     "vitest": "^0.33.0",
     "vue": "^3.3.4",
     "vue-router": "^4.2.5"

@@ -40,6 +40,12 @@ npm run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
+## Database seeding
+
+Running `npm run seed` will recreate the database using the `DATABASE_URL` environment variable, or `./sqlite.db` as default.
+This will also seed the database with the values from `seed/seedData.ts`.
+The recreating of the database is done using the migrations but you can manually do `npm run updateDB` to update your DB to the latest version of your schema without creating new migrations.
+
 ## Folders
 
 ### Components
