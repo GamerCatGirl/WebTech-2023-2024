@@ -8,6 +8,6 @@ export default defineConfig({
             DATABASE_URL: "test/sqlite.db",
         },
         include: ["test/**/*.ts"],
-        exclude: ["test/data.ts"],
+        exclude: ["test/seedData.ts"],
     },
 });
