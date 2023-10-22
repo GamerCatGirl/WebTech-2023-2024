@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.3",
+    "@nuxtjs/color-mode": "^3.3.0",
     "@sidebase/nuxt-auth": "^0.6.0-beta.7",
     "auth": "^0.0.9",
     "better-sqlite3": "^8.7.0",

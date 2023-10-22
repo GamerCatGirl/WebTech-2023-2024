@@ -1,3 +1,12 @@
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+ /*  background-color: rgb(40, 29, 64); */
+ /*  background-color: #24252A; */
+}
+
 #login {
   text-align: center;
   margin: auto;
@@ -5,4 +14,10 @@
   border: 2px solid black;
   background-image: url("~/assets/images/fruit.jpg");
   width: fit-content;
+}
+
+footer {
+  background-color: rgb(40, 29, 64);
+  color: whitesmoke;
+  padding: 30px 5%; /* size footer */
 }
