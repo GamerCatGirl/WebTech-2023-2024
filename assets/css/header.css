@@ -1,0 +1,66 @@
+#headerRight a img{
+    width: 40px;
+    height: 40px;
+    background-color: whitesmoke;
+  }
+
+  #hearderLeft{ 
+    float: left;
+  }
+  
+  #headerRight{ 
+    float: right;
+    justify-content: space-between; /* dit doet nog niets */
+  }
+  
+  #headerRight button{
+    background-color: white;
+    color: black;
+    border: 1px solid whitesmoke;
+    padding: 6px 20px;
+    border-radius: 5px;
+  }
+  
+  #headerRight input{
+    background-color: gray;
+    opacity: 80%;
+    color: white;
+    border: 1px solid whitesmoke;
+    padding: 6px 20px;
+    border-radius: 5px;
+  }
+  
+  #headerRight input:hover{
+    background-color: white;
+    opacity: 80%;
+    color: darkblue;
+    border: 1px solid whitesmoke;
+    padding: 6px 20px;
+    border-radius: 5px;
+  }
+  
+  #headerRight button:hover{
+    background-color: gray;
+    color: rgb(40, 29, 64);
+    border: 1px solid gray;
+    padding: 6px 20px;
+    border-radius: 5px;
+  }
+  
+  #headerLeft a img {
+    width: 40px;
+    height: 40px;
+  }
+  
+  #headerLeft a:hover {
+    color: gray;
+    cursor: pointer;
+  }
+  
+  header{   /* doesn't work yet */
+    background-color: rgb(40, 29, 64);
+    color: whitesmoke;
+    /* display: flex; */
+    padding: 30px 5%; /* size header */
+  }
+  
