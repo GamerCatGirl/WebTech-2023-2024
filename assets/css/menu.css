@@ -1,15 +1,19 @@
-ul {
-    list-style-type: none;
+#menu {
     margin: 0;
     padding: 0;
-    background-color: aqua;
     width: fit-content;
-    height: 100%; /* Full height */
+    height: fit-content; /* Full height */
     position: fixed;
+    display: flex;
     overflow: auto;
+    list-style: none;
+}
+  
+#menu li {
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
-li {
-    text-align: center;
-  }
-  
+#menu li:hover{
+    color: gray;
+}

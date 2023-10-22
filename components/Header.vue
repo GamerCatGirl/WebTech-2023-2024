@@ -7,7 +7,13 @@ import { Container } from 'postcss';
 		 <div id="headerBar"> 
 
 			<Container id="headerLeft">			
-				<a> <img src="../assets/images/LOGO.png" @click="showMenu"> </a> 
+				<a> <img src="../assets/images/LOGO.png"> </a> 
+				<ul id="menu">
+					<li>Home</li>
+					<li>Map</li>
+					<li>My Recipies</li>
+					<li>Profile </li>
+				</ul>
 			</Container>
 
 			<Container id="headerRight">

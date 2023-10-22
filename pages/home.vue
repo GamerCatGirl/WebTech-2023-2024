@@ -8,16 +8,6 @@ const user = data.value?.user?.name;
 <template>
     <div>
         <title>Good Food</title>
-        <div id="menu">
-            <h1> Menu </h1> 
-            <!-- <SidebarMenu/> -->
-            <ul>
-                <li>Home</li>
-                <li>Map</li>
-                <li>My Recipies</li>
-                <li>Profile </li>
-            </ul>
-         </div>
         **** {{ user }} ****
         Home, a place where you belong! 
         <!-- <SidebarMenu/>  -->
@@ -26,4 +16,5 @@ const user = data.value?.user?.name;
 
 <style>
 @import url("~/assets/css/style.css");
+@import url("~/assets/css/menu.css");
 </style>
