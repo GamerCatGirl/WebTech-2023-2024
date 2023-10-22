@@ -19,3 +19,7 @@ import { Container } from 'postcss';
 		 </div>
 	</header>
 </template>
+
+<style>
+	@import url("../assets/css/header.css");
+</style>
