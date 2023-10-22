@@ -12,7 +12,7 @@ import { Container } from 'postcss';
 					<li>Home</li>
 					<li>Map</li>
 					<li>My Recipies</li>
-					<li>Profile </li>
+					<li @click="openProfile">Profile </li>
 				</ul>
 			</Container>
 
