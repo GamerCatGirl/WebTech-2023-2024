@@ -1,4 +1,8 @@
 
+import { openHome } from '~/composables/routing';
+
+import { openHome } from '~/composables/routing';
+
 import { Container } from 'postcss';
 
 import { Container } from 'postcss';
@@ -9,9 +13,9 @@ import { Container } from 'postcss';
 			<Container id="headerLeft">			
 				<a> <img src="../assets/images/LOGO.png"> </a> 
 				<ul id="menu">
-					<li>Home</li>
-					<li>Map</li>
-					<li>My Recipies</li>
+					<li @click="openHome">Home</li>
+					<li @click="openMap">Map</li>
+					<li @click="openRecepies">Discover recipies</li>
 					<li @click="openProfile">Profile </li>
 				</ul>
 			</Container>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { SidebarMenu } from '#build/components';
+import { users } from '~/database/auth';
 
 const {data, status} = useAuth();
 const user = data.value?.user?.name;
