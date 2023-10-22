@@ -1,7 +1,11 @@
 #headerRight a img{
     width: 40px;
     height: 40px;
-    background-color: whitesmoke;
+  }
+
+  #headerRight a img:hover {
+      background-color: whitesmoke;
+      border-radius: 5px;
   }
 
   #hearderLeft{ 
@@ -60,6 +64,7 @@
   header{   /* doesn't work yet */
     background-color: rgb(40, 29, 64);
     color: whitesmoke;
+    align-items: start;
     /* display: flex; */
     padding: 30px 5%; /* size header */
   }
