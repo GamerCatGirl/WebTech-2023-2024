@@ -1,0 +1,26 @@
+#box {
+    width: 40%;
+    height: auto;
+    background-color: lightgrey;
+    opacity: 100%;
+    margin: auto;
+    text-align: center;
+    border-radius: 20px;
+    border: solid plum 2px;
+}
+
+#importantWord {
+    color: plum;
+    text-transform: uppercase;
+    font-weight: bolder;
+    font-size: medium;
+    margin: 5px ;
+}
+
+h2 {
+    font-family: 'Montserrat';
+    text-transform: uppercase;
+    color: purple;
+    font-weight: lighter;
+    margin: 10px;
+}
