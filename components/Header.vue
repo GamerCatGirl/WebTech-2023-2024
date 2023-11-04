@@ -7,7 +7,7 @@ import { Container } from 'postcss';
 		 <div id="headerBar"> 
 
 			<Container id="headerLeft">			
-				<a> <img src="../assets/images/LOGO.png"> </a> 
+				<a> <img src="../assets/images/logo.png"> </a> 
 				<ul id="menu">
 					<li>Home</li>
 					<li>Map</li>
@@ -19,7 +19,7 @@ import { Container } from 'postcss';
 			<Container id="headerRight">
 				<input type="text" placeholder="Search..." />
 				<button @click="openLoginPage"> Sign In </button>  <!-- If logged in change to profile pic -->
-				<a> <img src="../assets/images/SUN.png"></a>
+				<a> <img src="../assets/images/sun.png"></a>
 			</Container>
 
 		 </div>

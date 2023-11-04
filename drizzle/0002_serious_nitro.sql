@@ -37,17 +37,17 @@ CREATE TABLE `verificationToken` (
 );
 --> statement-breakpoint
 CREATE TABLE `image` (
-	`id` integer PRIMARY KEY NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`url` text NOT NULL,
-	`recipe_id` integer NOT NULL,
+	`recipe_id` text NOT NULL,
 	FOREIGN KEY (`recipe_id`) REFERENCES `recipe`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `recipe` (
-	`id` integer PRIMARY KEY NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`location` text NOT NULL,
 	`description` text NOT NULL,
-	`user` integer NOT NULL,
+	`user` text NOT NULL,
 	FOREIGN KEY (`user`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
