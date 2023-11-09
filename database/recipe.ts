@@ -1,11 +1,14 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-import { sqliteTable, text, integer, sqliteView } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, sqliteView } from "drizzle-orm/sqlite-core";
+import { createId } from "@paralleldrive/cuid2";
 import { users } from "./auth";
 
 export const images = sqliteTable("image", {
-    id: integer("id").primaryKey(),
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => createId()),
     url: text("url").notNull(),
-    recipe: integer("recipe_id")
+    recipe: text("recipe_id")
         .references(() => recipes.id)
         .notNull(),
 });
@@ -18,11 +21,13 @@ export const imagesRelations = relations(images, ({ one }) => ({
 }));
 
 export const recipes = sqliteTable("recipe", {
-    id: integer("id").primaryKey(),
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => createId()),
     name: text("name").notNull(),
     location: text("location").notNull(),
     description: text("description").notNull(),
-    user: integer("user")
+    user: text("user")
         .references(() => users.id)
         .notNull(),
     thumbnail: text("thumbnail"),
