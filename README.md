@@ -4,7 +4,7 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 ## Setup
 
-Make sure to install the dependencies:
+Make sure to install the dependencies and update Database:
 With each pull from git!
 
 ```bash
@@ -41,7 +41,7 @@ npm run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-## Database seeding
+## Database seeding: populating DB with an initial set of data 
 
 Running `npm run seed` will recreate the database using the `DATABASE_URL` environment variable, or `./sqlite.db` as default.
 This will also seed the database with the values from `seed/seedData.ts`.
@@ -104,6 +104,10 @@ Once you created migrations you can update the database using
 ```bash
 npm run updateDB
 ```
+For Windows use:
+```bash
+npm run updateDBWindows
+```
 After this you can use the database by running the app.
 
 If you want to look at the database you can use
@@ -111,6 +115,7 @@ If you want to look at the database you can use
 npm run showDB
 ```
 This gives an interface to look at all the data in the database.
+For Windows: use the link [Drizzle](http://localhost:4983/) instead of [Drizzle](http://0.0.0.0:4983)
 
 ### Using the database
 
