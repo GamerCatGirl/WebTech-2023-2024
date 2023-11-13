@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "generateMigrations": "drizzle-kit generate:sqlite",
     "updateDB": "drizzle-kit push:sqlite; sqlite3 ./sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
+    "updateDBWindows": "drizzle-kit push:sqlite && C:\\sqlite\\sqlite3.exe .\\sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
     "showDB": "drizzle-kit studio",
     "seed": "npx tsx -e \"require('./seed/seed.ts').seed(require('./seed/seedData.ts').seedData, true);\"",
     "updateTestDB": "database_url=test/sqlite.db drizzle-kit push:sqlite && sqlite3 ./test/sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
