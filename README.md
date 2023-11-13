@@ -115,7 +115,7 @@ If you want to look at the database you can use
 npm run showDB
 ```
 This gives an interface to look at all the data in the database.
-For Windows: use the link [Drizzle](http://localhost:4983/) instead of [Drizzle](http://0.0.0.0:4983)
+For Windows: use the link [](http://localhost:4983/) instead of [](http://0.0.0.0:4983)
 
 ### Using the database
 
