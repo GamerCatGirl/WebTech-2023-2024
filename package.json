@@ -39,6 +39,7 @@
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.28.6",
     "next-auth": "^4.21.1",
-    "ngrok": "^5.0.0-beta.2"
+    "ngrok": "^5.0.0-beta.2",
+    "primevue": "^3.40.1"
   }
 }
