@@ -1,20 +1,24 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     devtools: { enabled: true },
-    modules: ["@sidebase/nuxt-auth","@nuxtjs/color-mode" ],
+    modules: ["@sidebase/nuxt-auth","@nuxtjs/color-mode", "nuxt-primevue" ],
 
     //alls comments are from the documentation website of primevue
     primevue: {
 	//Whether to install the PrimeVue plugin, defaults to true. Disable this option if you prefer to configure PrimeVue manually 
 	//e.g. with a Nuxt plugin.
 	usePrimeVue: true,
-        options: {},
+        options: {
+		unstyled: false, 
+		ripple: true, 
+		inputStyle: 'filled'	
+	},
 	//Configures the global pass through import path.
 	//Pathe may also be a location within your application 
 	//ex importPT: { as: 'MyCustomPreset', from: path.resolve(__dirname, './assets/presets/mypreset.js')}
         importPT: undefined,
 	//Defines the CSS layer order setting for compatibility with libraries like Tailwind.
-        cssLayerOrder: undefined, //'tailwind-base, primevue, tailwind-utilities',
+        cssLayerOrder: 'primevue', //'tailwind-base, primevue, tailwind-utilities',
 	//The components to import and register are defined with the include option using a string array. 
 	//When the value is ignored or set using the * alias, all of the components are registered.
         components: {
@@ -60,7 +64,7 @@ export default defineNuxtConfig({
 
 
 	    //give a prefix to a register component 
-            prefix: '',
+            prefix: 'Prime',
 	    //Component registration can be customized further by implementing the name function
 	    //that gets an object representing the import metadata. name is the label of the component, 
 	    //as is the default export name and from is the import path.
@@ -68,15 +72,14 @@ export default defineNuxtConfig({
             name: undefined,
 	    //ex include: ['Button', 'DataTable']
 	    //ex include: '*'
-            include: ['Editor', 'InputNumber', 'InputSwitch', 'InputText', 'Password', 'Rating', 'Button', 'SpeedDial', 'DataView', 'OrderList'
-	    	      'Paginator'],
+            include: ['Editor', 'InputNumber', 'InputSwitch', 'InputText', 'Password', 'Rating', 'Button', 'SpeedDial', 
+		'DataView', 'OrderList','Paginator', 'Menu'],
 	    //ex if include: '*'
 	    //-> exclude: ['Carousel']
-            exclude: undefined
+	    exclude: undefined 
         },
         directives: {
             prefix: '',
-            name: undefined,
 	    //The names of the directives to import and register are provided using the include property. 
 	    //When the value is ignored or set using the * alias, all of the directives are registered.
             include: undefined,
@@ -87,10 +90,26 @@ export default defineNuxtConfig({
             name: undefined,
 	    //Determines the composables to use, when default value is ignored or set as * all composables are imported.
 	    //ex include: ['useStyle']
-            include: undefined,
+            include: ['useStyle'],
             exclude: undefined
         }
-    }
+    },
     //config a prime vue team that needs to be used as css 
-    //css: ['primevue/resources/themes/lara-dark-teal/theme.css']
+    css: ['primevue/resources/themes/soho-dark/theme.css']
+    //
+
+    /*
+    
+    app: {
+	    head: {
+		    link: [
+			    {
+				    id: 'theme-link',
+				    rel: 'stylehseet', 
+				    href: baseURL + 'themes/soho-dark/theme.css'
+			    }
+		    ]
+	    }
+    }
+    */
 });
