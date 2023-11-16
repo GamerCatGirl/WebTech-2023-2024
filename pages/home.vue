@@ -10,22 +10,23 @@ const items = ref([
 	{
 	label: 'Title 1', 
 	items: [
-		{label: 'Home', icon: 'pi pi-plus'}, 
-		{label: 'Discover', icon: 'pi pi-plus'},
+		{label: 'Home', icon: 'pi pi-home'}, 
+		{label: 'Discover', icon: 'pi pi-globe'},
 		{label: 'Search', icon: 'pi pi-search'}
 		]
 	}, 
 	{
-	label: 'My Recipies', 
+	label: 'Recipies', 
 	items: [
 		{label: 'New', icon: 'pi pi-plus'}, 
-		{label: 'Edit'}]
+		{label: 'Edit', icon: 'pi pi-pencil'},
+		{label: 'Saved', icon: 'pi pi-bookmark'}]
 	}, 
 	{
 	label: 'Profile', 
 	items: [
 		{label: 'Notifications', icon: 'pi pi-inbox', badge: 3}, 
-		{label: 'Comments', badge: 2}, 
+		{label: 'Comments', icon:'pi pi-comments', badge: 2}, 
 		{label: 'Settings', icon:'pi pi-cog'}, 
 		{label: 'Logout', icon: 'pi pi-sign-out'}
 	]
@@ -36,10 +37,8 @@ const items = ref([
 <template>
 	<div>
 		<title>Good Food</title>
-		**** {{ user }} **** Home, a place where you belong!
-
 		<!-- From PRIME VUE DOCUMENTATION -->
-		<div class="card flex justify-content-center">
+		<div class="card flex justify-content-left">
 			<Menu :model="items" />
 		</div>
 

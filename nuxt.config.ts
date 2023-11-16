@@ -96,7 +96,8 @@ export default defineNuxtConfig({
     //config a prime vue team that needs to be used as css 
     css: ['primevue/resources/themes/soho-dark/theme.css', 
     	  'primevue/resources/primevue.min.css', 
-    	  'primeicons/primeicons.css'	
+    	  'primeicons/primeicons.css',
+	  'primeflex/primeflex.css'
     ]
     //
 
