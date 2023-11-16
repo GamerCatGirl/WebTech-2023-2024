@@ -16,9 +16,9 @@ export default defineNuxtConfig({
 	//Configures the global pass through import path.
 	//Pathe may also be a location within your application 
 	//ex importPT: { as: 'MyCustomPreset', from: path.resolve(__dirname, './assets/presets/mypreset.js')}
-        importPT: undefined,
+        importPT: {as: 'Tailwind', from: 'primevue/passthrough/tailwind'},
 	//Defines the CSS layer order setting for compatibility with libraries like Tailwind.
-        cssLayerOrder: 'primevue', //'tailwind-base, primevue, tailwind-utilities',
+        cssLayerOrder: 'tailwind-base, primevue, tailwind-utilities',
 	//The components to import and register are defined with the include option using a string array. 
 	//When the value is ignored or set using the * alias, all of the components are registered.
         components: {
@@ -64,7 +64,7 @@ export default defineNuxtConfig({
 
 
 	    //give a prefix to a register component 
-            prefix: 'Prime',
+    	prefix: '',
 	    //Component registration can be customized further by implementing the name function
 	    //that gets an object representing the import metadata. name is the label of the component, 
 	    //as is the default export name and from is the import path.
@@ -72,8 +72,7 @@ export default defineNuxtConfig({
             name: undefined,
 	    //ex include: ['Button', 'DataTable']
 	    //ex include: '*'
-            include: ['Editor', 'InputNumber', 'InputSwitch', 'InputText', 'Password', 'Rating', 'Button', 'SpeedDial', 
-		'DataView', 'OrderList','Paginator', 'Menu'],
+            include: '*',
 	    //ex if include: '*'
 	    //-> exclude: ['Carousel']
 	    exclude: undefined 
@@ -95,7 +94,10 @@ export default defineNuxtConfig({
         }
     },
     //config a prime vue team that needs to be used as css 
-    css: ['primevue/resources/themes/soho-dark/theme.css']
+    css: ['primevue/resources/themes/soho-dark/theme.css', 
+    	  'primevue/resources/primevue.min.css', 
+    	  'primeicons/primeicons.css'	
+    ]
     //
 
     /*

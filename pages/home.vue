@@ -1,6 +1,7 @@
 <script setup lang="ts">
 //import { SidebarMenu } from "#build/components";
 //import Menu from "primevue/menu";
+import 'primeicons/primeicons.css';
 
 const { data, status } = useAuth();
 const user = data.value?.user?.name;
@@ -39,7 +40,7 @@ const items = ref([
 
 		<!-- From PRIME VUE DOCUMENTATION -->
 		<div class="card flex justify-content-center">
-			<PrimeMenu :model="items" />
+			<Menu :model="items" />
 		</div>
 
 		<!-- <SidebarMenu/>  -->
