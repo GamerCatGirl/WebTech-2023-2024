@@ -53,6 +53,7 @@ The recreating of the database is done using the migrations but you can manually
 
 Folder to place all your components, components are HTML files (with `.vue` filetype) where you can add `<style></style>`, `<script></script>` and `<template></template>` tags.
 The `<template></template>` contain all the HTML code you want to display.
+Components will be automatically available across the application without having to explicitly import them.
 
 ### pages
 

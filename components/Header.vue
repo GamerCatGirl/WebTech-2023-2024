@@ -7,9 +7,9 @@ import { Container } from 'postcss';
 		 <div id="headerBar"> 
 
 			<Container id="headerLeft">			
-				<a> <img src="../assets/images/logo.png"> </a> 
+				<a> <img src="../assets/images/logo.png" alt="Logo of website"> </a> 
 				<ul id="menu">
-					<li>Home</li>
+					<li @click="openHome">Home</li>
 					<li>Map</li>
 					<li>My Recipies</li>
 					<li @click="openProfile">Profile </li>
