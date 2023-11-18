@@ -1,90 +1,83 @@
 <template>
-  <header>
-    <div class="card">
-      <Menubar :model="items">
-        <template #end>
-          <div class="flex align-items-center gap-2">
-            <InputText
-              placeholder="Search"
-              type="text"
-              class="w-8rem sm:w-auto"
-            />
-            <Avatar image="/images/avatar/amyelsner.png" shape="circle" />
-          </div>
-        </template>
-      </Menubar>
-    </div>
-    <!--
-		 <div id="headerBar"> 
-
-			<Container id="headerLeft">			
-				<a> <img src="../assets/images/logo.png"> </a> 
-				<ul id="menu">
-					<li>Home</li>
-					<li>Map</li>
-					<li>My Recipies</li>
-					<li @click="openProfile">Profile </li>
-				</ul>
-			</Container>
-
-			<Container id="headerRight">
-				<input type="text" placeholder="Search..." />
-				<button @click="openLoginPage"> Sign In </button> 
-				 If logged in change to profile pic 
-				<a> <img src="../assets/images/sun.png"></a>
-			</Container>
-
-		 </div> -->
-  </header>
+	<header>
+		<div class="card">
+			<Menubar :model="items">
+				<template #end>
+					<div class="flex align-items-center gap-2">
+						<InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" />
+						<Avatar image="lol.png" shape="circle" />
+						<!-- Bedoeling dat hieronder de profile subtab komt maar ik weet hoe -->
+					</div>
+				</template>
+			</Menubar>
+		</div>
+	</header>
 </template>
 
 <script setup lang="ts">
-
-//const toast = useToast();
 const items = ref([
-  {
-    label: "Home",
-    icon: "pi pi-home",
-  },
-  {
-    label: "Features",
-    icon: "pi pi-star",
-  },
-  {
-    label: "Projects",
-    icon: "pi pi-search",
-    items: [
-      {
-        label: "Components",
-        icon: "pi pi-bolt",
-      },
-      {
-        label: "Blocks",
-        icon: "pi pi-server",
-      },
-      {
-        label: "UI Kit",
-        icon: "pi pi-pencil",
-      },
-      {
-        label: "Templates",
-        icon: "pi pi-palette",
-        items: [
-          {
-            label: "Apollo",
-            icon: "pi pi-palette",
-          },
-          {
-            label: "Ultima",
-            icon: "pi pi-palette",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: "Contact",
-    icon: "pi pi-envelope",
-  },
+	{
+		label: "Home",
+		icon: "pi pi-home",
+		command: () => {
+			navigateTo("home");
+		},
+	},
+	{
+		label: "Recipies",
+		icon: "pi pi-star",
+		items: [
+			{
+				label: "Discover",
+				icon: "pi pi-globe",
+				command: () => {
+					navigateTo("recipies");
+				},
+			},
+			{
+				label: "New",
+				icon: "pi pi-plus",
+				command: () => {
+					navigateTo("recipies/add");
+				},
+			},
+			{ label: "Edit", icon: "pi pi-pencil" },
+			{ label: "Saved", icon: "pi pi-bookmark" },
+		],
+	},
+
+	{
+		label: "Inbox",
+		icon: "pi pi-envelope",
+		items: [
+			{ label: "Notifications", icon: "pi pi-inbox", badge: 3 },
+
+			{ label: "Comments", icon: "pi pi-comments", badge: 2 },
+		],
+	},
+
+	{
+		label: "Profile",
+		icon: "pi pi-user",
+		items: [
+			{ label: "Login", icon: "pi pi-user",
+			  command: () => {
+			  	navigateTo("login");
+				},
+			},
+			{ label: "Settings", icon: "pi pi-cog" },
+			{ label: "Logout", icon: "pi pi-sign-out" },
+		],
+	},
+
+	//	{end: true},
+
+	//	{label: "test"},
 ]);
+
+//const homeButton = document.getElementById("home-button");
+//console.log("homebutton: " + homeButton);
+//homeButton?.onclick = () => {
+//	console.log("Clicked on home button");
+//};
 </script>
