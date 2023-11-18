@@ -42,7 +42,7 @@ const value = ref(3);
         <!--Insert a picture-->
         <div class="card flex">
           <Image
-            src="../../assets/images/Tiramisu.png"
+            src="~/assets/images/Tiramisu.png"
             alt="Image"
             width="200"
           />
@@ -71,7 +71,7 @@ const value = ref(3);
         <!--Insert a picture-->
         <div class="card flex justify-content-center">
           <Image
-            src="../../assets/images/Tiramisu.png"
+            src="~/assets/images/Tiramisu.png"
             alt="Image"
             width="200"
           />
@@ -100,7 +100,7 @@ const value = ref(3);
         <!--Insert a picture-->
         <div class="card flex">
           <Image
-            src="../../assets/images/Tiramisu.png"
+            src="~/assets/images/Tiramisu.png"
             alt="Image"
             width="200"
           />
@@ -161,3 +161,5 @@ const value = ref(3);
   </div>
   -->
 </template>
+
+

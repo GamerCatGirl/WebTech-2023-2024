@@ -9,14 +9,15 @@ export default defineNuxtConfig({
 	//e.g. with a Nuxt plugin.
 	usePrimeVue: true,
         options: {
-		unstyled: false, 
+	unstyled: false, 
 		ripple: true, 
 		inputStyle: 'filled'	
 	},
 	//Configures the global pass through import path.
 	//Pathe may also be a location within your application 
 	//ex importPT: { as: 'MyCustomPreset', from: path.resolve(__dirname, './assets/presets/mypreset.js')}
-        importPT: {as: 'Tailwind', from: 'primevue/passthrough/tailwind'},
+        //importPT: {as: 'Tailwind', from: 'primevue/passthrough/tailwind'},
+	
 	//Defines the CSS layer order setting for compatibility with libraries like Tailwind.
         cssLayerOrder: 'tailwind-base, primevue, tailwind-utilities',
 	//The components to import and register are defined with the include option using a string array. 
@@ -94,11 +95,12 @@ export default defineNuxtConfig({
         }
     },
     //config a prime vue team that needs to be used as css 
-    css: ['primevue/resources/themes/soho-dark/theme.css', 
+    css: ['primeflex/primeflex.css',
+	 // 'primeflex/themes/primeone-dark.css',  
+	  'primevue/resources/themes/soho-dark/theme.css', 
     	  'primevue/resources/primevue.min.css', 
-    	  'primeicons/primeicons.css',
-	  'primeflex/primeflex.css'
-    ]
+    	  'primeicons/primeicons.css'
+	    ]
     //
 
     /*
