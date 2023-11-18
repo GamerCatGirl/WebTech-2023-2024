@@ -5,7 +5,7 @@
 				<template #end>
 					<div class="flex align-items-center gap-2">
 						<InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" />
-						<Avatar image="lol.png" shape="circle" />
+						<Avatar image="Tiramisu.png" shape="circle" />
 						<!-- Bedoeling dat hieronder de profile subtab komt maar ik weet hoe -->
 					</div>
 				</template>
