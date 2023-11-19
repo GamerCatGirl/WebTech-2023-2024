@@ -7,6 +7,6 @@ export const openLoginPage = ()  => {
 }
 
 export const openProfile = () => {
-    let url = "/profile" //+ user
+    let url = "/profile/[id]" //+ user
     navigateTo(url)
 }

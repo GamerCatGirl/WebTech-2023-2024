@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare",
     "generateMigrations": "drizzle-kit generate:sqlite",
     "updateDB": "drizzle-kit push:sqlite; sqlite3 ./sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
+    "updateDBWindows": "drizzle-kit push:sqlite && C:\\sqlite\\sqlite3.exe .\\sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
     "showDB": "drizzle-kit studio",
     "seed": "npx tsx -e \"require('./seed/seed.ts').seed(require('./seed/seedData.ts').seedData, true);\"",
     "updateTestDB": "database_url=test/sqlite.db drizzle-kit push:sqlite && sqlite3 ./test/sqlite.db < ./drizzle/0004_empty_killer_shrike.sql",
@@ -23,6 +24,7 @@
     "@types/better-sqlite3": "^7.6.5",
     "drizzle-kit": "^0.19.13",
     "nuxt": "^3.7.4",
+    "nuxt-primevue": "^0.2.0",
     "tsx": "^3.14.0",
     "vitest": "^0.33.0",
     "vue": "^3.3.4",
@@ -38,6 +40,10 @@
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.28.6",
     "next-auth": "^4.21.1",
-    "ngrok": "^5.0.0-beta.2"
+    "ngrok": "^5.0.0-beta.2",
+    "primeflex": "^3.3.1",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.40.1",
+    "quill": "^1.3.7"
   }
 }
