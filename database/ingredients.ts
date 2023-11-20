@@ -5,10 +5,10 @@ import { recipes } from "./recipe";
 
 export const ingredients = sqliteTable("ingredients", {
 	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => createId()),
+		.primaryKey(),
+	//	.$defaultFn(() => createId()),
 	recipyId: text("recipyId") //nog linken met andere tabel
-		.references(() => recipes.id)
+		//.references(() => recipes.id)
 		.notNull(),
 	ingredient: text("ingredient"),
 	amount: integer("amount"),
@@ -17,6 +17,6 @@ export const ingredients = sqliteTable("ingredients", {
   });
 
 export type ingredientsDB = InferSelectModel<typeof ingredients>;
-export type InserttIngredients = InferInsertModel<typeof ingredients>;
+export type InsertIngredients = InferInsertModel<typeof ingredients>;
 
 //don't understand the relatsions 

@@ -24,7 +24,7 @@
 			@upload="onUpload" :auto="true" chooseLabel="Browse" />
 	</div>
 
-	<div class="card flex flex-column md:flex-row gap-3" v-for="input in inputs">
+	<div class="card flex flex-column md:flex-row gap-3" v-for="input in inputs"> <!-- TODO adding row numbers for error handling-->
 		<!-- Name Ingredient -->
 		<InputText placeholder="Ingredient Name" v-model="input.Ingredient" />
 
@@ -97,6 +97,8 @@
 <script setup>
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import { ingredients} from "~/database/ingredients";
+//import { Database } from "better-sqlite3";
 
 const recipyName = ref("");
 
@@ -191,8 +193,34 @@ function save() {
 		});
 	} else {
 		inputs.value.map((value, index, array) => {
-
 			if (
+				!(
+					value.Ingredient == "" ||
+					value.Amount == null ||
+					value.Type == "" ||
+					value.Category == ""
+				)
+			) {
+				//insert into data Base
+				toast.add({
+					severity: "success",
+					summary: "Insert into DB",
+					detail: index,
+					life: 3000,
+				});
+				let currentValue = {
+					id: 2992,//id
+					recipyId: 239237,//recipyID
+					ingredient: value.Ingredient,//ingredient 
+					amount: value.Amount,//amount
+					type: value.Type,//type 
+					category: value.Category//category
+				}
+				//InserttIngredients.insert.values(currentValue);
+				database.insert(ingredients).values(currentValue);
+				//ingredients.insert.values(currentValue);
+			
+			} else if (
 				!(
 					value.Ingredient == "" &&
 					value.Amount == null &&
@@ -203,57 +231,11 @@ function save() {
 				toast.add({
 					severity: "error",
 					summary: value.Ingredient,
-					detail: "lol",
+					detail: "Missing values on row " +  (index + 1) + "!", 
 					life: 3000,
 				});
-
-				
-				}
-
-			});
-
-		/* if (value.Ingredient == "") {
-				    toast.add({
-					    severity: "error",
-					    summary: value.Ingredient,
-					    detail: "lol",
-					    life: 3000,
-				    }),
-						    } else if (value.Amount == null) {
-				    toast.add({
-					    severity: "error",
-					    summary: value.Ingredient,
-					    detail: "lol",
-					    life: 3000,
-				    }),
-						    } else if (value.Type == "") {
-				    toast.add({
-					    severity: "error",
-					    summary: value.Ingredient,
-					    detail: "lol",
-					    life: 3000,
-				    }),
-	    
-						    } else if (value.Category == "") {
-	    
-				    toast.add({
-					    severity: "error",
-					    summary: value.Ingredient,
-					    detail: "lol",
-					    life: 3000,
-				    }),
-						    } else {
-				    toast.add({
-					    severity: "error",
-					    summary: value.Ingredient,
-					    detail: "lol",
-					    life: 3000,
-				    }),
-	    
-				    //push into dataBase
-			    } */
-
-		//const recipyName = ref();
+			} 
+		});
 	}
 }
 </script>
