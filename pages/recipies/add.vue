@@ -18,15 +18,24 @@
 		</Toolbar>
 	</div>
 
-	<div class="card flex justify-content-center">
-		<InputText placeholder="Recipy Name" v-model="recipyName" />
+	<div class="card flex justify-content-center gap-3">
+		<InputText placeholder="Recipy Name" v-model="recipyName" size="large" :disabled="false" />
+		<!-- Put it in disabled mode when recipy already exists -->
+
+		<InlineMessage severity="error">Recipy name is required</InlineMessage>
+	</div>
+	<div class="card flex justify-content-center gap-3">
 		<FileUpload mode="basic" name="demo[]" url="/api/upload" accept="image/*" :maxFileSize="1000000"
 			@upload="onUpload" :auto="true" chooseLabel="Browse" />
+		<!--	<Image :src="picture.value.url" alt="Image" width="250" v-model="picture"/> -->
+		<InputText placeholder="Thumbnail" v-model="thumbnail" />
 	</div>
 
-	<div class="card flex flex-column md:flex-row gap-3" v-for="input in inputs"> <!-- TODO adding row numbers for error handling-->
+	<div class="card flex flex-column md:flex-row gap-3" v-for="input in inputs">
+		<Chip :label="input.Label" v-model="input.new" />
+		<!-- TODO adding row numbers for error handling-->
 		<!-- Name Ingredient -->
-		<InputText placeholder="Ingredient Name" v-model="input.Ingredient" />
+		<InputText placeholder="Ingredient Name" aria-labelledby="ingredient name" v-model="input.Ingredient" />
 
 		<!-- Amount -->
 		<InputNumber v-model="input.Amount" placeholder="Amount" />
@@ -97,7 +106,7 @@
 <script setup>
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import { ingredients} from "~/database/ingredients";
+import { ingredients } from "~/database/ingredients";
 //import { Database } from "better-sqlite3";
 
 const recipyName = ref("");
@@ -122,6 +131,7 @@ const amountTypes = ref([
 ]);
 
 const amountType = ref();
+const picture = ref({url: "test.png"});
 const dummyObject = {
 	Ingredient: "",
 	Counter: "",
@@ -136,6 +146,7 @@ const inputs = ref([newDummy()]);
 
 function newDummy() {
 	return {
+		Label: "New",
 		Ingredient: "",
 		Counter: counter,
 		Category: "",
@@ -153,7 +164,20 @@ function addNewRow() {
 	inputs.value.push(newDummy());
 }
 
-const onUpload = () => {
+const onUpload = (event) => {
+	console.log(event);
+
+	console.log(event.files[0]);
+	
+	console.log("before upload: ")
+	console.log(picture);
+	console.log(picture.value.url);
+
+	picture.value.url = event.files[0].objectURL;
+	
+	console.log(picture)
+	console.log(picture.value.url);
+
 	toast.add({
 		severity: "info",
 		summary: "Success",
@@ -181,7 +205,7 @@ function deleteIngredient(idString) {
 	}
 }
 
-function save() {
+async function save() {
 	//to implement
 
 	if (recipyName.value == "") {
@@ -192,7 +216,59 @@ function save() {
 			life: 3000,
 		});
 	} else {
-		inputs.value.map((value, index, array) => {
+		console.log(recipyName);
+		recipyName.disabled = true;
+		console.log(recipyName);
+		//TODO check if recipyName already exitst
+		// if exists -> getRecipyID
+		/*
+		        
+					//this doesn't work 
+		        
+		        
+					const { getRecipyID } = await $fetch("/api/recipes/:id", {
+						method: "get",
+						params: recipyName.value,
+					});
+					
+		        
+					// else get new recipyID en post in recipes
+					//data wordt in database gestoken
+		        
+					let dataToPost = {
+						id: 0,
+						name: recipyName.value,
+						location: "",
+						description: "",
+						user: currentUser,
+						thumbnail: "",
+					};
+		        
+		        
+					const { postRecipe } = await $fetch("/api/recipes", {
+						method: "post",
+						body: dataToPost,
+					});
+					*/
+
+		value.Label = "Saved";
+
+		let currentRecipy = {
+			id: 0,
+			name: 0,
+			location: 0,
+			description: 0,
+			user: 0,
+			thumbnail: 0,
+		};
+
+		let currentImage = {
+			id: 0,
+			url: 0,
+			recipe: currentRecipy.id,
+		};
+
+		inputs.value.map(async (value, index, array) => {
 			if (
 				!(
 					value.Ingredient == "" ||
@@ -201,25 +277,24 @@ function save() {
 					value.Category == ""
 				)
 			) {
-				//insert into data Base
-				toast.add({
-					severity: "success",
-					summary: "Insert into DB",
-					detail: index,
-					life: 3000,
-				});
 				let currentValue = {
-					id: 2992,//id
-					recipyId: 239237,//recipyID
-					ingredient: value.Ingredient,//ingredient 
-					amount: value.Amount,//amount
-					type: value.Type,//type 
-					category: value.Category//category
-				}
-				//InserttIngredients.insert.values(currentValue);
-				database.insert(ingredients).values(currentValue);
-				//ingredients.insert.values(currentValue);
-			
+					id: "ZIEHA" + index, //id
+					recipyId: 1, //recipyID
+					ingredient: value.Ingredient, //ingredient
+					amount: value.Amount, //amount
+					type: value.Type.name, //type
+					category: value.Category.name, //category
+				};
+
+				//data wordt in database gestoken
+				const { body } = await $fetch("/api/ingredients", {
+					method: "post",
+					body: currentValue,
+				});
+
+				value.Label = "Saved";
+
+				//TODO put a check next to the line so you know it is saved
 			} else if (
 				!(
 					value.Ingredient == "" &&
@@ -231,10 +306,17 @@ function save() {
 				toast.add({
 					severity: "error",
 					summary: value.Ingredient,
-					detail: "Missing values on row " +  (index + 1) + "!", 
+					detail: "Missing values on row " + (index + 1) + "!",
 					life: 3000,
 				});
-			} 
+			}
+		});
+
+		toast.add({
+			severity: "success",
+			summary: "Saved",
+			detail: "all new data is saved!",
+			life: 3000,
 		});
 	}
 }

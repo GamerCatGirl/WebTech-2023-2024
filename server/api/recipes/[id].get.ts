@@ -6,5 +6,6 @@ export default defineEventHandler((event) => {
         });
     }
     const id = event.context.params.id as string;
+    console.log(event);
     return database.query.recipes.findFirst({ where: (recipe, { eq }) => eq(recipe.id, id), with: { images: true } });
 });
