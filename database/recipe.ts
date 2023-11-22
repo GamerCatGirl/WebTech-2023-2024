@@ -25,8 +25,8 @@ export const recipes = sqliteTable("recipe", {
         .primaryKey()
         .$defaultFn(() => createId()),
     name: text("name").notNull(),
-    location: text("location").notNull(),
-    description: text("description").notNull(),
+    location: text("location"),
+    description: text("description"),
     user: text("user")
         .references(() => users.id)
         .notNull(),

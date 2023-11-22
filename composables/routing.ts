@@ -14,3 +14,4 @@ export const openProfile = () => {
 export const openHome = () => {
     navigateTo("/home")
 }
+

@@ -9,7 +9,7 @@ import { NuxtAuthHandler } from "#auth";
 
 export default NuxtAuthHandler({
     pages: {
-        signIn: '/register'
+        signIn: '/login'
     },
     // @ts-expect-error
     adapter: DrizzleAdapter(database),
