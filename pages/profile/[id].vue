@@ -1,7 +1,5 @@
-<script setup lang="ts"></script>
 
 <template>
-
   <div class="flex align-items-center">
     <Card class="profileCard">
       <template #header>
@@ -35,6 +33,108 @@
   <Card>
     <template #title> My Recipies </template>
     <template #content>
+      <div class="card flex justify-content-center gap-2">
+        <Card>
+          <template #title> Tiramisu </template>
+          <template #content>
+            <div class="flex flex-wrap gap-2">
+              <Tag value="Dessert"></Tag>
+              <Tag icon="" value="Easy" severity="success"></Tag>
+              <Tag
+                icon="pi pi-clock"
+                value="'15"
+                severity="success"
+                rounded
+              ></Tag>
+            </div>
+
+            <!--Insert a picture-->
+            <div class="card flex">
+              <Image src="Tiramisu.png" alt="Image" width="200" />
+            </div>
+
+            <p class="m-0">Made by @Silken</p>
+            <!-- Display kind of recipy: dessert, lunch, ...--->
+            <!--Display figures like meat, vegi, halal, vegan, ...-->
+            <!-- Display the time and dificulty-->
+            <!--Display de rating -->
+            <div class="card flex">
+              <Rating
+                v-model="value"
+                readonly
+                :cancel="false"
+                class="flex gap-2"
+              />
+            </div>
+          </template>
+        </Card>
+
+        <Card>
+          <template #title> Tiramisu </template>
+          <template #content>
+            <div class="flex flex-wrap gap-2">
+              <Tag value="Dessert"></Tag>
+              <Tag icon="" value="Easy"></Tag>
+              <Tag
+                icon="pi pi-clock"
+                value="'30"
+                severity="warning"
+                rounded
+              ></Tag>
+            </div>
+
+            <!--Insert a picture-->
+            <div class="card flex justify-content-center">
+              <Image src="Tiramisu.png" alt="Image" width="200" />
+            </div>
+
+            <p class="m-0">Made by @Silken</p>
+            <!-- Display kind of recipy: dessert, lunch, ...--->
+            <!--Display figures like meat, vegi, halal, vegan, ...-->
+            <!-- Display the time and dificulty-->
+            <!--Display de rating -->
+            <div class="card">
+              <Rating v-model="value" readonly :cancel="false" />
+            </div>
+          </template>
+        </Card>
+
+        <Card>
+          <template #title> Tiramisu </template>
+          <template #content>
+            <div class="flex flex-wrap gap-2">
+              <Tag value="Dessert"></Tag>
+              <Tag icon="" value="Easy" severity="success"></Tag>
+              <Tag
+                icon="pi pi-clock"
+                value="'60"
+                severity="danger"
+                rounded
+              ></Tag>
+            </div>
+
+            <!--Insert a picture-->
+            <div class="card flex">
+              <Image src="Tiramisu.png" alt="Image" width="200" />
+            </div>
+
+            <p class="m-0">Made by @Silken</p>
+            <!-- Display kind of recipy: dessert, lunch, ...--->
+            <!--Display figures like meat, vegi, halal, vegan, ...-->
+            <!-- Display the time and dificulty-->
+            <!--Display de rating -->
+            <div class="card flex">
+              <Rating
+                v-model="value"
+                readonly
+                :cancel="false"
+                class="flex gap-2"
+              />
+            </div>
+          </template>
+        </Card>
+      </div>
+
       <p class="m-0">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
         consequuntur error repudiandae numquam deserunt quisquam repellat libero
@@ -42,12 +142,103 @@
         cupiditate neque quas!
       </p>
     </template>
-    <template #footer> Footer </template>
+   
   </Card>
 
   <Card>
     <template #title> Saved Recipies </template>
     <template #content>
+
+
+  <div class="card flex justify-content-center gap-2">
+    <Card>
+      <template #title> Tiramisu </template>
+      <template #content>
+        <div class="flex flex-wrap gap-2">
+          <Tag value="Dessert"></Tag>
+          <Tag icon="" value="Easy" severity="success"></Tag>
+          <Tag icon="pi pi-clock" value="'15" severity="success" rounded></Tag>
+        </div>
+
+        <!--Insert a picture-->
+        <div class="card flex">
+          <Image
+            src="Tiramisu.png"
+            alt="Image"
+            width="200"
+          />
+        </div>
+
+        <p class="m-0">Made by @Silken</p>
+        <!-- Display kind of recipy: dessert, lunch, ...--->
+        <!--Display figures like meat, vegi, halal, vegan, ...-->
+        <!-- Display the time and dificulty-->
+        <!--Display de rating -->
+        <div class="card flex">
+          <Rating v-model="value" readonly :cancel="false" class="flex gap-2" />
+        </div>
+      </template>
+    </Card>
+
+    <Card>
+      <template #title> Tiramisu </template>
+      <template #content>
+        <div class="flex flex-wrap gap-2">
+          <Tag value="Dessert"></Tag>
+          <Tag icon="" value="Easy"></Tag>
+          <Tag icon="pi pi-clock" value="'30" severity="warning" rounded></Tag>
+        </div>
+
+        <!--Insert a picture-->
+        <div class="card flex justify-content-center">
+          <Image
+            src="Tiramisu.png"
+            alt="Image"
+            width="200"
+          />
+        </div>
+
+        <p class="m-0">Made by @Silken</p>
+        <!-- Display kind of recipy: dessert, lunch, ...--->
+        <!--Display figures like meat, vegi, halal, vegan, ...-->
+        <!-- Display the time and dificulty-->
+        <!--Display de rating -->
+        <div class="card">
+          <Rating v-model="value" readonly :cancel="false" />
+        </div>
+      </template>
+    </Card>
+
+    <Card>
+      <template #title> Tiramisu </template>
+      <template #content>
+        <div class="flex flex-wrap gap-2">
+          <Tag value="Dessert"></Tag>
+          <Tag icon="" value="Easy" severity="success"></Tag>
+          <Tag icon="pi pi-clock" value="'60" severity="danger" rounded></Tag>
+        </div>
+
+        <!--Insert a picture-->
+        <div class="card flex">
+          <Image
+            src="Tiramisu.png"
+            alt="Image"
+            width="200"
+          />
+        </div>
+
+        <p class="m-0">Made by @Silken</p>
+        <!-- Display kind of recipy: dessert, lunch, ...--->
+        <!--Display figures like meat, vegi, halal, vegan, ...-->
+        <!-- Display the time and dificulty-->
+        <!--Display de rating -->
+        <div class="card flex">
+          <Rating v-model="value" readonly :cancel="false" class="flex gap-2" />
+        </div>
+      </template>
+    </Card>
+  </div>
+
       <p class="m-0">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
         consequuntur error repudiandae numquam deserunt quisquam repellat libero
@@ -55,7 +246,7 @@
         cupiditate neque quas!
       </p>
     </template>
-    <template #footer> Footer </template>
+   
   </Card>
 </template>
 
@@ -69,3 +260,7 @@
   width: 50%;
 }
 </style>
+
+<script setup lang="ts">
+const value = ref(3);
+</script>
