@@ -14,6 +14,13 @@ export const seedData = {
 			emailVerified: new Date(),
 			image: "",
 		},
+		{
+			id: "30",
+			name: "Ely",
+			email: "user3@email.com",
+			emailVerified: new Date(),
+			image: ""
+		}
 	],
 	recipes: [
 		{
