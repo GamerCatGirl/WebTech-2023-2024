@@ -39,7 +39,7 @@ export const seedData = {
 			location: "Belgium",
 			name: "Tiramisu",
 			thumbnail: "Easy, 5 ingredient recipy",
-			user: "Silken",
+			user: "2",
 		},
 	],
 	images: [
@@ -70,7 +70,7 @@ export const seedData = {
 		},
 		{
 			id: "1",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Eggs",
 			amount: "3",
 			type: "Pieces",
@@ -78,7 +78,7 @@ export const seedData = {
 		},
 		{
 			id: "2",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Sugar",
 			amount: "150",
 			type: "gramms",
@@ -86,7 +86,7 @@ export const seedData = {
 		},
 		{
 			id: "3",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Vanilla Sugar",
 			amount: "24",
 			type: "gramms",
@@ -95,7 +95,7 @@ export const seedData = {
 		},
 		{
 			id: "4",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Boudoir (Cookies)",
 			amount: "2",
 			type: "Packs",
@@ -104,7 +104,7 @@ export const seedData = {
 		},
 		{
 			id: "5",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Coffee",
 			amount: "3",
 			type: "Cups",
@@ -113,7 +113,7 @@ export const seedData = {
 		},
 		{
 			id: "6",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Amaretto",
 			amount: "40",
 			type: "ml",
@@ -121,7 +121,7 @@ export const seedData = {
 		},	
 		{
 			id: "7",
-			recipyID: "3",
+			recipyId: "3",
 			ingredient: "Cacao",
 			amount: "/",
 			type: "/",
