@@ -2,6 +2,7 @@ import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
 import { users } from "./auth";
+import { ingredients } from "./ingredients";
 
 export const images = sqliteTable("image", {
     id: text("id")
@@ -38,6 +39,7 @@ export type InsertRecipe = InferInsertModel<typeof recipes>;
 
 export const recipesRelations = relations(recipes, ({ many, one }) => ({
     images: many(images),
+    ingredients: many(ingredients),
     user: one(users, { fields: [recipes.user], references: [users.id] }),
 }));
 
