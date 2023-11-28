@@ -32,6 +32,10 @@ export const recipes = sqliteTable("recipe", {
         .references(() => users.id)
         .notNull(),
     thumbnail: text("thumbnail"),
+    time: text("time"),
+    type: text("type"), 
+    difficulty: text("difficulty"),
+    score: text("score"),
 });
 
 export type Recipe = InferSelectModel<typeof recipes>;

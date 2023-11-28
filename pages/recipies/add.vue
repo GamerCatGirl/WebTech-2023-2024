@@ -25,11 +25,17 @@
 		<InlineMessage severity="error">Recipy name is required</InlineMessage>
 	</div>
 	<div class="card flex justify-content-center gap-3">
+		<Chip :label="uploaded" />
+
 		<FileUpload mode="basic" name="demo[]" url="/api/upload" accept="image/*" :maxFileSize="1000000"
 			@upload="onUpload" :auto="true" chooseLabel="Browse" />
-		<!--	<Image :src="picture.value.url" alt="Image" width="250" v-model="picture"/> -->
-		<InputText placeholder="Thumbnail" v-model="thumbnail" />
 	</div>
+
+	<div class="card flex justify-content-center gap-3">
+		<Image :src="image" height="250" preview />
+	</div>
+
+	<InputText placeholder="Thumbnail" v-model="thumbnail" />
 
 	<div class="card flex flex-column md:flex-row gap-3" v-for="input in inputs">
 		<Chip :label="input.Label" v-model="input.new" />
@@ -58,46 +64,6 @@
 		<Button icon="pi pi-plus" @click="addNewRow()"> </Button>
 	</div>
 
-	<!-- ADD TO RECIPY/ ID
-  <div class="card">
-    <TabView>
-      <TabPanel header="Header I">
-        <p class="m-0">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-      </TabPanel>
-      <TabPanel header="Header II">
-        <p class="m-0">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-          accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
-          ab illo inventore veritatis et quasi architecto beatae vitae dicta
-          sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
-          aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos
-          qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit,
-          sed quia non numquam eius modi.
-        </p>
-      </TabPanel>
-      <TabPanel header="Header III">
-        <p class="m-0">
-          At vero eos et accusamus et iusto odio dignissimos ducimus qui
-          blanditiis praesentium voluptatum deleniti atque corrupti quos dolores
-          et quas molestias excepturi sint occaecati cupiditate non provident,
-          similique sunt in culpa qui officia deserunt mollitia animi, id est
-          laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita
-          distinctio. Nam libero tempore, cum soluta nobis est eligendi optio
-          cumque nihil impedit quo minus.
-        </p>
-      </TabPanel>
-    </TabView>
-  </div>
--->
-
 	<div class="card">
 		<Editor v-model="value" editorStyle="height: 320px" />
 	</div>
@@ -106,13 +72,13 @@
 <script setup>
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import { ingredients } from "~/database/ingredients";
-//import { Database } from "better-sqlite3";
 
 const recipyName = ref("");
+const image = ref();
 
 const toast = useToast();
 const value = ref("");
+const uploaded = ref("new");
 const currentUser = "admin";
 
 const categoriesIngredients = ref([
@@ -131,7 +97,7 @@ const amountTypes = ref([
 ]);
 
 const amountType = ref();
-const picture = ref({url: "test.png"});
+const picture = ref({ url: "test.png" });
 const dummyObject = {
 	Ingredient: "",
 	Counter: "",
@@ -165,25 +131,8 @@ function addNewRow() {
 }
 
 const onUpload = (event) => {
-	console.log(event);
-
-	console.log(event.files[0]);
-	
-	console.log("before upload: ")
-	console.log(picture);
-	console.log(picture.value.url);
-
 	picture.value.url = event.files[0].objectURL;
-	
-	console.log(picture)
-	console.log(picture.value.url);
-
-	toast.add({
-		severity: "info",
-		summary: "Success",
-		detail: "File Uploaded",
-		life: 3000,
-	});
+	image.value = picture.value.url;
 };
 
 function deleteIngredient(idString) {
@@ -216,40 +165,18 @@ async function save() {
 			life: 3000,
 		});
 	} else {
+
+		if (image.value != null) {
+			uploaded.value = "Saved";
+		}
+
+
 		console.log(recipyName);
 		recipyName.disabled = true;
 		console.log(recipyName);
-		//TODO check if recipyName already exitst
-		// if exists -> getRecipyID
-		/*
-		        
-					//this doesn't work 
-		        
-		        
-					const { getRecipyID } = await $fetch("/api/recipes/:id", {
-						method: "get",
-						params: recipyName.value,
-					});
-					
-		        
-					// else get new recipyID en post in recipes
-					//data wordt in database gestoken
-		        
-					let dataToPost = {
-						id: 0,
-						name: recipyName.value,
-						location: "",
-						description: "",
-						user: currentUser,
-						thumbnail: "",
-					};
-		        
-		        
-					const { postRecipe } = await $fetch("/api/recipes", {
-						method: "post",
-						body: dataToPost,
-					});
-					*/
+		//TODO: check if recipyName already exitst
+		//const recipes = await $fetch(`/api/recipes/$(recipyName)`);
+		console.log(recipes);
 
 		value.Label = "Saved";
 

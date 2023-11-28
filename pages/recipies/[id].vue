@@ -1,76 +1,108 @@
 <template>
-  <div class="card">
-    <Steps :model="items" :readonly="false" />
-  </div>
+	<div class="card">
+		<Steps :model="items" :readonly="false" />
+	</div>
 
-  <Card class="InfoCard" v-show="InfoCard">
-    <template #title> {{ recipyName }} </template>
-    <template #content>
-      <div class="flex flex-wrap gap-2">
-        <Tag value="Dessert"></Tag>
-        <Tag icon="" value="Easy" severity="success"></Tag>
-        <Tag icon="pi pi-clock" value="'15" severity="success" rounded></Tag>
-      </div>
+	<Card class="InfoCard" v-show="InfoCard">
+		<template #title> {{ recipyName }} </template>
+		<template #content>
+			<div class="flex flex-wrap gap-2">
+				<Tag :value="recipy.type"></Tag>
+				<Tag icon="" :value="recipy.difficulty" :severity="getColorDifficulty(recipy.difficulty)"></Tag>
+				<Tag icon="pi pi-clock" :value="recipy.time" :severity="getSeverity(recipy.time)" rounded></Tag>
+			</div>
 
-      <!--Insert a picture-->
-      <div class="card flex">
-        <Image
-          class="imageCard"
-          src="../Tiramisu.png"
-          alt="Image"
-          width="auto"
-        />
-      </div>
+			<!--Insert a picture-->
+			<div class="card flex">
+				<Image class="imageCard" src="../Tiramisu.png" alt="Image" width="auto" />
+			</div>
 
-      <p class="m-0">Made by @Silken</p>
-      <!-- Display kind of recipy: dessert, lunch, ...--->
-      <!--Display figures like meat, vegi, halal, vegan, ...-->
-      <!-- Display the time and dificulty-->
-      <!--Display de rating -->
-      <div class="card flex">
-        <Rating v-model="text" readonly :cancel="false" class="flex gap-2" />
-      </div>
-    </template>
+			<p class="m-0">Made by @Silken</p>
+			<!--Display figures like meat, vegi, halal, vegan, ...-->
+			<div class="card flex">
+				<Rating  v-model="recipyScore" readonly :cancel="false" class="flex gap-2" />
+			</div>
+		</template>
 
-    <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
-  </Card>
+		<!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
+	</Card>
 
-  <div class="card InfoCard" v-show="Ingredients">
-    <DataTable :value="products" tableStyle="min-width: 50rem">
-      <Column
-        v-for="col of columns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-      ></Column>
-    </DataTable>
-  </div>
+	<div class="card InfoCard" v-show="Ingredients">
+		<DataTable :value="ingredients" tableStyle="min-width: 50rem">
+			<Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header"></Column>
+		</DataTable>
+	</div>
 
-  <div class="card" v-show="RecipyText">
-    <Editor v-model="value" editorStyle="height: 320px" readonly />
-  </div>
+	<div class="card" v-show="RecipyText">
+		<Editor v-model="value" editorStyle="height: 320px" readonly />
+	</div>
 
-  <!-- TODO fix the layout of this horizontal bar -->
-  <div v-show="Comments">
-    <Divider align="right" type="solid">
-      <b>Username</b>
-    </Divider>
+	<!-- TODO: fix the layout of this horizontal bar -->
+	<div v-show="Comments">
+		<!-- input text -->
+		<Textarea v-model="comment1" rows="1" cols="90" />
+		<!-- TODO: make this dynamic!!!! -->
+		<!--  cancel button -->
+		<Button label="Cancel" severity="warning" rounded />
+		<!--  comment button -->
+		<Button label="Comment" severity="success" rounded />
 
-    <p class="m-0">
-      Temporibus autem quibusdam et aut officiis debitis aut rerum
-      necessitatibus saepe eveniet ut et voluptates repudiandae sint et
-      molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente
-      delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut
-      perferendis doloribus asperiores repellat. Donec vel volutpat ipsum.
-      Integer nunc magna, posuere ut tincidunt eget, egestas vitae sapien. Morbi
-      dapibus luctus odio.
-    </p>
-  </div>
+		<div>
+			<Divider align="right" type="solid">
+				<b>Username</b>
+			</Divider>
+
+			<p class="m-0">
+				Temporibus autem quibusdam et aut officiis debitis aut rerum
+				necessitatibus saepe eveniet ut et voluptates repudiandae sint et
+				molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente
+				delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut
+				perferendis doloribus asperiores repellat. Donec vel volutpat ipsum.
+				Integer nunc magna, posuere ut tincidunt eget, egestas vitae sapien.
+				Morbi dapibus luctus odio.
+			</p>
+
+			<!-- like button -->
+			<Button icon="pi pi-thumbs-up" severity="success" rounded />
+			<!-- amount of likes -->
+
+			<span class="amountStyle">56</span>
+			<!-- dislike button -->
+
+			<Button icon="pi pi-thumbs-down" severity="danger" rounded />
+			<!-- answer button -->
+		</div>
+
+		<div>
+			<Divider align="right" type="solid">
+				<b>Username</b>
+			</Divider>
+
+			<p class="m-0">
+				Temporibus autem quibusdam et aut officiis debitis aut rerum
+				necessitatibus saepe eveniet ut et voluptates repudiandae sint et
+				molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente
+				delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut
+				perferendis doloribus asperiores repellat. Donec vel volutpat ipsum.
+				Integer nunc magna, posuere ut tincidunt eget, egestas vitae sapien.
+				Morbi dapibus luctus odio.
+			</p>
+
+			<!-- like button -->
+			<Button icon="pi pi-thumbs-up" severity="success" rounded />
+			<!-- amount of likes -->
+
+			<span class="amountStyle">56</span>
+			<!-- dislike button -->
+
+			<Button icon="pi pi-thumbs-down" severity="danger" rounded />
+			<!-- answer button -->
+		</div>
+	</div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { ingredients } from "~/database/ingredients";
 
 const value = ref(3); //score of recipy still needs to be added in the database
 const route = useRoute();
@@ -80,6 +112,7 @@ const splitedId = id.split(comboRouting);
 const recipyID = splitedId[1];
 
 const recipy = await $fetch(`/api/recipes/${recipyID}`);
+const recipyScore = ref(Number(recipy.score));
 //const allIngredients = await $fetch(`/api/ingredients`);
 
 const recipyName = recipy.name;
@@ -88,21 +121,27 @@ const text = ref(recipy.thumbnail);
 console.log("recipy name");
 console.log(recipyName);
 
+
+console.log("recipy score: " + recipy.score);
+
+console.log(recipy);
+
+const ingredients = recipy.ingredients;
 console.log(ingredients);
 
 const products = ref([
-  {
-    ingredient: "Mascarpone",
-    amount: 500,
-    type: "grams",
-    category: "dairy products",
-  },
+	{
+		ingredient: "Mascarpone",
+		amount: 500,
+		type: "grams",
+		category: "dairy products",
+	},
 ]);
 const columns = [
-  { field: "ingredient", header: "Ingredient" },
-  { field: "amount", header: "Amount" },
-  { field: "type", header: "Type" },
-  { field: "category", header: "Category" },
+	{ field: "ingredient", header: "Ingredient" },
+	{ field: "amount", header: "Amount" },
+	{ field: "type", header: "Type" },
+	{ field: "category", header: "Category" },
 ];
 
 console.log(splitedId);
@@ -114,55 +153,73 @@ const RecipyText = ref(false);
 const Comments = ref(false);
 
 const items = ref([
-  {
-    label: "Info",
-    command: () => {
-      InfoCard.value = true;
-      Ingredients.value = false;
-      RecipyText.value = false;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Ingredients",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = true;
-      RecipyText.value = false;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Steps",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = false;
-      RecipyText.value = true;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Comments",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = false;
-      RecipyText.value = false;
-      Comments.value = true;
-    },
-  },
+	{
+		label: "Info",
+		command: () => {
+			InfoCard.value = true;
+			Ingredients.value = false;
+			RecipyText.value = false;
+			Comments.value = false;
+		},
+	},
+	{
+		label: "Ingredients",
+		command: () => {
+			InfoCard.value = false;
+			Ingredients.value = true;
+			RecipyText.value = false;
+			Comments.value = false;
+		},
+	},
+	{
+		label: "Steps",
+		command: () => {
+			InfoCard.value = false;
+			Ingredients.value = false;
+			RecipyText.value = true;
+			Comments.value = false;
+		},
+	},
+	{
+		label: "Comments",
+		command: () => {
+			InfoCard.value = false;
+			Ingredients.value = false;
+			RecipyText.value = false;
+			Comments.value = true;
+		},
+	},
 ]);
 
+
+function getSeverity(time) {
+	if (time < 30) { return "success"; }
+	else if (time < 60) { return "warning"; }
+	else { return "danger"; } 
+
+};
+
+
+function getColorDifficulty(difficulty){
+	if (difficulty === "Easy") {return "success"}
+	else if (difficulty === "Medium") {return "warning"}
+	else {return "danger"}
+}
 
 //const recipyName
 </script>
 
 <style>
 .InfoCard {
-  width: 80%;
-  margin: auto;
+	width: 80%;
+	margin: auto;
 }
 
 .imageCard {
-  width: 10%;
+	width: 10%;
+}
+
+.amountStyle {
+	font-size: 35px;
 }
 </style>
