@@ -50,6 +50,7 @@
     <Editor v-model="value" editorStyle="height: 320px" readonly />
   </div>
 
+  <!-- TODO fix the layout of this horizontal bar -->
   <div v-show="Comments">
     <Divider align="right" type="solid">
       <b>Username</b>
@@ -71,14 +72,24 @@
 import { ref } from "vue";
 import { ingredients } from "~/database/ingredients";
 
-const value = ref(3);
-const text = ref("Test test");
+const value = ref(3); //score of recipy still needs to be added in the database
 const route = useRoute();
 const id = route.params.id;
 const comboRouting = "&";
 const splitedId = id.split(comboRouting);
-const recipyName = splitedId[0];
 const recipyID = splitedId[1];
+
+const recipy = await $fetch(`/api/recipes/${recipyID}`);
+//const allIngredients = await $fetch(`/api/ingredients`);
+
+const recipyName = recipy.name;
+const text = ref(recipy.thumbnail);
+
+console.log("recipy name");
+console.log(recipyName);
+
+console.log(ingredients);
+
 const products = ref([
   {
     ingredient: "Mascarpone",
@@ -140,6 +151,7 @@ const items = ref([
     },
   },
 ]);
+
 
 //const recipyName
 </script>
