@@ -1,11 +1,13 @@
 import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core"
+import { InferInsertModel, InferSelectModel } from "drizzle-orm"
 import type { AdapterAccount } from "@auth/core/adapters"
+import { MySqlColumnWithAutoIncrement } from "drizzle-orm/mysql-core"
 
 export const users = sqliteTable("user", {
-  id: text("id").notNull().primaryKey(),
+  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }), //text("id").notNull().primaryKey(),
   name: text("name"),
   email: text("email").notNull(),
-  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
+  emailVerified: text("emailVerified"),//integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image")
 })
 
@@ -51,4 +53,5 @@ export const verificationTokens = sqliteTable(
   })
 )
 
-
+export type usersDB = InferSelectModel<typeof users>;
+export type InsertUsers = InferInsertModel<typeof users>;
