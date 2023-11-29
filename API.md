@@ -21,10 +21,11 @@ This will return the first `size` recipes in the database, or `100` if size is n
 
 ### Search
 
-If you add the `search` parameter a full text search will be done on the database to find a recipe that matches your search parameters.
+If you add the `query` parameter a full text search will be done on the database to find a recipe that matches your search parameters.
 The full text search is done using the [`porter` tokenizer](https://www.sqlite.org/fts5.html#porter_tokenizer), this means that words like `connect`, `connecting` and `connected` will all match onto each other.
 The results will be sorted on relevance through the [`bm25`](https://www.sqlite.org/fts5.html#the_bm25_function) function
 You can also add the `high`, `highStart` and `highEnd` to highlight the parts of the text that were matched using the full text search, if `high` is given but either `highStart`, or `highEnd` is not, they will default to `high`.
+You can also add `user`, this is the ID of a user and will filter the results to only allow results of this user.
 
 ### `api/recipes/<ID>`
 
@@ -37,6 +38,10 @@ This will return all the users in the database.
 ### `api/users/<ID>`
 
 This will return the user with the given ID.
+
+### `api/users/<ID>/recipes`
+
+This will return all the recipes of a given user.
 
 ## `api/auth/...`
 
