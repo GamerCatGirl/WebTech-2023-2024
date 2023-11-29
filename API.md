@@ -42,6 +42,10 @@ This will return the user with the given ID.
 ### `api/users/<ID>/recipes`
 
 This will return all the recipes of a given user.
+Here you can also add the query `name`, to filter based on the name of the recipe,
+this filter is not a full text search, but rather a `SQL` `match` expression,
+this means that just giving in a value will only return exact matches,
+and for searching `%` and `_` should be used.
 
 ## `api/auth/...`
 
