@@ -10,3 +10,8 @@ export const openProfile = () => {
     let url = "/profile/[id]" //+ user
     navigateTo(url)
 }
+
+export const openHome = () => {
+    navigateTo("/home")
+}
+

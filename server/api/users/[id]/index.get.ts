@@ -1,4 +1,4 @@
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     if (!event.context.params) {
         throw createError({
             statusCode: 400,
@@ -7,5 +7,5 @@ export default defineEventHandler(async (event) => {
     }
     const id = event.context.params.id;
 
-    return database.query.users.findFirst({ where: (user, { eq }) => eq(user.id, id)});
+    return database.query.users.findFirst({ where: (user, { eq }) => eq(user.id, id) });
 });

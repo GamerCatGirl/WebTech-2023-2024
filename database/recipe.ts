@@ -2,6 +2,7 @@ import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
 import { users } from "./auth";
+import { ingredients } from "./ingredients";
 
 export const images = sqliteTable("image", {
     id: text("id")
@@ -25,12 +26,16 @@ export const recipes = sqliteTable("recipe", {
         .primaryKey()
         .$defaultFn(() => createId()),
     name: text("name").notNull(),
-    location: text("location").notNull(),
-    description: text("description").notNull(),
+    location: text("location"),
+    description: text("description"),
     user: text("user")
         .references(() => users.id)
         .notNull(),
     thumbnail: text("thumbnail"),
+    time: text("time"),
+    type: text("type"), 
+    difficulty: text("difficulty"),
+    score: text("score"),
 });
 
 export type Recipe = InferSelectModel<typeof recipes>;
@@ -38,6 +43,7 @@ export type InsertRecipe = InferInsertModel<typeof recipes>;
 
 export const recipesRelations = relations(recipes, ({ many, one }) => ({
     images: many(images),
+    ingredients: many(ingredients),
     user: one(users, { fields: [recipes.user], references: [users.id] }),
 }));
 

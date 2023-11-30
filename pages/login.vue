@@ -43,6 +43,7 @@ const { signIn, signOut, status, getProviders } = useAuth();
           icon="pi pi-user-plus"
           severity="succes"
           class="w-10rem"
+          @click="navigateTo('register')"
         ></Button>
       </div>
       <div class="w-full md:w-2">

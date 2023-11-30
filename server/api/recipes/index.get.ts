@@ -1,30 +1,33 @@
+import { eq, sql, and } from "drizzle-orm";
 import { recipes, recipeFts } from "@/database/schema";
-import { eq, sql } from "drizzle-orm";
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     const query = getQuery(event);
-    let pageSize = (query.size?.valueOf() as number) ?? 100;
-    pageSize = pageSize > 100 ? 100 : pageSize;
-    const page = (query.page?.valueOf() as number) ?? 0;
-    if (query.search) {
-        const search = query.search.valueOf();
+    const queryParams = getSeachVars(query);
+    const pageSize = queryParams.pageSize;
+    const page = queryParams.page;
+    if (queryParams.query) {
+        const search = queryParams.query;
         const highlight = query.high?.valueOf() ?? "";
         const highlightStart = query.highStart?.valueOf() ?? highlight;
         const highlightEnd = query.highEnd?.valueOf() ?? highlight;
-        return database
+        const textSearch = sql`recipe_fts MATCH ${search}`;
+        const queryRes = database
             .select({
                 id: recipeFts.id,
                 name: sql<string>`highlight(recipe_fts, 1, ${highlightStart}, ${highlightEnd})`,
                 description: sql<string>`highlight(recipe_fts, 2, ${highlightStart}, ${highlightEnd})`,
+                user: recipes.user,
                 location: recipes.location,
                 thumbnail: recipes.thumbnail,
             })
             .from(recipeFts)
-            .where(sql`recipe_fts MATCH ${search}`)
+            .where(query.user ? and(eq(recipes.user, query.user?.valueOf().toString()), textSearch) : textSearch)
             .orderBy(sql`bm25(recipe_fts, 0, 2, 1)`)
             .limit(pageSize)
             .offset(pageSize * page)
             .leftJoin(recipes, eq(recipes.id, recipeFts.id));
+        return queryRes;
     } else {
         return database
             .select()

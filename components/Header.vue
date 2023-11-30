@@ -65,7 +65,11 @@ const items = ref([
 			  	navigateTo("login");
 				},
 			},
-			{ label: "Account", icon: "pi pi-user"},
+			{ label: "Account", icon: "pi pi-user",
+			  command: () => {
+			  	navigateTo("profile/username");
+				},
+			},
 			{ label: "Settings", icon: "pi pi-cog" },
 			{ label: "Logout", icon: "pi pi-sign-out" },
 		],
