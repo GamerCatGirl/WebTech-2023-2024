@@ -1,23 +1,24 @@
 <script setup lang="ts">
 /*definePageMeta({
     name:"testlalal1", //verandert enkel wat na "/profile" komt, wordt overschreven als onderste twee defined zijn
-    //alias:"/elyiscool", //verandert heel de path of na '/profile'
+    //alias:"/elycodeert", //verandert heel de path of na '/profile'
     title: 'Blablabla'
 })*/
+
+const { id } = useRoute().params
 useHead({
-    //titleTemplate: '%s blabla', //can put a function here instead of string
-    titleTemplate: (x)=>('test'),
+  titleTemplate: id
 })
+
 </script>
 
 <template>
-
   <div class="flex align-items-center">
     <Card class="profileCard">
       <template #header>
         <img alt="user header" src="Tiramisu.png" />
       </template>
-      <template #title> User1 </template>
+      <template #title> {{ id }} </template>
       <template #subtitle>
         @mail <br />
         Based in flag <br />
