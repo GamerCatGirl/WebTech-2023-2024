@@ -111,7 +111,7 @@ const comboRouting = "&";
 const splitedId = id.split(comboRouting);
 const recipyID = splitedId[1];
 
-const recipy = await $fetch(`/api/recipes/${recipyID}`);
+const recipy = await $fetch(`/api/recipes/${id}`);
 const recipyScore = ref(Number(recipy.score));
 //const allIngredients = await $fetch(`/api/ingredients`);
 

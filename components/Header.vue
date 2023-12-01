@@ -24,21 +24,21 @@ const items = ref([
 		},
 	},
 	{
-		label: "Recipies",
+		label: "Recipes",
 		icon: "pi pi-star",
 		items: [
 			{
 				label: "Discover",
 				icon: "pi pi-globe",
 				command: () => {
-					navigateTo("recipies");
+					navigateTo("recipes");
 				},
 			},
 			{
 				label: "New",
 				icon: "pi pi-plus",
 				command: () => {
-					navigateTo("recipies/add");
+					navigateTo("recipes/add");
 				},
 			},
 			{ label: "Edit", icon: "pi pi-pencil" },
