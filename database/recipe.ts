@@ -1,6 +1,7 @@
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-import { sqliteTable, text, sqliteView } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, sqliteView, real, integer } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
+import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
 
@@ -21,6 +22,12 @@ export const imagesRelations = relations(images, ({ one }) => ({
     recipe: one(recipes, { fields: [images.recipe], references: [recipes.id] }),
 }));
 
+const meals = Object.values(Meal).map((meal) => meal.toString());
+const mealsTuple: [string, ...string[]] = [meals[0], ...meals.slice(1)];
+
+const dificulty = Object.values(Difficulty).map((dificulty) => dificulty.toString());
+const dificultyTuple: [string, ...string[]] = [dificulty[0], ...dificulty.slice(1)];
+
 export const recipes = sqliteTable("recipe", {
     id: text("id")
         .primaryKey()
@@ -32,10 +39,10 @@ export const recipes = sqliteTable("recipe", {
         .references(() => users.id)
         .notNull(),
     thumbnail: text("thumbnail"),
-    time: text("time"),
-    type: text("type"), 
-    difficulty: text("difficulty"),
-    score: text("score"),
+    time: integer("time"),
+    type: text("type", { enum: mealsTuple }),
+    difficulty: text("difficulty", { enum: dificultyTuple }),
+    score: real("score"),
 });
 
 export type Recipe = InferSelectModel<typeof recipes>;
