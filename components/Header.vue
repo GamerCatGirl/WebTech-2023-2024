@@ -16,6 +16,14 @@
                     </a>
                 </template>
                 <template #end>
+                    <ToggleButton
+                        v-model="useLightTheme"
+                        class="toggleTheme"
+                        on-icon="pi pi-sun"
+                        off-icon="pi pi-moon"
+                        on-label=""
+                        off-label=""
+                    />
                     <div v-if="status === 'authenticated'" class="flex align-items-center gap-2">
                         <Button unstyled class="avatarButton" @click="(event: any) => menu.toggle(event)">
                             <Avatar image="Tiramisu.png" size="normal" shape="circle" />
@@ -47,9 +55,13 @@
 </template>
 
 <script setup lang="ts">
+import { theme, Theme } from "~/composables/theme";
 const { signOut, status } = useAuth();
 const route = useRoute();
 const menu = ref();
+const useLightTheme = ref(theme.value === Theme.light);
+watch(useLightTheme, () => (theme.value = useLightTheme.value ? Theme.light : Theme.dark));
+
 const items = ref([
     {
         label: "Home",
@@ -113,5 +125,19 @@ a {
 .p-avatar:hover {
     filter: brightness(0.8);
     transition: filter 0.3s;
+}
+
+.toggleTheme {
+    background-color: inherit;
+    border: none;
+    box-shadow: 0 0 0 0;
+}
+
+.toggleTheme:hover {
+    background-color: var(--surface-c);
+}
+
+:deep(.toggleTheme .p-button-icon) {
+    color: var(--text-color);
 }
 </style>

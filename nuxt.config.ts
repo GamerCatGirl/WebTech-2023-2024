@@ -49,27 +49,5 @@ export default defineNuxtConfig({
         },
     },
     // config a prime vue team that needs to be used as css
-    css: [
-        "primeflex/primeflex.css",
-        //  'primeflex/themes/primeone-dark.css',
-        "primevue/resources/themes/soho-dark/theme.css",
-        "primevue/resources/primevue.min.css",
-        "primeicons/primeicons.css",
-    ],
-    //
-
-    /*
-    
-    app: {
-	    head: {
-		    link: [
-			    {
-				    id: 'theme-link',
-				    rel: 'stylehseet', 
-				    href: baseURL + 'themes/soho-dark/theme.css'
-			    }
-		    ]
-	    }
-    }
-    */
+    css: ["primeflex/primeflex.css", "primevue/resources/primevue.min.css", "primeicons/primeicons.css"],
 });

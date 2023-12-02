@@ -1,14 +1,14 @@
 <script setup lang="ts">
-useHead({
-  titleTemplate:"Good Food"
-})
+import { theme, Theme } from "~/composables/theme";
+useHead({ titleTemplate: "Good Food" });
 </script>
 
 <template>
-  <div>
-    <Header />
-    <NuxtPage />
-    <Footer />
-  </div>
+    <div>
+        <link v-if="theme === Theme.light" rel="stylesheet" href="/themes/soho-light/theme.css" />
+        <link v-else rel="stylesheet" href="/themes/soho-dark/theme.css" />
+        <Header />
+        <NuxtPage />
+        <Footer />
+    </div>
 </template>
-
