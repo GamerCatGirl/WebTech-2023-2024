@@ -73,6 +73,8 @@
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
 
+definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
+
 const recipyName = ref("");
 const image = ref();
 
