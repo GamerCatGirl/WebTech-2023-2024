@@ -2,4 +2,10 @@ export enum Theme {
     light,
     dark,
 }
-export const theme = ref(Theme.light);
+let theme = ref(Theme.light);
+export function initializeTheme() {
+    theme = useCookie("theme", { default: () => Theme.light });
+}
+export function getTheme() {
+    return theme;
+}

@@ -24,7 +24,7 @@
                         on-label=""
                         off-label=""
                     />
-                    <div v-if="status === 'authenticated'" class="flex align-items-center gap-2">
+                    <div v-if="status === 'authenticated'" class="flex">
                         <Button unstyled class="avatarButton" @click="(event: any) => menu.toggle(event)">
                             <Avatar image="Tiramisu.png" size="normal" shape="circle" />
                         </Button>
@@ -44,9 +44,14 @@
                         </Menu>
                     </div>
                     <div v-else-if="route.name === 'login'" />
-                    <NuxtLink v-else-if="status === 'unauthenticated'" v-ripple to="/login" class="p-button p-ripple"
-                        >Login</NuxtLink
+                    <NuxtLink
+                        v-else-if="status === 'unauthenticated'"
+                        v-ripple
+                        to="/login"
+                        class="p-button p-ripple loginButton"
                     >
+                        Login
+                    </NuxtLink>
                     <Skeleton v-else shape="circle" size="2rem" />
                 </template>
             </Menubar>
@@ -55,7 +60,8 @@
 </template>
 
 <script setup lang="ts">
-import { theme, Theme } from "~/composables/theme";
+import { getTheme, Theme } from "~/composables/theme";
+const theme = getTheme();
 const { signOut, status } = useAuth();
 const route = useRoute();
 const menu = ref();
@@ -127,17 +133,28 @@ a {
     transition: filter 0.3s;
 }
 
-.toggleTheme {
+.toggleTheme,
+.loginButton {
     background-color: inherit;
     border: none;
     box-shadow: 0 0 0 0;
+    color: var(--text-color);
 }
 
-.toggleTheme:hover {
+.toggleTheme {
+    margin-right: 5px;
+}
+
+.toggleTheme:hover,
+.loginButton:hover {
     background-color: var(--surface-c);
 }
 
 :deep(.toggleTheme .p-button-icon) {
     color: var(--text-color);
+}
+
+:deep(.p-menubar-end) {
+    display: flex;
 }
 </style>

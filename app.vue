@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { theme, Theme } from "~/composables/theme";
+import { initializeTheme, getTheme, Theme } from "~/composables/theme";
 useHead({ titleTemplate: "Good Food" });
+initializeTheme();
+const theme = getTheme();
 </script>
 
 <template>
