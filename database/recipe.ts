@@ -1,6 +1,6 @@
+import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView, real, integer } from "drizzle-orm/sqlite-core";
-import { createId } from "@paralleldrive/cuid2";
 import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
@@ -8,7 +8,7 @@ import { ingredients } from "./ingredients";
 export const images = sqliteTable("image", {
     id: text("id")
         .primaryKey()
-        .$defaultFn(() => createId()),
+        .$defaultFn(() => crypto.randomUUID()),
     url: text("url").notNull(),
     recipe: text("recipe_id")
         .references(() => recipes.id)
@@ -31,7 +31,7 @@ const dificultyTuple: [string, ...string[]] = [dificulty[0], ...dificulty.slice(
 export const recipes = sqliteTable("recipe", {
     id: text("id")
         .primaryKey()
-        .$defaultFn(() => createId()),
+        .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
     location: text("location"),
     description: text("description"),
