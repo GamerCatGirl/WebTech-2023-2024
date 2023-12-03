@@ -174,10 +174,10 @@ async function save() {
 
 
 		console.log(recipyName);
-		recipyName.disabled = true;
+		recipyName.disabled = true; //TODO: this doesn't work yet
 		console.log(recipyName);
 		//TODO: check if recipyName already exitst
-		//const recipes = await $fetch(`/api/recipes/$(recipyName)`);
+		const recipes = await $fetch(`/api/recipes/$(recipyName)`);
 		console.log(recipes);
 
 		value.Label = "Saved";
