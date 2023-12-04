@@ -1,11 +1,12 @@
-import { createId } from "@paralleldrive/cuid2";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { recipes } from "./recipe";
+import crypto from "crypto"
 
 export const ingredients = sqliteTable("ingredients", {
-    id: text("id").primaryKey(),
-    //	.$defaultFn(() => createId()),
+    id: text("id")
+    	.primaryKey()
+    	.$defaultFn(() => crypto.randomUUID()),
     recipyId: text("recipyId").notNull(),
     ingredient: text("ingredient"),
     amount: integer("amount"),

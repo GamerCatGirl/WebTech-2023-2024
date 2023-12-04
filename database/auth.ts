@@ -1,7 +1,9 @@
 import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core"
-import { InferInsertModel, InferSelectModel } from "drizzle-orm"
+
 import type { AdapterAccount } from "@auth/core/adapters"
-import { MySqlColumnWithAutoIncrement } from "drizzle-orm/mysql-core"
+import crypto from "crypto";
+import {comments} from "../database/recipe"
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const users = sqliteTable("user", {
   id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }), //text("id").notNull().primaryKey(),
@@ -10,6 +12,24 @@ export const users = sqliteTable("user", {
   emailVerified: text("emailVerified"),//integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image")
 })
+
+
+///// LIKED comments ///// 
+export const likedComments = sqliteTable("liked comments", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	user: text("user_id")
+		.references(() => users.id)
+		.notNull(),
+	comment: text("comment_id")
+		.references(() => comments.id)
+		.notNull(),
+})
+
+export type LikedComments = InferSelectModel<typeof likedComments>;
+export type InsertLikedComments = InferInsertModel<typeof likedComments>;
+
 
 export const accounts = sqliteTable(
   "account",

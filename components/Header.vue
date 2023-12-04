@@ -1,88 +1,160 @@
 <template>
-	<header>
-		<div class="card">
-			<Menubar :model="items">
-				<template #end>
-					<div class="flex align-items-center gap-2">
-						<InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" />
-						<Avatar image="Tiramisu.png" shape="circle" />
-						<!-- Bedoeling dat hieronder de profile subtab komt maar ik weet hoe -->
-					</div>
-				</template>
-			</Menubar>
-		</div>
-	</header>
+    <header>
+        <div class="card">
+            <Menubar :model="items">
+                <template #item="{ item, props, hasSubmenu }">
+                    <NuxtLink v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                        <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+                            <span :class="item.icon" />
+                            <span class="ml-2">{{ item.label }}</span>
+                        </a>
+                    </NuxtLink>
+                    <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
+                        <span :class="item.icon" />
+                        <span class="ml-2">{{ item.label }}</span>
+                        <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down ml-2" />
+                    </a>
+                </template>
+                <template #end>
+                    <ToggleButton
+                        v-model="useLightTheme"
+                        class="toggleTheme"
+                        on-icon="pi pi-sun"
+                        off-icon="pi pi-moon"
+                        on-label=""
+                        off-label=""
+                    />
+                    <div v-if="status === 'authenticated'" class="flex">
+                        <Button unstyled class="avatarButton" @click="(event: any) => menu.toggle(event)">
+                            <Avatar image="Tiramisu.png" size="normal" shape="circle" />
+                        </Button>
+                        <Menu id="overlay_menu" ref="menu" :model="accountItems" :popup="true">
+                            <template #item="{ item, props }">
+                                <NuxtLink v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                                    <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+                                        <span :class="item.icon" />
+                                        <span class="ml-2">{{ item.label }}</span>
+                                    </a>
+                                </NuxtLink>
+                                <a v-else v-ripple :href="item.url" :target="item.target" v-bind="props.action">
+                                    <span :class="item.icon" />
+                                    <span class="ml-2">{{ item.label }}</span>
+                                </a>
+                            </template>
+                        </Menu>
+                    </div>
+                    <div v-else-if="route.name === 'login'" />
+                    <NuxtLink
+                        v-else-if="status === 'unauthenticated'"
+                        v-ripple
+                        to="/login"
+                        class="p-button p-ripple loginButton"
+                    >
+                        Login
+                    </NuxtLink>
+                    <Skeleton v-else shape="circle" size="2rem" />
+                </template>
+            </Menubar>
+        </div>
+    </header>
 </template>
 
 <script setup lang="ts">
+import { getTheme, Theme } from "~/composables/theme";
+const theme = getTheme();
+const { signOut, status } = useAuth();
+const route = useRoute();
+const menu = ref();
+const useLightTheme = ref(theme.value === Theme.light);
+watch(useLightTheme, () => (theme.value = useLightTheme.value ? Theme.light : Theme.dark));
+
 const items = ref([
-	{
-		label: "Home",
-		icon: "pi pi-home",
-		command: () => {
-			navigateTo("home");
-		},
-	},
-	{
-		label: "Recipies",
-		icon: "pi pi-star",
-		items: [
-			{
-				label: "Discover",
-				icon: "pi pi-globe",
-				command: () => {
-					navigateTo("recipies");
-				},
-			},
-			{
-				label: "New",
-				icon: "pi pi-plus",
-				command: () => {
-					navigateTo("recipies/add");
-				},
-			},
-			{ label: "Edit", icon: "pi pi-pencil" },
-			{ label: "Saved", icon: "pi pi-bookmark" },
-		],
-	},
+    {
+        label: "Home",
+        icon: "pi pi-home",
+        route: "/home",
+    },
+    {
+        label: "Recipes",
+        icon: "pi pi-star",
+        items: [
+            {
+                label: "Discover",
+                icon: "pi pi-globe",
+                route: "/recipes",
+            },
+            {
+                label: "New",
+                icon: "pi pi-plus",
+                route: "/recipes/add",
+            },
+            { label: "Edit", icon: "pi pi-pencil", route: "/recipes/edit" },
+            { label: "Saved", icon: "pi pi-bookmark", route: "/recipes/saved" },
+        ],
+    },
 
-	{
-		label: "Inbox",
-		icon: "pi pi-envelope",
-		items: [
-			{ label: "Notifications", icon: "pi pi-inbox", badge: 3 },
+    {
+        label: "Inbox",
+        icon: "pi pi-envelope",
+        items: [
+            { label: "Notifications", icon: "pi pi-inbox", badge: 3 },
 
-			{ label: "Comments", icon: "pi pi-comments", badge: 2 },
-		],
-	},
-
-	{
-		label: "Profile",
-		icon: "pi pi-user",
-		items: [
-			{ label: "Login", icon: "pi pi-user",
-			  command: () => {
-			  	navigateTo("login");
-				},
-			},
-			{ label: "Account", icon: "pi pi-user",
-			  command: () => {
-			  	navigateTo("profile/username");
-				},
-			},
-			{ label: "Settings", icon: "pi pi-cog" },
-			{ label: "Logout", icon: "pi pi-sign-out" },
-		],
-	},
-
-	//	{end: true},
-
-	//	{label: "test"},
+            { label: "Comments", icon: "pi pi-comments", badge: 2 },
+        ],
+    },
 ]);
-
-//const homeButton = document.getElementById("home-button");
-//console.log("homebutton: " + homeButton);
-//homeButton?.onclick = () => {
-//	console.log("Clicked on home button");
-//};
+const accountItems = ref([
+    {
+        label: "Account",
+        icon: "pi pi-user",
+        route: "/profile/username",
+    },
+    { label: "Settings", icon: "pi pi-cog" },
+    { label: "Logout", icon: "pi pi-sign-out", command: signOut },
+]);
 </script>
+
+<style scoped>
+a {
+    text-decoration: none;
+}
+
+.avatarButton {
+    border: none;
+    background-color: inherit;
+}
+
+.p-avatar {
+    transition: filter 0.3s;
+}
+
+.p-avatar:hover {
+    filter: brightness(0.8);
+    transition: filter 0.3s;
+}
+
+.toggleTheme,
+.loginButton {
+    background-color: inherit;
+    border: none;
+    box-shadow: 0 0 0 0;
+    color: var(--text-color);
+}
+
+.toggleTheme {
+    margin-right: 5px;
+}
+
+.toggleTheme:hover,
+.loginButton:hover {
+    background-color: var(--surface-c);
+}
+
+:deep(.toggleTheme .p-button-icon) {
+    color: var(--text-color);
+}
+
+:deep(.p-menubar-end) {
+    display: flex;
+}
+</style>

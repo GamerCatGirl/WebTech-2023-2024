@@ -21,10 +21,24 @@ This will return the first `size` recipes in the database, or `100` if size is n
 
 ### Search
 
-If you add the `search` parameter a full text search will be done on the database to find a recipe that matches your search parameters.
+If you add the `query` parameter a full text search will be done on the database to find a recipe that matches your search parameters.
 The full text search is done using the [`porter` tokenizer](https://www.sqlite.org/fts5.html#porter_tokenizer), this means that words like `connect`, `connecting` and `connected` will all match onto each other.
 The results will be sorted on relevance through the [`bm25`](https://www.sqlite.org/fts5.html#the_bm25_function) function
-You can also add the `high`, `highStart` and `highEnd` to highlight the parts of the text that were matched using the full text search, if `high` is given but either `highStart`, or `highEnd` is not, they will default to `high`.
+
+#### Usable search queries
+
+* `user=[ID]`
+  * Only return recipes made by this user
+* `query=[query]` 
+  * Search recipes based on the contents of their title and description
+* `difficulty=[difficulty]`
+  * Search recipes based on the difficulty of the recipe
+  * This query can be used multiple times, this will select a recipe that has one of these difficulties
+  * E.g `?difficulty=Easy&difficulty=Medium`
+	* Will only select recipes with a easy or medium difficulty
+* `mealType=[type]`
+  * Search recipes based on the type of meal
+  * This query can be used multiple times just as `difficulty`
 
 ### `api/recipes/<ID>`
 
@@ -37,6 +51,14 @@ This will return all the users in the database.
 ### `api/users/<ID>`
 
 This will return the user with the given ID.
+
+### `api/users/<ID>/recipes`
+
+This will return all the recipes of a given user.
+Here you can also add the query `name`, to filter based on the name of the recipe,
+this filter is not a full text search, but rather a `SQL` `match` expression,
+this means that just giving in a value will only return exact matches,
+and for searching `%` and `_` should be used.
 
 ## `api/auth/...`
 

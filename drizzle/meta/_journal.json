@@ -57,6 +57,13 @@
       "when": 1700669907657,
       "tag": "0007_bright_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1701609450634,
+      "tag": "0008_low_rocket_racer",
+      "breakpoints": true
     }
   ]
 }

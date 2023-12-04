@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { definePageMeta, useAuth, navigateTo } from "#imports";
-const { data } = await useFetch("/api/test");
-const { signIn, signOut, status, getProviders } = useAuth();
+definePageMeta({ middleware: "auth", auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/home" } });
+const { signIn } = useAuth();
+const route = useRoute();
+const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
 </script>
 
 <template>
   <div>
     <title>Good Food</title>
-    <pre>{{ data }}</pre>
-
   
   </div>
 
@@ -63,7 +62,7 @@ const { signIn, signOut, status, getProviders } = useAuth();
             icon="pi pi-github"
             severity="success"
             class="w-10rem"
-            @click="signIn('github', { callbackUrl: '/home' })"
+            @click="signIn('github', { callbackUrl })"
           ></Button>
 
           <Button
