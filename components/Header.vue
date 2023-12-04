@@ -88,7 +88,7 @@ const items = ref([
                 icon: "pi pi-plus",
                 route: "/recipes/add",
             },
-            { label: "Edit", icon: "pi pi-pencil" },
+            { label: "Edit", icon: "pi pi-pencil", route: "/recipes/edit" },
             { label: "Saved", icon: "pi pi-bookmark", route: "/recipes/saved" },
         ],
     },

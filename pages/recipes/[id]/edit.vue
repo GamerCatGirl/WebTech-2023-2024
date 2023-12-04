@@ -1,3 +1,7 @@
 <template>
-	This is edit page
+	This is edit page, needs to be adjusted from the add
+	<div>
+	<edit/>
+	</div>
+
 </template>
