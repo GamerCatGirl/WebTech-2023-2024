@@ -3,6 +3,8 @@
     <Steps :model="items" :readonly="false" />
   </div>
 
+  
+
   <Card class="InfoCard" v-show="InfoCard">
     <template #title> {{ recipyName }} </template>
     <template #content>
@@ -25,7 +27,7 @@
       <div class="card flex">
         <Image
           class="imageCard"
-          src="../Tiramisu.png"
+          src="../../Tiramisu.png"
           alt="Image"
           width="auto"
         />

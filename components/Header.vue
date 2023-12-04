@@ -89,7 +89,7 @@ const items = ref([
                 route: "/recipes/add",
             },
             { label: "Edit", icon: "pi pi-pencil" },
-            { label: "Saved", icon: "pi pi-bookmark" },
+            { label: "Saved", icon: "pi pi-bookmark", route: "/recipes/saved" },
         ],
     },
 
