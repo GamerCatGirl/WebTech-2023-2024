@@ -1,7 +1,7 @@
 //  https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     devtools: { enabled: true },
-    modules: ["@sidebase/nuxt-auth", "@nuxtjs/color-mode", "nuxt-primevue"],
+    modules: ["@sidebase/nuxt-auth", "@nuxtjs/color-mode", "nuxt-primevue", "nuxt3-leaflet"],
 
     // alls comments are from the documentation website of primevue
     primevue: {

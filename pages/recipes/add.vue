@@ -9,6 +9,12 @@
           class="mr-2"
         />
 
+        <Button
+          label="Cancel"
+          icon="pi pi-history"
+          severity="warning"
+          class="mr-2"
+        />
         <!-- 	
 				<Button icon="pi pi-plus" class="mr-2" />
 				<Button icon="pi pi-pencil" class="mr-2" />
@@ -39,7 +45,15 @@
 
     <InlineMessage severity="error">Recipy name is required</InlineMessage>
 
-    <Button label="Fetch data" icon="pi pi-arrow-right-arrow-left" class="mr-2" />
+    <Button
+      label="Fetch data"
+      icon="pi pi-arrow-right-arrow-left"
+      class="mr-2"
+      @click="fetch()"
+    />
+
+    <!--TODO: make a hover that displays more information on the button -->
+    <!-- Info to display: Gets all info of your recipy with this name so you can edit it -->
   </div>
   <div class="card flex justify-content-center gap-3">
     <Chip :label="uploaded" />
@@ -72,6 +86,7 @@
       :max-selected-labels="3"
     />
 
+    <!-- Difficulty Recipy  -->
     <MultiSelect
       v-model="mealDifficulties"
       display="chip"
@@ -81,22 +96,22 @@
       :max-selected-labels="3"
     />
 
-
     <!--TODO: add location selector -->
   </div>
 
+  <!-- Ingredients loop add -->
   <div class="card flex flex-column md:flex-row gap-3" v-for="input in inputs">
     <Chip :label="input.Label" v-model="input.new" />
-    <!-- TODO adding row numbers for error handling-->
+    <!-- TODO: adding row numbers for error handling-->
     <!-- Name Ingredient -->
     <InputText
       placeholder="Ingredient Name"
       aria-labelledby="ingredient name"
-      v-model="input.Ingredient"
+      v-model="input.ingredient"
     />
 
     <!-- Amount -->
-    <InputNumber v-model="input.Amount" placeholder="Amount" />
+    <InputNumber v-model="input.amount" placeholder="Amount" />
 
     <!-- Select the type of amount -->
     <div class="card flex justify-content-center">
@@ -105,7 +120,7 @@
         :options="amountTypes"
         optionLabel="name"
         placeholder="Type"
-        v-model="input.Type"
+        v-model="input.type"
         class="w-full md:w-14rem"
       />
     </div>
@@ -116,7 +131,7 @@
         editable
         :options="categoriesIngredients"
         optionLabel="name"
-        v-model="input.Category"
+        v-model="input.category"
         placeholder="Category"
         class="w-full md:w-14rem"
       />
@@ -145,12 +160,18 @@ import { Meal, Difficulty } from "~/composables/recipes";
 //definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
 
 const recipyName = ref("");
+let id = null;
+
 const image = ref("../placeholder.svg");
+const thumbnail = ref(); //displays a short message that you can use in the short view
+
 const meals = Object.values(Meal);
 const mealTypes = ref();
 const difficulties = Object.values(Difficulty);
 const mealDifficulties = ref();
 const description = ref();
+const time = ref();
+let score = 0;
 
 const toast = useToast();
 const value = ref("");
@@ -179,16 +200,12 @@ const inputs = ref([newDummy()]);
 function newDummy() {
   return {
     Label: "New",
-    Ingredient: "",
+    ingredient: "",
     Counter: counter,
-    Category: "",
-    Amount: null,
-    Type: "",
+    category: "",
+    amount: null,
+    type: "",
   };
-
-  //const newDummy.value.Ingredient = ref(),
-
-  //return newDummy;
 }
 
 function addNewRow() {
@@ -220,6 +237,64 @@ function deleteIngredient(idString) {
   }
 }
 
+async function fetch() {
+  let recipes = await $fetch(`/api/recipes`, {
+    query: { user: currentUserID },
+  });
+
+  let exists = false;
+  let recipyData = null;
+
+  recipes.map((recipe) => {
+    if (recipe.name == recipyName.value) {
+      exists = true;
+      recipyData = recipe;
+    }
+  });
+
+  if (exists) {
+    id = recipyData.id;
+    //TODO: display toats to make sure they want to replace new data with old data
+
+    //fill the data fields
+    description.value = recipyData.description;
+
+    console.log(mealDifficulties);
+    mealDifficulties.value = recipyData.difficulty.name; //this doesn't work yet
+    console.log(mealDifficulties.difficulty);
+
+    thumbnail.value = recipyData.thumbnail;
+    time.value = recipyData.time;
+
+    mealTypes.value = recipyData.type.name; //this doesn't work yet
+    score = recipyData.score;
+
+    //fetch ingredients
+    recipyData = await $fetch(`/api/recipes/${recipyData.id}`);
+    console.log(recipyData);
+    inputs.value = recipyData.ingredients;
+
+    counter = 0;
+    amountDeleted = 0;
+    inputs.value.map((ingredient) => {
+      console.log(ingredient);
+      counter += 1;
+      ingredient.Label = "Saved";
+    });
+
+    //TODO: fetch image
+    let images = recipyData.images;
+  } else {
+    //trying to fetch a recipy that doesn't exists
+    toast.add({
+      severity: "error",
+      summary: "No such recipe",
+      detail: "You don't have a recipe with name: " + recipyName.value ,
+      life: 3000,
+    });
+  }
+}
+
 async function save() {
   //to implement
 
@@ -243,45 +318,51 @@ async function save() {
     });
     console.log(recipes);
     let exists = false;
+    let recipeData = null;
 
     recipes.map((recipe) => {
       if (recipe.name == recipyName.value) {
         exists = true;
-
-	//TODO: delete recipy add all new values to it, but first give a warning
+        recipeData = recipe;
+        //TODO: delete recipy add all new values to it, but first give a warning
+        //TODO: add old score to score value
       }
     });
 
     console.log("Recispy exists?: " + exists);
     console.log("Recipy UserID: " + currentUserID);
+    let newRecipy = 0;
 
     if (!exists) {
+      // Adding a new Recipy
+
       let { postRecipy } = await $fetch("/api/recipes", {
         method: "post",
         body: {
-          //TODO:
           name: recipyName.value,
           user: String(currentUserID), //TODO: change this to the logged in user
-	  //location: TODO: use geolocation api HTML5 to fill in this 
-	  description: description.value,
-	  difficulty: mealDifficulties.value,
+          //location: TODO: use geolocation api HTML5 to fill in this
+          description: description.value,
+          difficulty: mealDifficulties.value,
+          thumbnail: thumbnail.value,
+          time: time.value,
+          type: mealTypes.value,
+          score: score,
         },
       });
+      let recipesOfUser = await $fetch(`/api/recipes`, {
+        query: { user: currentUserID },
+      });
+
+      recipesOfUser.map((recipe) => {
+        if (recipe.name == recipyName.value) {
+          newRecipy = recipe;
+        }
+      });
+    } else {
+      //recipy does exists
+      id = recipeData.id;
     }
-
-    let recipesOfUser = await $fetch(`/api/recipes`, {
-      query: { user: currentUserID },
-    });
-
-    let newRecipy = 0;
-    recipesOfUser.map((recipe) => {
-      if (recipe.name == recipyName.value) {
-        newRecipy = recipe;
-      }
-    });
-
-    console.log("new recipy: ");
-    console.log(newRecipy);
 
     value.Label = "Saved";
 
@@ -294,19 +375,20 @@ async function save() {
     inputs.value.map(async (value, index, array) => {
       if (
         !(
-          value.Ingredient == "" ||
-          value.Amount == null ||
-          value.Type == "" ||
-          value.Category == ""
+          value.ingredient == "" ||
+          value.amount == null ||
+          value.type == "" ||
+          value.category == "" ||
+          value.Label == "Saved"
         )
       ) {
         let currentValue = {
           //id: "ZIEHA" + index, //TODO: automatische handler aanzetten
           recipyId: newRecipy.id, //recipyID
-          ingredient: value.Ingredient, //ingredient
-          amount: value.Amount, //amount
-          type: value.Type.name, //type
-          category: value.Category.name, //category
+          ingredient: value.ingredient, //ingredient
+          amount: value.amount, //amount
+          type: value.type.name, //type
+          category: value.category.name, //category
         };
 
         //data wordt in database gestoken
@@ -316,19 +398,18 @@ async function save() {
         });
 
         value.Label = "Saved";
-
-        //TODO put a check next to the line so you know it is saved
       } else if (
         !(
-          value.Ingredient == "" &&
-          value.Amount == null &&
-          value.Type == "" &&
-          value.Category == ""
+          (value.ingredient == "" &&
+            value.amount == null &&
+            value.type == "" &&
+            value.category == "") ||
+          value.Label == "Saved"
         )
       ) {
         toast.add({
           severity: "error",
-          summary: value.Ingredient,
+          summary: value.ingredient,
           detail: "Missing values on row " + (index + 1) + "!",
           life: 3000,
         });

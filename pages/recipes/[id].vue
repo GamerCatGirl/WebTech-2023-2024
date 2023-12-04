@@ -81,15 +81,25 @@
         {{ comment.comment }}
       </p>
 
-      <!-- like button -->
-      <Button icon="pi pi-thumbs-up" severity="success" rounded />
-      <!-- amount of likes -->
+      <div class="flex gap-5">
+        <div class="flex justify-content-left">
+          <!-- like button -->
+          <Button icon="pi pi-thumbs-up" severity="success" rounded />
+          <!-- amount of likes -->
 
-      <span class="amountStyle">56</span>
-      <!-- dislike button -->
+          <span class="amountStyle">{{ comment.likes }}</span>
+          <!-- dislike button -->
 
-      <Button icon="pi pi-thumbs-down" severity="danger" rounded />
-      <!-- answer button -->
+          <Button icon="pi pi-thumbs-down" severity="danger" rounded />
+          <!-- answer button -->
+        </div>
+        <div class="flex justify-content-right">
+          <!--TODO: flex right doesn't work here-->
+
+          <Textarea v-model="addReaction" rows="1" cols="90" />
+          <Button label="Answer" rounded />
+        </div>
+      </div>
     </div>
   </div>
 </template>

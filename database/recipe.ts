@@ -29,6 +29,7 @@ export const comments = sqliteTable("comment", {
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
 	comment: text("comment").notNull(),
+	likes: text("likes"),
 	commentAnswer: text("answered on"),
 	recipe: text("recipe_id")
 		.references(() => recipes.id)
