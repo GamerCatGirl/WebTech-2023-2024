@@ -6,7 +6,7 @@ import {comments} from "../database/recipe"
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const users = sqliteTable("user", {
-  id: integer('id', { mode: 'number' }).primaryKey({ autoIncrement: true }), //text("id").notNull().primaryKey(),
+  id: text("id").notNull().primaryKey(),
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: text("emailVerified"),//integer("emailVerified", { mode: "timestamp_ms" }),

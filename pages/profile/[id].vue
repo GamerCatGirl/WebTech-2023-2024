@@ -7,7 +7,7 @@
 
 const { id } = useRoute().params
 useHead({
-  titleTemplate: ''+ id
+  titleTemplate: '' + id
 })
 const value = ref(3);
 
@@ -40,7 +40,11 @@ const value = ref(3);
 
     <Card class="profileCard">
       <template #title> Settings </template>
-      <template #content> </template>
+      <template #content> 
+        <Button @click="navigateTo('edit')">
+          Edit profile
+        </Button>
+      </template>
     </Card>
   </div>
 

@@ -1,0 +1,16 @@
+.editOverview {
+    margin-top: 50px;
+}
+
+.editOverview .editElement {
+    margin-bottom: 20px;
+    width: 400px;
+}
+
+.justify-content-space-between {
+    justify-content: space-between;
+}
+
+.inputBox {
+    width: 250px;
+}
