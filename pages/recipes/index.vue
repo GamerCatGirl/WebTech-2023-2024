@@ -127,6 +127,7 @@ function sortDifficulty(difficulty: Difficulty) {
       : 3;
 }
 
+
 const dataView = ref(true);
 const map = ref(false);
 const viewButton = ref(true);
@@ -254,7 +255,7 @@ const zoom = ref(6);
             </template>
             <template #header>
               <nuxtLink :to="'/recipes/' + recipe.id">
-                <Image src="/Tiramisu.png" />
+	      <Image src="" />
               </nuxtLink>
             </template>
 

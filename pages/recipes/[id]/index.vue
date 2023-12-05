@@ -26,8 +26,9 @@
       <!--Insert a picture-->
       <div class="card flex">
         <Image
+	  @click="console.log(recipy.images[0].url)"
           class="imageCard"
-          src="../../Tiramisu.png"
+          :src="recipy.images[0].url"
           alt="Image"
           width="auto"
         />
