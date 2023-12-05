@@ -3,6 +3,17 @@ import { ref } from "vue";
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { Recipe } from "~/database/recipe";
 import { Meal, Difficulty } from "~/composables/recipes";
+import {
+  LMap,LIcon,
+  LTileLayer,
+  LMarker,
+  LControlLayers,
+  LTooltip,
+  LPopup,
+  LPolyline,
+  LPolygon,
+  LRectangle,
+} from "@vue-leaflet/vue-leaflet";
 
 function getParamArray(
   array: LocationQueryValue | LocationQueryValue[] | undefined,
@@ -152,7 +163,13 @@ function sort(event: { originalEvent: Event; value: any }) {
   }
 }
 
+
+//Leaflet map components 
 const zoom = ref(6);
+//const marker = ref(latLng(51,-0.99));
+
+
+
 </script>
 
 <template>
@@ -163,14 +180,19 @@ const zoom = ref(6);
 
     <div v-if="map" style="height: 80vh; width: 50vw">
 
-      <LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]">
+      <LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]" >
         <LTileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
           layer-type="base"
           name="OpenStreetMap"
         />
+      <LMarker :lat-lng="[50, 50]"></LMarker>
       </LMap>
+	
+      
+      
+
     </div>
 
     <div v-show="dataView">

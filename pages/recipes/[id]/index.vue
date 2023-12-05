@@ -28,7 +28,7 @@
         <Image
 	  @click="console.log(recipy.images[0].url)"
           class="imageCard"
-          :src="recipy.images[0].url"
+          :src="recipy.images[0]"
           alt="Image"
           width="auto"
         />

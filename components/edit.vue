@@ -96,6 +96,14 @@
       :max-selected-labels="3"
     />
 
+    <Dropdown
+    	editable
+	:options="locations"
+	optionLabel="location"
+	placeholder="Location"
+	v-model="selectedLocation"
+	class="w-full md:w-14rem" />
+
     <!--TODO: add location selector -->
   </div>
 
@@ -162,6 +170,25 @@ import { inputRecipeName, image, inputThumbnail, inputDescription, inputTime, sc
        } from "~/composables/edit_add"
 //definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
 const toast = useToast();
+
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    let toatsError = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude +
+  "<br>Longitude: " + position.coords.longitude;
+}
+
+// TODO: auto focus on current location
+// TODO: get all data from an api 
+const locations = [{location: "Italy", coor: [42, 12]}]
+const selectedLocation = ref();
 
 //TODO: you cannot upload multiple mealtypes to database 
 
