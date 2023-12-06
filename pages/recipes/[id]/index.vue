@@ -26,9 +26,9 @@
       <!--Insert a picture-->
       <div class="card flex">
         <Image
-	  @click="console.log(recipy.images[0].url)"
+	  @click="console.log(recipy.thumbnail)"
           class="imageCard"
-          :src="recipy.images[0].url"
+          :src="recipy.thumbnail"
           alt="Image"
           width="auto"
         />

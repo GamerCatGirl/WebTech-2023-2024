@@ -244,14 +244,14 @@ async function saveData(toast) {
 		location: null,
 		description: inputDescription.value,
 		user: userID,
-		thumbnail: inputThumbnail.value,
+		thumbnail: image.value,
 		time: inputTime.value,
 		type: selectedTypes.value,
 		difficulty: selectedDifficulties.value,
 		score: null,
 	};
 
-	await $fetch("/api/recipes", {
+	await useFetch("/api/recipes", {
 		method: "post",
 		body: newRecipe,
 	});

@@ -255,7 +255,7 @@ const zoom = ref(6);
             </template>
             <template #header>
               <nuxtLink :to="'/recipes/' + recipe.id">
-	      <Image src="" />
+	      <Image :src="recipe.thumbnail" />
               </nuxtLink>
             </template>
 

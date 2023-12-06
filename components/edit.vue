@@ -58,16 +58,16 @@
   <div class="card flex justify-content-center gap-3">
     <Chip :label="infoImage" />
 
-    <FileUpload
-      mode="basic"
-      name="demo[]"
-      url="/api/upload"
-      accept="image/*"
-      :maxFileSize="1000000"
-      @upload="onUpload"
-      :auto="true"
-      chooseLabel="Browse"
-    />
+	<FileUpload
+		mode="basic"
+		url="/api/image"
+		method="post"
+		accept="image/*"
+		choose-label="Browse"
+		:max-file-size="1000000"
+		:auto="true"
+		@upload="onUpload"
+	/>
   </div>
 
   <div class="card flex justify-content-center gap-3">
@@ -176,7 +176,7 @@ let counter = 0;
 
 
 const onUpload = (event) => {
-  image.value = event.files[0].objectURL;
+  image.value = event.xhr.response;
 };
 
 
