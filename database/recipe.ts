@@ -5,24 +5,6 @@ import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
 
-
-//////IMAGES ////////////
-export const images = sqliteTable("image", {
-    id: text("id")
-        .primaryKey()
-        .$defaultFn(() => crypto.randomUUID()),
-    url: text("url").notNull(),
-    recipe: text("recipe_id")
-        .references(() => recipes.id)
-        .notNull(),
-});
-
-export type Image = InferSelectModel<typeof images>;
-export type InsertImage = InferInsertModel<typeof images>;
-
-
-
-
 ////////// Comments ///////////
 export const comments = sqliteTable("comment", {
 	id: text("id")
@@ -39,13 +21,7 @@ export const comments = sqliteTable("comment", {
 export type Comment = InferSelectModel<typeof comments>;
 export type InsertComment = InferInsertModel<typeof comments>;
 
-
-
 ///////////////////////////////
-export const imagesRelations = relations(images, ({ one }) => ({
-    recipe: one(recipes, { fields: [images.recipe], references: [recipes.id] }),
-}));
-
 export const commentsRelations = relations(comments, ({ one }) => ({
 	recipe: one(recipes, {fields: [comments.recipe], references: [recipes.id] }),
 }))
@@ -77,7 +53,6 @@ export type Recipe = InferSelectModel<typeof recipes>;
 export type InsertRecipe = InferInsertModel<typeof recipes>;
 
 export const recipesRelations = relations(recipes, ({ many, one }) => ({
-    images: many(images),
     ingredients: many(ingredients),
     comments: many(comments),
     user: one(users, { fields: [recipes.user], references: [users.id] }),

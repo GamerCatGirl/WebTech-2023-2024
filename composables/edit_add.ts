@@ -259,17 +259,6 @@ async function saveData(toast) {
 	//so we can acces recipe
 	await getRecipe();
 
-	// TODO: put image
-	let newImage = {
-		url: image.value,
-		recipe: recipe.id,
-	};
-
-	await $fetch("/api/images", {
-		method: "post",
-		body: newImage,
-	});
-
 	// TODO: put Ingredients
 	saveIngredients(toast);
 }

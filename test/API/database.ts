@@ -27,9 +27,6 @@ test("`/api/recipes` returns the recipes", async () => {
 test("`/api/recipes/<ID>` returns the recipe", async () => {
     for (const recipe of seedData.recipes) {
         const received = await $fetch(`/api/recipes/${recipe.id}`);
-        expect(received, `recipe with ID '${recipe.id}'`).toStrictEqual({
-            ...recipe,
-            images: seedData.images.filter(({ recipe: recipeId }) => recipeId == recipe.id),
-        });
+        expect(received, `recipe with ID '${recipe.id}'`).toStrictEqual({ ...recipe });
     }
 });
