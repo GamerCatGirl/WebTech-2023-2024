@@ -242,7 +242,8 @@ async function saveData(toast) {
 	let newRecipe = {
 		name: inputRecipeName.value,
 		location: null,
-		description: inputDescription.value,
+		recipe: inputDescription.value,
+		description: inputThumbnail.value,
 		user: userID,
 		thumbnail: image.value,
 		time: inputTime.value,

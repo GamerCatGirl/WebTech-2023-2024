@@ -75,7 +75,7 @@
   </div>
 
   <div class="card flex justify-content-center gap-3">
-    <InputText placeholder="Thumbnail" v-model="inputThumbnail" />
+    <InputText placeholder="Description" v-model="inputDescription" />
     <InputText placeholder="Time" v-model="inputTime" />
     <MultiSelect
       v-model="selectedTypes"
@@ -149,13 +149,13 @@
   </div>
 
   <div class="card">
-    <Editor v-model="inputDescription" editorStyle="height: 320px" />
+    <Editor v-model="inputRecipe" editorStyle="height: 320px" />
   </div>
 </template>
 
 <script setup>
 import { useToast } from "primevue/usetoast";
-import { inputRecipeName, image, inputThumbnail, inputDescription, inputTime, scoreRecipe, 
+import { inputRecipeName, image, inputThumbnail as inputDescription, inputDescription as inputRecipe, inputTime, scoreRecipe, 
        meals, difficulties, amountTypes, ingredients, addRowIngredients, deleteRowIngredients,inputsIngredients,
        selectedTypes, selectedDifficulties, save,
 	infoImage, fetchRecipe

@@ -7,15 +7,15 @@ import { ingredients } from "./ingredients";
 
 ////////// Comments ///////////
 export const comments = sqliteTable("comment", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	comment: text("comment").notNull(),
-	likes: text("likes"),
-	commentAnswer: text("answered on"),
-	recipe: text("recipe_id")
-		.references(() => recipes.id)
-		.notNull(),
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => crypto.randomUUID()),
+    comment: text("comment").notNull(),
+    likes: text("likes"),
+    commentAnswer: text("answered on"),
+    recipe: text("recipe_id")
+        .references(() => recipes.id)
+        .notNull(),
 });
 
 export type Comment = InferSelectModel<typeof comments>;
@@ -23,8 +23,8 @@ export type InsertComment = InferInsertModel<typeof comments>;
 
 ///////////////////////////////
 export const commentsRelations = relations(comments, ({ one }) => ({
-	recipe: one(recipes, {fields: [comments.recipe], references: [recipes.id] }),
-}))
+    recipe: one(recipes, { fields: [comments.recipe], references: [recipes.id] }),
+}));
 
 const meals = Object.values(Meal).map((meal) => meal.toString());
 const mealsTuple: [string, ...string[]] = [meals[0], ...meals.slice(1)];
@@ -39,6 +39,8 @@ export const recipes = sqliteTable("recipe", {
     name: text("name").notNull(),
     location: text("location"),
     description: text("description"),
+    // The actual recipe explanation
+    recipe: text("recipe"),
     user: text("user")
         .references(() => users.id)
         .notNull(),
