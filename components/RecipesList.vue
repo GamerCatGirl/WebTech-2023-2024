@@ -20,14 +20,14 @@ const props = withDefaults(
          * @returns The promise of the recipes that match these search queries
          */
         getRecipes: (
-            query: Ref<String>,
-            page: Ref<Number>,
-            size: Number,
+            query: Ref<string>,
+            page: Ref<number>,
+            size: number,
             difficulty: Ref<Difficulty[]>,
             mealType: Ref<Meal[]>,
             sortOn: Ref<string>,
             sortOrder: Ref<number>
-        ) => Ref<{ recipes: Recipe[]; totalAmount: Number }>;
+        ) => Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>;
         /**
          * Whether or not to highlight the matches that match the `query` parameter given to `getRecipes`.
          *
@@ -129,24 +129,8 @@ const layout: Ref<"list" | "grid" | undefined> = ref("list");
 
 const data = props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes, sortField, sortOrder);
 /** The recipes that mach the current search and sort parameters */
-const recipes = computed(() => {
-    return (
-        data.value.recipes.map((value) => {
-            const recipe = value;
-            const hours = Math.floor((recipe.time ?? 0) / 60);
-            const minutes = (recipe.time ?? 0) % 60;
-            const cookTime = (hours ? hours + "h" : "") + (minutes ? minutes + "m" : "");
-            let name = recipe.name;
-            let descList = [recipe.description];
-            if (props.highlightMatches) {
-                name = recipe.name.replaceAll(/<\/?b>/g, "");
-                descList = recipe.description?.split(/<\/?b>/) ?? [];
-            }
-            const totalAmount = data.value.totalAmount;
-            return { ...recipe, name, totalAmount, descList, cookTime };
-        }) ?? []
-    );
-});
+const recipes = computed(() => data.value.recipes);
+const totalAmount = computed(() => data.value.totalAmount);
 const meals = Object.values(Meal);
 const difficulty = Object.values(Difficulty);
 
@@ -230,53 +214,13 @@ const zoom = ref(6);
                     </div>
                 </template>
                 <template #list="{ data: recipe }">
-                    <Card>
-                        <!-- <template #title> {{ data.name }} </template> -->
-                        <template #title>
-                            <nuxtLink :to="'/recipes/' + recipe.id">
-                                {{ recipe.name }}
-                            </nuxtLink>
-                            <br />
-                            <Tag icon="pi pi-clock" :value="recipe.cookTime" severity="info" rounded />
-                            <Tag
-                                icon=""
-                                :value="recipe.difficulty"
-                                :severity="
-                                    recipe.difficulty == Difficulty.Easy
-                                        ? 'success'
-                                        : recipe.difficulty == Difficulty.Medium
-                                          ? 'warning'
-                                          : 'danger'
-                                "
-                            />
-                            <Tag :value="recipe.type" />
-                        </template>
-                        <template #subtitle
-                            >Made by
-                            <NuxtLink :to="'/profile/' + recipe.user">{{ recipe.userName }}</NuxtLink>
-                        </template>
-                        <template #header>
-                            <nuxtLink :to="'/recipes/' + recipe.id">
-                                <Image :src="recipe.thumbnail" />
-                            </nuxtLink>
-                        </template>
-
-                        <template #content>
-                            <template v-for="(description, index) in recipe.descList" :key="index">
-                                <b v-if="index % 2 == 1">{{ description }}</b>
-                                <template v-else>{{ description }}</template>
-                            </template>
-                        </template>
-                        <template #footer>
-                            <Rating v-model="recipe.score" readonly :cancel="false" class="flex gap-2" />
-                        </template>
-                    </Card>
+                    <recipe-card :show-recipe="recipe" :highlight-matches="highlightMatches" />
                 </template>
                 <template #footer>
                     <Paginator
                         :always-show-paginator="false"
                         :rows="pageSize"
-                        :total-records="recipes[0]?.totalAmount ?? 0"
+                        :total-records="totalAmount"
                         @page="($event) => (page = $event.page)"
                     />
                 </template>
@@ -291,38 +235,6 @@ const zoom = ref(6);
     display: flex;
 }
 
-.p-dataview .p-card {
-    width: 13em;
-    max-width: 30em;
-    margin: 10px;
-    flex-grow: 1;
-}
-
-.p-card-header .p-image {
-    display: inline-block;
-    width: 100%;
-}
-
-:deep(.p-card-content) {
-    max-height: 20em;
-    overflow-wrap: break-word;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 15;
-    overflow: hidden;
-}
-
-.p-card-title .p-tag {
-    margin-right: 2px;
-}
-
-:deep(.p-card-header .p-image img) {
-    object-fit: contain;
-    width: 100%;
-    max-height: 23em;
-    border-radius: var(--border-radius) var(--border-radius) 0px 0px;
-}
-
 .search,
 .p-inputtext {
     width: 100%;
@@ -331,10 +243,5 @@ const zoom = ref(6);
 .p-multiselect {
     margin: 5px;
     margin-left: 0px;
-}
-
-a {
-    color: inherit;
-    text-decoration: inherit;
 }
 </style>

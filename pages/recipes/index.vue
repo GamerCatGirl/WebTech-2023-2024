@@ -30,9 +30,9 @@ function updateQueryParams(queryParams: LocationQuery) {
 
 /** Get all the recipes that match the current search terms */
 function getRecipes(
-    query: Ref<String>,
-    page: Ref<Number>,
-    size: Number,
+    query: Ref<string>,
+    page: Ref<number>,
+    size: number,
     difficulty: Ref<Difficulty[]>,
     mealType: Ref<Meal[]>,
     sortOn: Ref<string>,
