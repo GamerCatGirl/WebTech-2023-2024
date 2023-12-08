@@ -3,6 +3,13 @@ import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { Meal, Difficulty } from "~/composables/recipes";
 import { Recipe } from "~/database/recipe";
 
+/**
+ * Make an array of `locationQuery` out of a variable that is either a singleton, an array or undefined.
+ * If `array` is undefined, this returns the empty array, if `array` is a singleton, this returns an array with only that element inside of it, otherwise it just returns the array itself.
+ *
+ * @param array - The `locationQuery`
+ * @returns An array of all `locationquerie`s inside of `array`
+ */
 function getParamArray(array: LocationQueryValue | LocationQueryValue[] | undefined): LocationQueryValue[] {
     if (!array) return [];
     else if (Array.isArray(array)) return array;
@@ -16,17 +23,20 @@ const page = parseInt(queryParams.page?.valueOf() as string) || 0;
 const mealTypes = getParamArray(queryParams.mealType) as Meal[];
 const mealDifficulties = getParamArray(queryParams.mealDifficulty) as Difficulty[];
 
-/** [TODO:description] */
+/** Change the URL to reflect the state of the `recipesList` */
 function updateQueryParams(queryParams: LocationQuery) {
     navigateTo({ path: route.path, query: queryParams, replace: true });
 }
 
+/** Get all the recipes that match the current search terms */
 function getRecipes(
     query: Ref<String>,
     page: Ref<Number>,
     size: Number,
     difficulty: Ref<Difficulty[]>,
-    mealType: Ref<Meal[]>
+    mealType: Ref<Meal[]>,
+    sortOn: Ref<string>,
+    sortOrder: Ref<number>
 ) {
     const { data } = useFetch("/api/recipes", {
         query: {
@@ -35,6 +45,8 @@ function getRecipes(
             size,
             difficulty,
             mealType,
+            sortOn,
+            sort: sortOrder,
             highStart: "<b>",
             highEnd: "</b>",
         },

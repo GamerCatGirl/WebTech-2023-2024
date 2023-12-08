@@ -14,6 +14,8 @@ const props = withDefaults(
          * @param size The size of the pages we are requesting
          * @param difficulty The difficulty of the results we are searching on
          * @param mealType The type of meals we are searching for
+         * @param sortOn What to attribute to sort on
+         * @param sort How to sort this attribute
          *
          * @returns The promise of the recipes that match these search queries
          */
@@ -22,7 +24,9 @@ const props = withDefaults(
             page: Ref<Number>,
             size: Number,
             difficulty: Ref<Difficulty[]>,
-            mealType: Ref<Meal[]>
+            mealType: Ref<Meal[]>,
+            sortOn: Ref<string>,
+            sortOrder: Ref<number>
         ) => Ref<{ recipes: Recipe[]; totalAmount: Number }>;
         /**
          * Whether or not to highlight the matches that match the `query` parameter given to `getRecipes`.
@@ -57,29 +61,16 @@ const emits = defineEmits<{
 }>();
 
 interface sortOption {
-    label: String;
-    sort: String;
-    field: String | ((recipe: Recipe) => number);
+    label: string;
+    sort: string;
     order: 1 | -1;
 }
 
 const sortOptions: sortOption[] = [
-    {
-        label: "Difficulty hard to easy",
-        sort: "difficulty",
-        field: ({ difficulty }) => sortDifficulty(difficulty as Difficulty),
-        order: -1,
-    },
-    {
-        label: "Difficulty easy to hard",
-        sort: "difficulty",
-        field: ({ difficulty }) => sortDifficulty(difficulty as Difficulty),
-        order: 1,
-    },
-    { label: "Rating best to worst", sort: "score", field: "score", order: -1 },
-    { label: "Rating worst to best", sort: "score", field: "score", order: 1 },
-    { label: "Time shortest to longest", sort: "time", field: "time", order: 1 },
-    { label: "Time longest to shortest", sort: "time", field: "time", order: -1 },
+    { label: "Rating best to worst", sort: "score", order: -1 },
+    { label: "Rating worst to best", sort: "score", order: 1 },
+    { label: "Time shortest to longest", sort: "time", order: 1 },
+    { label: "Time longest to shortest", sort: "time", order: -1 },
 ];
 
 const input = ref("");
@@ -99,12 +90,15 @@ if (queryParams.sort && queryParams.sortOrder) {
     if (sortKey.value) {
         sortOrder.value = sortKey.value.order;
         // @ts-ignore
-        sortField.value = sortKey.value.field;
+        sortField.value = sortKey.value.sort;
     }
 }
 if (query.value) input.value = query.value;
 
-let debounceTimeout: NodeJS.Timeout;
+/**
+ * Update the URL to reflect the current state, this is done by using the `queryParametersChanged` emit.
+ * This also allows us to recover this state during page reloads.
+ */
 function updateURL() {
     const queryParams: LocationQuery = {};
     if (input.value) queryParams.query = input.value;
@@ -119,6 +113,9 @@ function updateURL() {
     }
     emits("queryParametersChanged", queryParams);
 }
+
+/** A timer to ensure that, when the user is searching, there is not a request send on every key press, but only if the user stops typing for a small amount of time */
+let debounceTimeout: NodeJS.Timeout;
 watch(input, () => {
     if (debounceTimeout) clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(() => {
@@ -130,7 +127,8 @@ watch([mealDifficulties, mealTypes, page, sortKey], updateURL, { deep: true });
 
 const layout: Ref<"list" | "grid" | undefined> = ref("list");
 
-const data = props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes);
+const data = props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes, sortField, sortOrder);
+/** The recipes that mach the current search and sort parameters */
 const recipes = computed(() => {
     return (
         data.value.recipes.map((value) => {
@@ -152,10 +150,6 @@ const recipes = computed(() => {
 const meals = Object.values(Meal);
 const difficulty = Object.values(Difficulty);
 
-function sortDifficulty(difficulty: Difficulty) {
-    return difficulty === Difficulty.Easy ? 1 : difficulty === Difficulty.Medium ? 2 : 3;
-}
-
 const dataView = ref(true);
 const map = ref(false);
 const viewButton = ref(true);
@@ -165,6 +159,7 @@ function viewOnMap() {
     map.value = true;
 }
 
+/** Sort the recipes that are returned */
 function sort(event: { originalEvent: Event; value: any }) {
     const sortValue = event.value;
     if (sortValue == null) {
@@ -173,7 +168,7 @@ function sort(event: { originalEvent: Event; value: any }) {
         sortKey.value = undefined;
     } else {
         sortOrder.value = sortValue.order;
-        sortField.value = sortValue.field;
+        sortField.value = sortValue.sort;
         sortKey.value = sortValue;
     }
 }
@@ -199,14 +194,7 @@ const zoom = ref(6);
         </div>
 
         <div v-show="dataView">
-            <DataView
-                :value="recipes"
-                :rows="pageSize"
-                :layout="layout"
-                :sort-field="sortField"
-                :sort-order="sortOrder"
-                data-key="1"
-            >
+            <DataView :value="recipes" :rows="pageSize" :layout="layout" data-key="1">
                 <template #header>
                     <div>
                         <span class="p-input-icon-left search">
