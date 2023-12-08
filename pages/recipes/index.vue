@@ -37,7 +37,7 @@ function getRecipes(
     mealType: Ref<Meal[]>,
     sortOn: Ref<string>,
     sortOrder: Ref<number>
-) {
+): Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }> {
     const { data } = useFetch("/api/recipes", {
         query: {
             query,
@@ -54,8 +54,8 @@ function getRecipes(
     return computed(() => {
         return (
             {
-                recipes: (data.value?.valueOf() as Recipe[]) || [],
-                totalAmount: (data.value?.valueOf() || [])[0]?.totalAmount || 0,
+                recipes: (data.value?.valueOf() as (Recipe & { userName: string; totalAmount: number })[]) || [],
+                totalAmount: ((data.value?.valueOf() || []) as (Recipe & { totalAmount: number })[])[0]?.totalAmount || 0,
             } ?? { recipes: [], totalAmount: 0 }
         );
     });
