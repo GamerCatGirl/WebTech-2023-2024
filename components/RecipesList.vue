@@ -303,7 +303,7 @@ const zoom = ref(6);
     width: 100%;
 }
 
-:deep(.p-card-content p) {
+:deep(.p-card-content) {
     max-height: 20em;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -316,7 +316,9 @@ const zoom = ref(6);
 }
 
 :deep(.p-card-header .p-image img) {
+    object-fit: contain;
     width: 100%;
+    max-height: 23em;
     border-radius: var(--border-radius) var(--border-radius) 0px 0px;
 }
 
