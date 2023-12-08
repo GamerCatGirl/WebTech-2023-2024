@@ -305,6 +305,7 @@ const zoom = ref(6);
 
 :deep(.p-card-content) {
     max-height: 20em;
+    overflow-wrap: break-word;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 15;
