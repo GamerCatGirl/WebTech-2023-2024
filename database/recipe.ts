@@ -49,6 +49,7 @@ export const recipes = sqliteTable("recipe", {
     type: text("type", { enum: mealsTuple }),
     difficulty: text("difficulty", { enum: dificultyTuple }),
     score: real("score"),
+    createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
 export type Recipe = InferSelectModel<typeof recipes>;
