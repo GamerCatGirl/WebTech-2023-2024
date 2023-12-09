@@ -1,16 +1,14 @@
-import { recipes, InsertRecipe } from "~/database/recipe";
+import { parse } from "valibot";
+import { recipes, InsertRecipe, insertRecipeSchema } from "~/database/recipe";
 
 export default defineEventHandler(async (event) => {
-  // TODO: Form validation
-  // using e.g. ZOD: https://orm.drizzle.team/docs/zod/
-  const putRecipe = async (recipe: InsertRecipe) => {
-    return database.insert(recipes).values(recipe);
-  };
+    const putRecipe = (recipe: InsertRecipe) => {
+        return database.insert(recipes).values(recipe);
+    };
 
-  const body = await readBody(event);
+    const body = await readValidatedBody(event, (data) => parse(insertRecipeSchema, data));
 
-  console.log(body); 
-  await putRecipe(body);
+    putRecipe(body);
 
-  return { body };
+    return { body };
 });

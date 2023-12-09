@@ -25,7 +25,7 @@ export const amountTypes = ref([
 
 //inputs for recipy
 export const inputRecipeName = ref();
-export const image = ref("../placeholder.svg");
+export const image = ref("/placeholder.svg");
 export const inputThumbnail = ref();
 export const inputTime = ref();
 export const selectedTypes = ref();
@@ -90,7 +90,7 @@ export function deleteRowIngredients(idString, toast) {
 //reset values
 export function resetVariables() {
 	inputRecipeName.value = null;
-	image.value = "../placeholder.svg";
+	image.value = "/placeholder.svg";
 	inputThumbnail.value = null;
 	inputTime.value = null;
 	selectedTypes.value = null;
@@ -238,13 +238,18 @@ async function saveIngredients(toast) {
 	});
 }
 
+/**
+ * Saves the data
+ *
+ * @async
+ * @returns {Promise<boolean>} Whether or not the saving was succesful
+ */
 async function saveData(toast) {
 	let newRecipe = {
 		name: inputRecipeName.value,
 		location: null,
 		recipe: inputDescription.value,
 		description: inputThumbnail.value,
-		user: userID,
 		thumbnail: image.value,
 		time: inputTime.value,
 		type: selectedTypes.value,
@@ -252,16 +257,25 @@ async function saveData(toast) {
 		score: null,
 	};
 
-	await useFetch("/api/recipes", {
+	const res = await useFetch("/api/recipes", {
 		method: "post",
 		body: newRecipe,
 	});
+	if (res.status.value === "error" && res.error.value?.statusCode === 400) {
+		toast.add({
+			severity: "error",
+			detail: res.error.value?.data.message,
+			life: 3000,
+		});
+	 	return false
+	}
 
 	//so we can acces recipe
 	await getRecipe();
 
 	// TODO: put Ingredients
 	saveIngredients(toast);
+	return true
 }
 
 export async function save(toast) {
@@ -270,7 +284,7 @@ export async function save(toast) {
 		errorFillInRecipeName(toast);
 	} //recipy name empty
 	else if (recipe === null) {
-		await saveData(toast);
+		if (!await saveData(toast)) return
 
 		toast.add({
 			severity: "success",

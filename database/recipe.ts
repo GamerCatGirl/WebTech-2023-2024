@@ -1,6 +1,8 @@
 import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView, real, integer } from "drizzle-orm/sqlite-core";
+import { createInsertSchema } from "drizzle-valibot";
+import { maxValue, minLength, number, string, toTrimmed, undefined_, minValue } from "valibot";
 import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
@@ -61,6 +63,24 @@ export const recipes = sqliteTable("recipe", {
 
 export type Recipe = InferSelectModel<typeof recipes>;
 export type InsertRecipe = InferInsertModel<typeof recipes>;
+
+export const insertRecipeSchema = createInsertSchema(recipes, {
+    id: undefined_("No ID should be specified."),
+    name: string("Please give a name to your recipe", [
+        toTrimmed(),
+        minLength(5, "The name of your recipe should be longer than 5 characters"),
+    ]),
+    location: string("Please specify a location."),
+    description: string("Please add a description.", [
+        toTrimmed(),
+        minLength(10, "Your description should be at least 10 characters long."),
+    ]),
+    recipe: string("Please add your recipe.", [toTrimmed(), minLength(50, "Your recipe is not long enough.")]),
+    user: undefined_("No user should be specified."),
+    thumbnail: string("Please specify a thumbnail."),
+    score: number("Please specify a score", [minValue(0), maxValue(5)]),
+    createdAt: undefined_("Creation date should not be specified."),
+});
 
 export const recipesRelations = relations(recipes, ({ many, one }) => ({
     ingredients: many(ingredients),
