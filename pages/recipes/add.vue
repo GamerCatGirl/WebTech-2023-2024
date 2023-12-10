@@ -1,6 +1,5 @@
 <template>
-  This is the add page
-  <edit />
+  <RecipeEdit />
 </template>
 
 <script>

@@ -6,20 +6,9 @@ import {
 } from "~/composables/recipes";
 
 //selectors data
-export const meals = Object.values(Meal);
-export const difficulties = Object.values(Difficulty);
 
-export const ingredients = ref([
-	{ name: "Vegtable" },
-	{ name: "Meat" },
-	{ name: "Fish" },
-]);
 
-export const amountTypes = ref([
-	{ name: "Pieces" },
-	{ name: "grams" },
-	{ name: "ml" },
-]);
+export const amountTypes = ref(["Pieces", "grams", "ml"]);
 
 //buttons
 
@@ -61,7 +50,7 @@ function newDummy() {
 	};
 }
 
-export const inputsIngredients = ref([newDummy()]);
+export const inputsIngredients = ref([]);
 
 export function addRowIngredients() {
 	amountAdded += 1;

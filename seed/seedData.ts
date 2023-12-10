@@ -72,7 +72,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Mascarpone",
         amount: "500",
-        type: "gramms",
+        unit: "gramms",
         category: "cheese",
     },
     {
@@ -80,7 +80,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Eggs",
         amount: "3",
-        type: "Pieces",
+        unit: "Pieces",
         category: "Dairy",
     },
     {
@@ -88,7 +88,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Sugar",
         amount: "150",
-        type: "gramms",
+        unit: "gramms",
         category: "Dry Goods",
     },
     {
@@ -96,7 +96,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Vanilla Sugar",
         amount: "24",
-        type: "gramms",
+        unit: "gramms",
         category: "Dry Goods",
     },
     {
@@ -104,7 +104,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Boudoir (Cookies)",
         amount: "2",
-        type: "Packs",
+        unit: "Packs",
         category: "Dry Goods",
     },
     {
@@ -112,7 +112,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Coffee",
         amount: "3",
-        type: "Cups",
+        unit: "Cups",
         category: "Liquids",
     },
     {
@@ -120,7 +120,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Amaretto",
         amount: "40",
-        type: "ml",
+        unit: "ml",
         category: "Liquids",
     },
     {
@@ -128,7 +128,7 @@ const ingredients = [
         recipyId: recipes[2].id,
         ingredient: "Cacao",
         amount: "/",
-        type: "/",
+        unit: "/",
         category: "Dry Goods",
     },
 ];

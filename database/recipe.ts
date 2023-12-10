@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView, real, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { maxValue, minLength, number, string, toTrimmed, undefined_, minValue } from "valibot";
+import { maxValue, minLength, number, string, toTrimmed, undefined_, minValue, custom } from "valibot";
 import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
@@ -38,8 +38,8 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
 const meals = Object.values(Meal).map((meal) => meal.toString());
 const mealsTuple: [string, ...string[]] = [meals[0], ...meals.slice(1)];
 
-const dificulty = Object.values(Difficulty).map((dificulty) => dificulty.toString());
-const dificultyTuple: [string, ...string[]] = [dificulty[0], ...dificulty.slice(1)];
+const difficulty = Object.values(Difficulty).map((dificulty) => dificulty.toString());
+const dificultyTuple: [string, ...string[]] = [difficulty[0], ...difficulty.slice(1)];
 
 export const recipes = sqliteTable("recipe", {
     id: text("id")
@@ -47,17 +47,17 @@ export const recipes = sqliteTable("recipe", {
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
     location: text("location"),
-    description: text("description"),
+    description: text("description").notNull(),
     // The actual recipe explanation
-    recipe: text("recipe"),
+    recipe: text("recipe").notNull(),
     user: text("user")
         .references(() => users.id)
         .notNull(),
     thumbnail: text("thumbnail"),
-    time: integer("time"),
-    type: text("type", { enum: mealsTuple }),
-    difficulty: text("difficulty", { enum: dificultyTuple }),
-    score: real("score"),
+    time: integer("time").notNull(),
+    type: text("type", { enum: mealsTuple }).notNull(),
+    difficulty: text("difficulty", { enum: dificultyTuple }).notNull(),
+    score: real("score").notNull(),
     createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
@@ -76,8 +76,15 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
         minLength(10, "Your description should be at least 10 characters long."),
     ]),
     recipe: string("Please add your recipe.", [toTrimmed(), minLength(50, "Your recipe is not long enough.")]),
+    time: number("Please specify the required time.", [minValue(1)]),
     user: undefined_("No user should be specified."),
     thumbnail: string("Please specify a thumbnail."),
+    type: string("Please specify the type of meal.", [
+        custom((input) => meals.includes(input), "Please select a valid meal type."),
+    ]),
+    difficulty: string("Please specify how difficult this recipy is to make.", [
+        custom((input) => difficulty.includes(input), "Please select a valid difficulty."),
+    ]),
     score: number("Please specify a score", [minValue(0), maxValue(5)]),
     createdAt: undefined_("Creation date should not be specified."),
 });
