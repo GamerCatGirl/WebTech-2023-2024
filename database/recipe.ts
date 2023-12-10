@@ -85,7 +85,7 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
     difficulty: string("Please specify how difficult this recipy is to make.", [
         custom((input) => difficulty.includes(input), "Please select a valid difficulty."),
     ]),
-    score: number("Please specify a score", [minValue(0), maxValue(5)]),
+    score: undefined_("Score should not be specified."),
     createdAt: undefined_("Creation date should not be specified."),
 });
 

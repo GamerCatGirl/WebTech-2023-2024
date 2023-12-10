@@ -1,14 +1,14 @@
 import { parse } from "valibot";
+import { getServerSession } from "#auth";
 import { recipes, InsertRecipe, insertRecipeSchema } from "~/database/recipe";
 
 export default defineEventHandler(async (event) => {
-    const putRecipe = (recipe: InsertRecipe) => {
-        return database.insert(recipes).values(recipe);
-    };
+    const session = await getServerSession(event);
+    if (!session) throw createError({ statusCode: 401, statusMessage: "You need to be logged in to create new recipes." });
 
-    const body = await readValidatedBody(event, (data) => parse(insertRecipeSchema, data));
+    const recipe = await readValidatedBody(event, (data) => parse(insertRecipeSchema, data));
+    recipe.user = session.user?.id;
+    recipe.score = 0;
 
-    putRecipe(body);
-
-    return { body };
+    database.insert(recipes).values(recipe as InsertRecipe);
 });

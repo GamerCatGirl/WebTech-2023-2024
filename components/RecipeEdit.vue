@@ -1,4 +1,5 @@
 <template>
+    <Toast />
     <div class="card">
         <Toolbar>
             <template #start>
@@ -117,7 +118,7 @@
                         @upload="onUpload"
                     />
                     <br />
-                    <Image :src="image" height="250" preview />
+                    <Image :src="thumbnail" height="250" preview />
                 </div>
             </div>
         </TabPanel>
@@ -219,15 +220,22 @@
 <script setup lang="ts">
 import { toTypedSchema } from "@vee-validate/valibot";
 import { configure, useForm } from "vee-validate";
+import { useToast } from "primevue/usetoast";
 import { insertRecipeSchema } from "~/database/recipe";
 import { insertIngredientSchema } from "~/database/ingredients";
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
 const units = [...Object.values(MassUnit), ...Object.values(VolumeUnit)];
 const ingredientTypes = ref(["Vegtable", "Meat", "Fish"]);
-const image = ref("/placeholder.svg");
+const thumbnail = ref("/placeholder.svg");
 const selectedIngredients = ref();
+const toast = useToast();
 // definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
+
+const props = defineProps<{
+    /** The ID of the recipe you want to edit, if you want to create a new recipe, you should leave this empty */
+    recipeId?: string;
+}>();
 
 configure({
     validateOnBlur: false,
@@ -269,9 +277,43 @@ function getEmptyRecipe() {
     };
 }
 
-function save() {
-    validate();
-    ingredients.value.forEach((recipe) => recipe.validate());
+async function save() {
+    let valid = (await validate()).valid;
+    if (ingredients.value.length == 0) {
+        toast.add({
+            severity: "error",
+            detail: "Please add some ingredients to your recipe.",
+            life: 3000,
+        });
+        return;
+    }
+    ingredients.value.forEach(async (recipe) => (valid = (await recipe.validate()).valid || valid));
+    if (valid) {
+        if (!props.recipeId) {
+            const res = await useFetch("/api/recipes", {
+                method: "post",
+                body: {
+                    id: props.recipeId,
+                    name: name.value,
+                    location: "TODO",
+                    description: description.value,
+                    recipe: recipe.value,
+                    thumbnail: thumbnail.value,
+                    time: time.value,
+                    type: mealType.value,
+                    difficulty: difficulty.value,
+                },
+            });
+            if (res.status.value === "error" && res.error.value?.statusCode === 400) {
+                toast.add({
+                    severity: "error",
+                    detail: res.error.value?.data.message,
+                    life: 3000,
+                });
+                return;
+            }
+        }
+    }
 }
 
 // TODO: you cannot upload multiple mealtypes to database
@@ -280,7 +322,7 @@ function save() {
 // const inputs = ref([newDummy()]);
 
 const onUpload = (event: any) => {
-    image.value = event.xhr.response;
+    thumbnail.value = event.xhr.response;
 };
 </script>
 

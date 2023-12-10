@@ -1,15 +1,20 @@
-// import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import FacebookProvider from "next-auth/providers/facebook";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { NuxtAuthHandler } from "#auth";
 
-//import { db } from "./schema"
-
 export default NuxtAuthHandler({
     pages: {
-        signIn: '/login'
+        signIn: "/login",
+    },
+    callbacks: {
+        session: ({ session, user }) => {
+            if (session?.user) {
+                session.user.id = user.id;
+            }
+            return session;
+        },
     },
     // @ts-expect-error
     adapter: DrizzleAdapter(database),
@@ -20,14 +25,14 @@ export default NuxtAuthHandler({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         }),
         // @ts-expect-error
-       GitHubProvider.default({
+        GitHubProvider.default({
             clientId: process.env.GITHUB_CLIENT_ID,
             clientSecret: process.env.GITHUB_CLIENT_SECRET,
         }),
         // @ts-expect-error
-       FacebookProvider.default({
-        clientId: process.env.FACEBOOK_CLIENT_ID,
-        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        FacebookProvider.default({
+            clientId: process.env.FACEBOOK_CLIENT_ID,
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         }),
     ],
 });
