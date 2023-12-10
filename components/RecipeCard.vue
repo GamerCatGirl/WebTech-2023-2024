@@ -74,7 +74,7 @@ const visualRecipe = computed(() => {
 
 <style scoped>
 .p-card {
-    width: 13em;
+    width: 20em;
     max-width: 30em;
     margin: 10px;
     flex-grow: 1;
