@@ -31,6 +31,7 @@ export const comments = sqliteTable("comment", {
 	comment: text("comment").notNull(),
 	likes: text("likes"),
 	commentAnswer: text("answered on"),
+	userID: text("userID").notNull(),
 	recipe: text("recipe_id")
 		.references(() => recipes.id)
 		.notNull(),
