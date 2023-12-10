@@ -8,6 +8,6 @@ export default defineEventHandler((event) => {
     const id = event.context.params.id as string;
     return database.query.comments.findFirst({
         where: (comment, { eq }) => eq(comment.id, id),
-        with: { replies: true },
+        with: { replies: { with: { user: { columns: { name: true, id: true } } } } },
     });
 });
