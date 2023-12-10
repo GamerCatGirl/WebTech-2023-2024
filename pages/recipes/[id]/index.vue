@@ -4,24 +4,63 @@
 	</div>
 
 	<Card class="InfoCard" v-show="InfoCard">
-		<template #title> {{ recipyName }} </template>
-		<template #content>
+		<template #title>
+			{{ recipyName }}
+
+			<div>
+				<!-- TODO: add a share button -->
+			</div>
+
+			<!-- TODO: add user possibility to rate -->
 			<div class="flex flex-wrap gap-2">
-				<Tag :value="recipy.type"></Tag>
-				<Tag icon="" :value="recipy.difficulty" :severity="getColorDifficulty(recipy.difficulty)"></Tag>
-				<Tag icon="pi pi-clock" :value="recipy.time" :severity="getSeverity(recipy.time)" rounded></Tag>
+				<Rating v-model="value" />
+				<Button label="Rate" icon="pi pi-check" size="small" rounded />
 			</div>
+		</template>
+		<template #content>
+		
 
-			<!--Insert a picture-->
-			<div class="card flex">
-				<Image @click="console.log(recipy.images[0].url)" class="imageCard" :src="recipy.images[0]"
-					alt="Image" width="auto" />
-			</div>
+			<div class="flex flex-column md:flex-row">
+				<div
+					class="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
 
-			<p class="m-0">Made by @Silken</p>
-			<!--Display figures like meat, vegi, halal, vegan, ...-->
-			<div class="card flex">
-				<Rating v-model="recipyScore" readonly :cancel="false" class="flex gap-2" />
+					<div class="flex flex-wrap justify-content-center align-items-center gap-2">
+						<Tag :value="recipy.type"></Tag>
+						<Tag icon="" :value="recipy.difficulty"
+						:severity="getColorDifficulty(recipy.difficulty)"></Tag>
+						<Tag icon="pi pi-clock" :value="recipy.time" :severity="getSeverity(recipy.time)"
+						rounded></Tag>
+					</div>
+					<!--Insert a picture-->
+					<div class="card flex">
+						<Image @click="console.log(recipy.images[0].url)" class="imageCard"
+						:src="recipy.images[0]" alt="Image" width="auto" />
+					</div>
+
+					<p class="m-0">Made by @Silken</p>
+					<!--Display figures like meat, vegi, halal, vegan, ...-->
+					<div class="card flex">
+						<Rating v-model="recipyScore" readonly :cancel="false" class="flex gap-2" />
+					</div>
+				</div>
+
+				<div class="w-full md:w-2">
+					<Divider layout="vertical" class="hidden md:flex"><b></b></Divider>
+					<Divider layout="horizontal" class="flex md:hidden" align="center"><b></b></Divider>
+				</div>
+				<div>
+					<p>Share Recipe</p>
+
+					<div class="flex-column flex align-items-center justify-content-center gap-2">
+						<SocialShare v-for="network in [
+							'facebook',
+							'twitter',
+							'linkedin',
+							'email',
+							'whatsapp',
+						]" :key="network" :network="network" :styled="true" :label="false" class="p-2 rounded-none" />
+					</div>
+				</div>
 			</div>
 		</template>
 
@@ -106,6 +145,7 @@ import { ref } from "vue";
 const value = ref(3); //score of recipy still needs to be added in the database
 const route = useRoute();
 const id = route.params.id;
+const loggedInUser = 2;
 const comboRouting = "&";
 const splitedId = id.split(comboRouting);
 const recipyID = splitedId[1];
@@ -130,7 +170,7 @@ async function like(comment) {
 	comment.likes = Number(comment.likes) + amount;
 	comment.severityLike = "success";
 
-	if (amount == -1){
+	if (amount == -1) {
 		comment.severityLike = "";
 	}
 
@@ -142,16 +182,11 @@ async function like(comment) {
 }
 
 async function dislike(comment) {
-	// TODO: test if user has disliked the comment
-
-	// TODO: test if a user already likes the comment and put something to show -- standard button = grey, color if pressed?
-
 	let amount = -1;
 
 	if (comment.severityDislike == "danger") {
 		amount = 1;
 		comment.severityDislike = "";
-		// TODO: toast
 	}
 
 	console.log(comment.severityLike);
@@ -167,7 +202,6 @@ async function dislike(comment) {
 
 	if (amount == 1) {
 		comment.severityDislike = "";
-		// TODO: toast
 	}
 
 	console.log("like :)");
@@ -182,8 +216,11 @@ async function setupReaction() {
 		comment.showReaction = false;
 		comment.addReaction = false;
 		comment.severityLike = "Primary";
+		comment.logedInUser = loggedInUser;
 
 		// TODO: if userID = currentUser than add button to delete comment
+
+		// TODO: if comment is liked by  = currentUser than display the likes
 
 		//let user = await $fetch(`/api/users/${comment.userID}`)
 

@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const comment = await readBody(event); 
 	
 
-  // TODO: add to current user that he liked it 
+  // TODO: add to current user that he liked it or disliked it;
 
   const updateComment = async (likesToUpdate) => {
     await database
