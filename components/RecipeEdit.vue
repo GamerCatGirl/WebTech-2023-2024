@@ -5,7 +5,13 @@
             <template #start>
                 <div>
                     <span class="p-float-label">
-                        <InputText id="name" v-model="name" v-bind="nameAttrs" :class="{ 'p-invalid': errors.name }" />
+                        <InputText
+                            id="name"
+                            v-model="name"
+                            v-bind="nameAttrs"
+                            name="name"
+                            :class="{ 'p-invalid': errors.name }"
+                        />
                         <label for="name">Recipe name</label>
                     </span>
                     <small id="text-error" class="p-error">{{ errors.name || "&nbsp;" }}</small>
@@ -19,14 +25,16 @@
         </Toolbar>
     </div>
 
-    <TabView>
+    <TabView :active-index="tabIndex" @update:active-index="(index: number) => (tabIndex = index)">
         <TabPanel header="Recipe">
-            <Editor v-model="recipe" v-bind="recipeAttrs" editor-style="height: 320px" />
-            <small id="text-error" class="p-error">{{ errors.recipe }}</small>
+            <div style="--tab-index: 0">
+                <Editor v-model="recipe" v-bind="recipeAttrs" editor-style="height: 320px" name="recipe" />
+                <small id="text-error" class="p-error">{{ errors.recipe }}</small>
+            </div>
         </TabPanel>
 
         <TabPanel header="Info">
-            <div class="infoPanel">
+            <div class="infoPanel" style="--tab-index: 1">
                 <div class="description">
                     <span class="p-float-label">
                         <Textarea
@@ -43,7 +51,7 @@
                     <small id="text-error" class="p-error">{{ errors.description || "&nbsp;" }}</small>
                 </div>
                 <div>
-                    <div class="timeDiv">
+                    <div class="timeDiv" name="time">
                         <span class="p-float-label">
                             <InputNumber
                                 v-model="hours"
@@ -82,6 +90,7 @@
                             v-bind="mealTypeAttrs"
                             display="chip"
                             class="md:w-14rem"
+                            name="type"
                             :options="meals"
                             :max-selected-labels="3"
                             :class="{ 'p-invalid': errors.type }"
@@ -98,6 +107,7 @@
                             v-model="difficulty"
                             v-bind="difficultyAttrs"
                             class="md:w-14rem"
+                            name="difficulty"
                             :options="difficulties"
                             :max-selected-labels="3"
                             :class="{ 'p-invalid': errors.difficulty }"
@@ -127,6 +137,7 @@
             <OrderList
                 v-model="ingredients"
                 list-style="height:auto"
+                style="--tab-index: 2"
                 @update:selection="(ingredients) => (selectedIngredients = ingredients)"
             >
                 <template #header>
@@ -213,7 +224,7 @@
                 </template>
             </OrderList>
         </TabPanel>
-        <TabPanel header="Location"></TabPanel>
+        <TabPanel header="Location"><div style="--tab-index: 3"></div></TabPanel>
     </TabView>
 </template>
 
@@ -232,6 +243,7 @@ const selectedIngredients = ref();
 const toast = useToast();
 // definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
 
+const tabIndex = ref();
 const props = defineProps<{
     /** The ID of the recipe you want to edit, if you want to create a new recipe, you should leave this empty */
     recipeId?: string;
@@ -278,17 +290,22 @@ function getEmptyRecipe() {
 }
 
 async function save() {
-    let valid = (await validate()).valid;
-    if (ingredients.value.length == 0) {
+    let validated = await validate();
+    if (validated.valid && ingredients.value.length === 0) {
         toast.add({
             severity: "error",
             detail: "Please add some ingredients to your recipe.",
             life: 3000,
         });
+        tabIndex.value = 2;
         return;
     }
-    ingredients.value.forEach(async (recipe) => (valid = (await recipe.validate()).valid || valid));
-    if (valid) {
+    for (const ingredient of ingredients.value) {
+        const val = await ingredient.validate();
+        if (validated.valid) validated = val;
+    }
+
+    if (validated.valid) {
         if (!props.recipeId) {
             const res = await useFetch("/api/recipes", {
                 method: "post",
@@ -313,6 +330,18 @@ async function save() {
                 return;
             }
         }
+        toast.add({ severity: "success", detail: "Successfully saved the recipe.", life: 3000 });
+    } else {
+        const firstError = Object.keys(validated.errors)[0];
+        const el = document.querySelector(`[name="${firstError}"]`);
+        const errorTabIndex = el ? parseInt(getComputedStyle(el).getPropertyValue("--tab-index")) : undefined;
+        if (errorTabIndex || errorTabIndex === 0) tabIndex.value = errorTabIndex;
+        setTimeout(() => {
+            el?.scrollIntoView({
+                behavior: "smooth",
+            });
+            el?.focus();
+        }, 100);
     }
 }
 
@@ -384,10 +413,6 @@ const onUpload = (event: any) => {
     width: 6em;
     margin-right: 3em;
 }
-
-/* .minutes { */
-/*     margin-top: 2em; */
-/* } */
 
 :deep(.time .p-inputtext) {
     width: 6em;
