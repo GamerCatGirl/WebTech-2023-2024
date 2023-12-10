@@ -61,13 +61,15 @@
 			<div class="flex gap-5">
 				<div class="flex justify-content-left">
 					<!-- like button -->
-					<Button icon="pi pi-thumbs-up" severity="success" rounded />
+					<Button icon="pi pi-caret-up" :severity="comment.severityLike" @click="like(comment)"
+						rounded />
 					<!-- amount of likes -->
 
 					<span class="amountStyle">{{ comment.likes }}</span>
 					<!-- dislike button -->
 
-					<Button icon="pi pi-thumbs-down" severity="danger" rounded />
+					<Button icon="pi pi-caret-down" :severity="comment.severityDislike"
+						@click="dislike(comment)" rounded />
 					<!-- answer button -->
 				</div>
 				<div class="flex justify-content-left gap-3">
@@ -113,17 +115,79 @@ const recipyScore = ref(Number(recipy.score));
 
 const comments = ref(recipy.comments);
 
+async function like(comment) {
+	let amount = 1;
+
+	if (comment.severityLike == "success") {
+		amount = -1;
+	}
+	if (comment.severityDislike == "danger") {
+		amount = 2;
+		comment.severityDislike = "";
+	}
+	let idOfComment = comment.id;
+	let newLikeAmount = Number(comment.likes) + amount;
+	comment.likes = Number(comment.likes) + amount;
+	comment.severityLike = "success";
+
+	if (amount == -1){
+		comment.severityLike = "";
+	}
+
+	console.log("like :)");
+	await $fetch(`/api/comments/${idOfComment}`, {
+		method: "put",
+		body: newLikeAmount,
+	});
+}
+
+async function dislike(comment) {
+	// TODO: test if user has disliked the comment
+
+	// TODO: test if a user already likes the comment and put something to show -- standard button = grey, color if pressed?
+
+	let amount = -1;
+
+	if (comment.severityDislike == "danger") {
+		amount = 1;
+		comment.severityDislike = "";
+		// TODO: toast
+	}
+
+	console.log(comment.severityLike);
+	if (comment.severityLike == "success") {
+		amount = -2;
+		comment.severityLike = "";
+	}
+
+	let idOfComment = comment.id;
+	let newLikeAmount = Number(comment.likes) + amount;
+	comment.likes = Number(comment.likes) + amount;
+	comment.severityDislike = "danger";
+
+	if (amount == 1) {
+		comment.severityDislike = "";
+		// TODO: toast
+	}
+
+	console.log("like :)");
+	await $fetch(`/api/comments/${idOfComment}`, {
+		method: "put",
+		body: newLikeAmount,
+	});
+}
 
 async function setupReaction() {
 	comments.value.map((comment) => {
 		comment.showReaction = false;
 		comment.addReaction = false;
+		comment.severityLike = "Primary";
 
-		// TODO: if userID = currentUser than add button to delete comment 
+		// TODO: if userID = currentUser than add button to delete comment
 
 		//let user = await $fetch(`/api/users/${comment.userID}`)
 
-		comment.user = "Need to be replaced"//user.name;
+		//comment.user = "Need to be replaced"//user.name;
 
 		//test
 		comment.reactions = [
@@ -136,10 +200,9 @@ async function setupReaction() {
 				comment: "reaction test 2",
 				user: "Username 3",
 				likes: 3,
-			}
+			},
 		];
 	});
-
 }
 
 setupReaction();
@@ -201,10 +264,12 @@ const items = ref([
 	},
 ]);
 
-
 function switchAddReaction(comment) {
-	if (comment.showReaction) { comment.showReaction = false; }
-	else { comment.showReaction = true; }
+	if (comment.showReaction) {
+		comment.showReaction = false;
+	} else {
+		comment.showReaction = true;
+	}
 }
 
 function getSeverity(time) {
@@ -246,7 +311,7 @@ async function comment() {
 	});
 
 	// TODO: vervang "Silken door userID fetch username"
-	const user = await $fetch(`/api/users/${commentData.userID}`)
+	const user = await $fetch(`/api/users/${commentData.userID}`);
 	console.log(user);
 	commentData.user = user.name;
 
