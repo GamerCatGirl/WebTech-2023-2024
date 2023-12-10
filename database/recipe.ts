@@ -12,7 +12,11 @@ export const comments = sqliteTable("comment", {
         .$defaultFn(() => crypto.randomUUID()),
     comment: text("comment").notNull(),
     likes: text("likes"),
-    commentAnswer: text("answered on"),
+    // On what comment is this replying
+    replied: text("replied").references(() => comments.id),
+    userId: text("user")
+        .references(() => users.id)
+        .notNull(),
     recipe: text("recipe_id")
         .references(() => recipes.id)
         .notNull(),
@@ -22,8 +26,11 @@ export type Comment = InferSelectModel<typeof comments>;
 export type InsertComment = InferInsertModel<typeof comments>;
 
 ///////////////////////////////
-export const commentsRelations = relations(comments, ({ one }) => ({
+export const commentsRelations = relations(comments, ({ one, many }) => ({
     recipe: one(recipes, { fields: [comments.recipe], references: [recipes.id] }),
+    replied: one(comments, { fields: [comments.replied], references: [comments.id], relationName: "replies" }),
+    user: one(users, { fields: [comments.userId], references: [users.id] }),
+    replies: many(comments, { relationName: "replies" }),
 }));
 
 const meals = Object.values(Meal).map((meal) => meal.toString());
@@ -63,6 +70,7 @@ export const recipesRelations = relations(recipes, ({ many, one }) => ({
 
 export const usersRelations = relations(users, ({ many }) => ({
     recipes: many(recipes),
+    comments: many(comments),
 }));
 
 export const recipeFts = sqliteView("recipe_fts", {
