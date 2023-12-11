@@ -94,6 +94,11 @@ const visualRecipe = computed(() => {
     overflow: hidden;
 }
 
+:deep(.p-card-title) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 .p-card-title .p-tag {
     margin-right: 2px;
 }
