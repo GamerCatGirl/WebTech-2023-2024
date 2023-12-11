@@ -1,5 +1,4 @@
 <template>
-    <Toast />
     <div class="card">
         <Toolbar>
             <template #start>
@@ -241,7 +240,6 @@ const ingredientTypes = ref(["Vegtable", "Meat", "Fish"]);
 const thumbnail = ref("/placeholder.svg");
 const selectedIngredients = ref();
 const toast = useToast();
-// definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
 
 const tabIndex = ref();
 const props = defineProps<{
@@ -294,16 +292,14 @@ if (props.recipeId) {
             ingredients.value.push(newIngredient);
         }
     } else {
-        setTimeout(() => {
+        setTimeout(async () => {
             toast.add({
                 severity: "error",
                 detail: `Recipe with ID '${props.recipeId}' doesn't exist.`,
                 life: 3000,
             });
-        }, 100);
-        setTimeout(async () => {
             await navigateTo("/recipes/add");
-        }, 4000);
+        }, 100);
     }
 }
 

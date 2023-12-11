@@ -1,5 +1,6 @@
 <template>
     <header>
+        <Toast />
         <div class="card">
             <Menubar :model="items">
                 <template #item="{ item, props, hasSubmenu }">
