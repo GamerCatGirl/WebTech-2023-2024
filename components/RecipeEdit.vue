@@ -231,7 +231,7 @@
 import { toTypedSchema } from "@vee-validate/valibot";
 import { configure, useForm } from "vee-validate";
 import { useToast } from "primevue/usetoast";
-import { insertRecipeSchema } from "~/database/recipe";
+import { Recipe, insertRecipeSchema } from "~/database/recipe";
 import { insertIngredientSchema, ingredientsDB } from "~/database/ingredients";
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
@@ -244,7 +244,7 @@ const toast = useToast();
 const tabIndex = ref();
 const props = defineProps<{
     /** The ID of the recipe you want to edit, if you want to create a new recipe, you should leave this empty */
-    recipeId?: string;
+    editRecipe?: Recipe;
 }>();
 
 configure({
@@ -268,38 +268,26 @@ watch([hours, minutes], () => (time.value = (hours.value ?? 0) * 60 + (minutes.v
 let id = 0;
 const ingredients = ref([getEmptyIngredient()]);
 
-if (props.recipeId) {
-    const defaultRecipe = (await useFetch(`/api/recipes/${props.recipeId}`)).data.value;
-    if (defaultRecipe) {
-        name.value = defaultRecipe.name;
-        recipe.value = defaultRecipe.recipe;
-        description.value = defaultRecipe.description;
-        hours.value = Math.floor(defaultRecipe.time / 60);
-        minutes.value = defaultRecipe.time % 60;
-        time.value = defaultRecipe.time;
-        mealType.value = defaultRecipe.type;
-        difficulty.value = defaultRecipe.difficulty;
-        ingredients.value = [];
-        for (const ingredient of defaultRecipe.ingredients as ingredientsDB[]) {
-            const newIngredient = getEmptyIngredient();
-            newIngredient.ingredient.value.value = ingredient.ingredient;
-            newIngredient.unit.value.value = ingredient.unit;
-            newIngredient.amount.value.value = ingredient.amount;
-            newIngredient.category.value.value = ingredient.category;
-            newIngredient.id = ingredient.id;
-            newIngredient.defaultID = false;
+if (props.editRecipe) {
+    const editRecipe = props.editRecipe;
+    recipe.value = editRecipe.recipe;
+    description.value = editRecipe.description;
+    hours.value = Math.floor(editRecipe.time / 60);
+    minutes.value = editRecipe.time % 60;
+    time.value = editRecipe.time;
+    mealType.value = editRecipe.type;
+    difficulty.value = editRecipe.difficulty;
+    ingredients.value = [];
+    for (const ingredient of editRecipe.ingredients as ingredientsDB[]) {
+        const newIngredient = getEmptyIngredient();
+        newIngredient.ingredient.value.value = ingredient.ingredient;
+        newIngredient.unit.value.value = ingredient.unit;
+        newIngredient.amount.value.value = ingredient.amount;
+        newIngredient.category.value.value = ingredient.category;
+        newIngredient.id = ingredient.id;
+        newIngredient.defaultID = false;
 
-            ingredients.value.push(newIngredient);
-        }
-    } else {
-        setTimeout(async () => {
-            toast.add({
-                severity: "error",
-                detail: `Recipe with ID '${props.recipeId}' doesn't exist.`,
-                life: 3000,
-            });
-            await navigateTo("/recipes/add");
-        }, 100);
+        ingredients.value.push(newIngredient);
     }
 }
 
@@ -363,13 +351,13 @@ async function save() {
         };
 
         let res: any;
-        if (!props.recipeId) {
+        if (!props.editRecipe) {
             res = await useFetch("/api/recipes", {
                 method: "post",
                 body: sendRecipe,
             });
         } else {
-            res = await useFetch(`/api/recipes/${props.recipeId}`, {
+            res = await useFetch(`/api/recipes/${props.editRecipe.id}`, {
                 method: "post",
                 body: sendRecipe,
             });
