@@ -1,4 +1,5 @@
 <template>
+  <Button v-if="user === recipy.user" icon="pi pi-upload" severity="success" label="Edit recipe" @click="() => navigateTo(`/recipes/${id}/edit`)"></Button>
   <div class="card">
     <Steps :model="items" :readonly="false" />
   </div>
@@ -136,6 +137,9 @@
 
 <script setup>
 import { ref } from "vue";
+
+const { data } = useAuth()
+const user = data.value?.user?.id ?? ""
 
 const value = ref(3); //score of recipy still needs to be added in the database
 const route = useRoute();
