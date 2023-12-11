@@ -1,0 +1,1 @@
+ALTER TABLE `liked comments` RENAME COLUMN `dislike?` TO `dislike`;

@@ -1,0 +1,1 @@
+ALTER TABLE liked comments ADD `dislike?` text;

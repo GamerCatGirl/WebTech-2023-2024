@@ -13,7 +13,7 @@
 
 			<!-- TODO: add user possibility to rate -->
 			<div class="flex flex-wrap gap-2">
-				<Rating v-model="value" />
+				<Rating v-model="valueRating" />
 				<Button label="Rate" icon="pi pi-check" size="small" rounded />
 			</div>
 		</template>
@@ -48,10 +48,10 @@
 					<Divider layout="vertical" class="hidden md:flex"><b></b></Divider>
 					<Divider layout="horizontal" class="flex md:hidden" align="center"><b></b></Divider>
 				</div>
-				<div>
+				<div class="align-content-end align-items-end">
 					<p>Share Recipe</p>
 
-					<div class="flex-column flex align-items-center justify-content-center gap-2">
+					<div class="flex-column flex align-items-center justify-content-end gap-2">
 						<SocialShare v-for="network in [
 							'facebook',
 							'twitter',
@@ -141,11 +141,12 @@
 
 <script setup>
 import { ref } from "vue";
-
+const {data} = useAuth();
 const value = ref(3); //score of recipy still needs to be added in the database
+const valueRating = ref();
 const route = useRoute();
 const id = route.params.id;
-const loggedInUser = 2;
+const loggedInUser = 2; //data.id // TODO: make this work with the logged in user 
 const comboRouting = "&";
 const splitedId = id.split(comboRouting);
 const recipyID = splitedId[1];
@@ -157,13 +158,22 @@ const comments = ref(recipy.comments);
 
 async function like(comment) {
 	let amount = 1;
+	let commentPost = {
+		       LikeAmount: 0,
+		       userThatLiked: loggedInUser,
+		       dislike: false,
+		       changeLike: false,
+		       cancel: false,
+		       }
 
-	if (comment.severityLike == "success") {
+	if (comment.severityLike == "success") { //cancel the like 
 		amount = -1;
+		commentPost.cancel = true;
 	}
-	if (comment.severityDislike == "danger") {
+	if (comment.severityDislike == "danger") { //change from dislike to like 
 		amount = 2;
 		comment.severityDislike = "";
+		commentPost.changeLike = true;
 	}
 	let idOfComment = comment.id;
 	let newLikeAmount = Number(comment.likes) + amount;
@@ -174,25 +184,35 @@ async function like(comment) {
 		comment.severityLike = "";
 	}
 
-	console.log("like :)");
+
+	commentPost.LikeAmount = newLikeAmount;
+
 	await $fetch(`/api/comments/${idOfComment}`, {
 		method: "put",
-		body: newLikeAmount,
+		body: commentPost,
 	});
 }
 
 async function dislike(comment) {
 	let amount = -1;
+	let commentPost = {
+		       LikeAmount: 0,
+		       userThatLiked: loggedInUser,
+		       dislike: true,
+		       changeLike: false,
+		       cancel: false,
+		       }
 
-	if (comment.severityDislike == "danger") {
+	if (comment.severityDislike == "danger") { //cancel the dislike
 		amount = 1;
 		comment.severityDislike = "";
+		commentPost.cancel = true;
 	}
 
-	console.log(comment.severityLike);
-	if (comment.severityLike == "success") {
+	if (comment.severityLike == "success") { //from like to dislike 
 		amount = -2;
 		comment.severityLike = "";
+		commentPost.changeLike = true;
 	}
 
 	let idOfComment = comment.id;
@@ -203,11 +223,13 @@ async function dislike(comment) {
 	if (amount == 1) {
 		comment.severityDislike = "";
 	}
+	
+	commentPost.LikeAmount = newLikeAmount;
 
 	console.log("like :)");
 	await $fetch(`/api/comments/${idOfComment}`, {
 		method: "put",
-		body: newLikeAmount,
+		body: commentPost,
 	});
 }
 
@@ -355,7 +377,6 @@ async function comment() {
 	comments.value.unshift(commentData);
 
 	//TODO: clear the input bar
-	//return "hallo";
 }
 
 //const recipyName
