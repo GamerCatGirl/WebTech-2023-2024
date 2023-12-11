@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     if (!session.user)
         throw createError({ statusCode: 401, statusMessage: "You need to be logged in to create new recipes." });
 
-    const body = await readBody(event); // await readValidatedBody(event, (data) => parse(insertRecipeSchema, data));
+    const body = await readBody(event);
     let recipe: InsertRecipe;
     let insertIngredients: InsertIngredients[] = [];
     try {
