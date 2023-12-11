@@ -198,6 +198,7 @@
                                     v-bind="item.unit.attributes"
                                     :class="{ 'p-invalid': item.errors.unit }"
                                     :options="units"
+                                    :option-label="(unit: Unit) => unitNames[unit]"
                                     class="w-full md:w-14rem"
                                     name="unit"
                                 />
