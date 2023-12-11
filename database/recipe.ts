@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView, real, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { maxValue, minLength, number, string, toTrimmed, undefined_, minValue, custom } from "valibot";
+import { minLength, number, string, toTrimmed, undefined_, minValue, enum_ } from "valibot";
 import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
@@ -57,7 +57,7 @@ export const recipes = sqliteTable("recipe", {
     time: integer("time").notNull(),
     type: text("type", { enum: mealsTuple }).notNull(),
     difficulty: text("difficulty", { enum: dificultyTuple }).notNull(),
-    score: real("score").notNull(),
+    score: real("score").notNull().default(0),
     createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()),
 });
 
@@ -79,12 +79,8 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
     time: number("Please specify the required time.", [minValue(1)]),
     user: undefined_("No user should be specified."),
     thumbnail: string("Please specify a thumbnail."),
-    type: string("Please specify the type of meal.", [
-        custom((input) => meals.includes(input), "Please select a valid meal type."),
-    ]),
-    difficulty: string("Please specify how difficult this recipy is to make.", [
-        custom((input) => difficulty.includes(input), "Please select a valid difficulty."),
-    ]),
+    type: enum_(Meal, "Please select a valid meal type."),
+    difficulty: enum_(Difficulty, "Please select a valid difficulty."),
     score: undefined_("Score should not be specified."),
     createdAt: undefined_("Creation date should not be specified."),
 });

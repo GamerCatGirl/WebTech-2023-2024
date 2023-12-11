@@ -305,14 +305,23 @@ async function save() {
         if (validated.valid) validated = val;
     }
 
-    if (validated.valid) {
+    if (validated.valid || true) {
         if (!props.recipeId) {
+            const sendIngredients = ingredients.value.map((ingredient) => {
+                return {
+                    ingredient: ingredient.ingredient.value,
+                    amount: ingredient.amount.value,
+                    unit: ingredient.unit.value,
+                    category: ingredient.category.value,
+                };
+            });
             const res = await useFetch("/api/recipes", {
                 method: "post",
                 body: {
                     id: props.recipeId,
                     name: name.value,
                     location: "TODO",
+                    ingredients: sendIngredients,
                     description: description.value,
                     recipe: recipe.value,
                     thumbnail: thumbnail.value,
@@ -321,7 +330,10 @@ async function save() {
                     difficulty: difficulty.value,
                 },
             });
-            if (res.status.value === "error" && res.error.value?.statusCode === 400) {
+            let id: string;
+            if (res.status.value === "success") {
+                id = res.data.value;
+            } else if (res.status.value === "error") {
                 toast.add({
                     severity: "error",
                     detail: res.error.value?.data.message,
@@ -329,8 +341,8 @@ async function save() {
                 });
                 return;
             }
+            toast.add({ severity: "success", detail: "Successfully saved the recipe.", life: 3000 });
         }
-        toast.add({ severity: "success", detail: "Successfully saved the recipe.", life: 3000 });
     } else {
         const firstError = Object.keys(validated.errors)[0];
         const el = document.querySelector(`[name="${firstError}"]`);
