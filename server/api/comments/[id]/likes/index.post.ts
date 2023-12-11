@@ -1,6 +1,6 @@
 import { likedComments, InsertLikedComments } from "~/database/auth"; 
 
-export defaultEventHandler(async (event) => {
+export default defineEventHandler(async (event) => {
 	const putLikedComment = async (likedComment: InsertLikedComments) => {
 		return database.insert(likedComments).values(likedComment);};
 		const commentToPost = await readBody(event);

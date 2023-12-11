@@ -1,6 +1,6 @@
 -- Custom SQL migration file, put you code below! --
     -- Create virtual table to allow for a full text search
-CREATE VIRTUAL TABLE IF NOT EXISTS recipe_fts USING fts5(id UNINDEXED, name, description, tokenize=porter, content=recipe, content_rowid=id);
+CREATE VIRTUAL TABLE IF NOT EXISTS recipe_fts USING fts5(id UNINDEXED, name, description, tokenize=porter);
 --> statement-breakpoint
 
 -- Create triggers to keep the virtual table in sync with the first table

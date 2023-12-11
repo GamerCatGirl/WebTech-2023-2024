@@ -6,26 +6,15 @@ import {
 } from "~/composables/recipes";
 
 //selectors data
-export const meals = Object.values(Meal);
-export const difficulties = Object.values(Difficulty);
 
-export const ingredients = ref([
-	{ name: "Vegtable" },
-	{ name: "Meat" },
-	{ name: "Fish" },
-]);
 
-export const amountTypes = ref([
-	{ name: "Pieces" },
-	{ name: "grams" },
-	{ name: "ml" },
-]);
+export const amountTypes = ref(["Pieces", "grams", "ml"]);
 
 //buttons
 
 //inputs for recipy
 export const inputRecipeName = ref();
-export const image = ref("../placeholder.svg");
+export const image = ref("/placeholder.svg");
 export const inputThumbnail = ref();
 export const inputTime = ref();
 export const selectedTypes = ref();
@@ -61,7 +50,7 @@ function newDummy() {
 	};
 }
 
-export const inputsIngredients = ref([newDummy()]);
+export const inputsIngredients = ref([]);
 
 export function addRowIngredients() {
 	amountAdded += 1;
@@ -90,7 +79,7 @@ export function deleteRowIngredients(idString, toast) {
 //reset values
 export function resetVariables() {
 	inputRecipeName.value = null;
-	image.value = "../placeholder.svg";
+	image.value = "/placeholder.svg";
 	inputThumbnail.value = null;
 	inputTime.value = null;
 	selectedTypes.value = null;
@@ -238,40 +227,44 @@ async function saveIngredients(toast) {
 	});
 }
 
+/**
+ * Saves the data
+ *
+ * @async
+ * @returns {Promise<boolean>} Whether or not the saving was succesful
+ */
 async function saveData(toast) {
 	let newRecipe = {
 		name: inputRecipeName.value,
 		location: null,
-		description: inputDescription.value,
-		user: userID,
-		thumbnail: inputThumbnail.value,
+		recipe: inputDescription.value,
+		description: inputThumbnail.value,
+		thumbnail: image.value,
 		time: inputTime.value,
 		type: selectedTypes.value,
 		difficulty: selectedDifficulties.value,
 		score: null,
 	};
 
-	await $fetch("/api/recipes", {
+	const res = await useFetch("/api/recipes", {
 		method: "post",
 		body: newRecipe,
 	});
+	if (res.status.value === "error" && res.error.value?.statusCode === 400) {
+		toast.add({
+			severity: "error",
+			detail: res.error.value?.data.message,
+			life: 3000,
+		});
+	 	return false
+	}
 
 	//so we can acces recipe
 	await getRecipe();
 
-	// TODO: put image
-	let newImage = {
-		url: image.value,
-		recipe: recipe.id,
-	};
-
-	await $fetch("/api/images", {
-		method: "post",
-		body: newImage,
-	});
-
 	// TODO: put Ingredients
 	saveIngredients(toast);
+	return true
 }
 
 export async function save(toast) {
@@ -280,7 +273,7 @@ export async function save(toast) {
 		errorFillInRecipeName(toast);
 	} //recipy name empty
 	else if (recipe === null) {
-		await saveData(toast);
+		if (!await saveData(toast)) return
 
 		toast.add({
 			severity: "success",

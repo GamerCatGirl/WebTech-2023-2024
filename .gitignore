@@ -23,3 +23,6 @@ logs
 uploaded/*
 
 todo.txt
+
+# user-generated images
+public/images/*

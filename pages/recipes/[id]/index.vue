@@ -19,6 +19,16 @@
 		</template>
 		<template #content>
 		
+      <!--Insert a picture-->
+      <div class="card flex">
+        <Image
+	  @click="console.log(recipy.thumbnail)"
+          class="imageCard"
+          :src="recipy.thumbnail"
+          alt="Image"
+          width="auto"
+        />
+      </div>
 
 			<div class="flex flex-column md:flex-row">
 				<div
@@ -30,11 +40,6 @@
 						:severity="getColorDifficulty(recipy.difficulty)"></Tag>
 						<Tag icon="pi pi-clock" :value="recipy.time" :severity="getSeverity(recipy.time)"
 						rounded></Tag>
-					</div>
-					<!--Insert a picture-->
-					<div class="card flex">
-						<Image @click="console.log(recipy.images[0].url)" class="imageCard"
-						:src="recipy.images[0]" alt="Image" width="auto" />
 					</div>
 
 					<p class="m-0">Made by @Silken</p>

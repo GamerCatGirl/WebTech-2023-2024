@@ -1,6 +1,7 @@
-import { eq, sql, and, or, SQL } from "drizzle-orm";
+import { eq, sql, and, or, asc, desc, SQL } from "drizzle-orm";
 import { SQLiteColumn } from "drizzle-orm/sqlite-core";
 import { recipes, recipeFts, users } from "@/database/schema";
+const recipesColumns = Object.values(recipes).map((object) => object.name);
 
 function testArray(object: any, column: SQLiteColumn<any>) {
     if (Array.isArray(object)) {
@@ -15,6 +16,10 @@ export default defineEventHandler((event) => {
     const queryParams = getSeachVars(query);
     const pageSize = queryParams.pageSize;
     const page = queryParams.page;
+
+    if (query.sortOn && query.sort && !recipesColumns.includes(query.sortOn as string))
+        throw createError({ statusCode: 400, statusMessage: "`sortOn` is not a column of recipes" });
+    const sortFunction = parseInt(query.sort as string) === 1 ? asc : desc;
 
     if (queryParams.query || query.mealType || query.difficulty || query.user) {
         const search = queryParams.query;
@@ -39,32 +44,32 @@ export default defineEventHandler((event) => {
             .where(search ? sql`recipe_fts MATCH ${search}` : undefined)
             .orderBy(sql`bm25(recipe_fts, 0, 2, 1)`)
             .as("sub");
-        return (
-            database
-                // @ts-ignore
-                .select({
-                    ...recipes,
-                    name: sub.name,
-                    description: sub.description,
-                    userName: users.name,
-                    totalAmount: sql<number>`COUNT(*) OVER()`,
-                })
-                .from(sub)
-                .where(and(...conditions))
-                .limit(pageSize)
-                .offset(pageSize * page)
-                .leftJoin(recipes, eq(recipes.id, sub.id))
-                .leftJoin(users, eq(recipes.user, users.id))
-        );
+        const dbQuery = database
+            // @ts-ignore
+            .select({
+                ...recipes,
+                name: sub.name,
+                description: sub.description,
+                userName: users.name,
+                totalAmount: sql<number>`COUNT(*) OVER()`,
+            })
+            .from(sub)
+            .where(and(...conditions))
+            .limit(pageSize)
+            .offset(pageSize * page)
+            .leftJoin(recipes, eq(recipes.id, sub.id))
+            .leftJoin(users, eq(recipes.user, users.id));
+        if (query.sortOn && query.sort) dbQuery.orderBy(sortFunction(recipes[query.sortOn.valueOf() as string]));
+        return dbQuery;
     } else {
-        return (
-            database
-                // @ts-ignore
-                .select({ ...recipes, userName: users.name, totalAmount: sql<number>`COUNT(*) OVER()` })
-                .from(recipes)
-                .limit(pageSize)
-                .offset(pageSize * page)
-                .leftJoin(users, eq(recipes.user, users.id))
-        );
+        const dbQuery = database
+            // @ts-ignore
+            .select({ ...recipes, userName: users.name, totalAmount: sql<number>`COUNT(*) OVER()` })
+            .from(recipes)
+            .limit(pageSize)
+            .offset(pageSize * page)
+            .leftJoin(users, eq(recipes.user, users.id));
+        if (query.sortOn && query.sort) dbQuery.orderBy(sortFunction(recipes[query.sortOn.valueOf() as string]));
+        return dbQuery;
     }
 });
