@@ -76,7 +76,7 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
         minLength(10, "Your description should be at least 10 characters long."),
     ]),
     recipe: string("Please add your recipe.", [toTrimmed(), minLength(50, "Your recipe is not long enough.")]),
-    time: number("Please specify the required time.", [minValue(1)]),
+    time: number("Please specify the required time.", [minValue(1, "Please specify the required time.")]),
     user: undefined_("No user should be specified."),
     thumbnail: string("Please specify a thumbnail."),
     type: enum_(Meal, "Please select a valid meal type."),

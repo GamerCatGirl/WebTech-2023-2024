@@ -1,16 +1,8 @@
 <template>
-	This is edit page, needs to be adjusted from the add
-	<edit/>
+    <RecipeEdit :recipe-id="id" />
 </template>
 
 <script setup>
-inputRecipeName.value = "";
-
-console.log(inputRecipeName)
-const id = 1;
-//recipyName.value = "Tiramisu";
-
-fetch("Tiramisu");
-
-
+const route = useRoute();
+const id = route.params.id;
 </script>

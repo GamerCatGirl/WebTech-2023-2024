@@ -146,7 +146,7 @@
                         <Button
                             icon="pi pi-plus"
                             label="Add ingredient"
-                            @click="() => ingredients.push(getEmptyRecipe())"
+                            @click="() => ingredients.push(getEmptyIngredient())"
                         />
                         <Button
                             icon="pi pi-times"
@@ -233,7 +233,7 @@ import { toTypedSchema } from "@vee-validate/valibot";
 import { configure, useForm } from "vee-validate";
 import { useToast } from "primevue/usetoast";
 import { insertRecipeSchema } from "~/database/recipe";
-import { insertIngredientSchema } from "~/database/ingredients";
+import { insertIngredientSchema, ingredientsDB } from "~/database/ingredients";
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
 const units = [...Object.values(MassUnit), ...Object.values(VolumeUnit)];
@@ -256,21 +256,58 @@ configure({
     validateOnModelUpdate: false,
 });
 const { errors, defineField, validate } = useForm({ validationSchema: toTypedSchema(insertRecipeSchema) });
-const hours = ref();
-const minutes = ref();
+const hours = ref(0);
+const minutes = ref(0);
 const [name, nameAttrs] = defineField("name");
 const [recipe, recipeAttrs] = defineField("recipe");
 const [description, descriptionAttrs] = defineField("description");
 const [time, timeAttrs] = defineField("time");
 const [mealType, mealTypeAttrs] = defineField("type");
 const [difficulty, difficultyAttrs] = defineField("difficulty");
-watch([hours, minutes], () => (time.value = hours.value ?? 0 * 60 + minutes.value ?? 0), { deep: true });
+watch([hours, minutes], () => (time.value = (hours.value ?? 0) * 60 + (minutes.value ?? 0)), { deep: true });
 
+/** Temporary ID used as a data key in the orderlist */
 let id = 0;
-const ingredients = ref([getEmptyRecipe()]);
-// Temporary ID used as a data key in the orderlist
+const ingredients = ref([getEmptyIngredient()]);
 
-function getEmptyRecipe() {
+if (props.recipeId) {
+    const defaultRecipe = (await useFetch(`/api/recipes/${props.recipeId}`)).data.value;
+    if (defaultRecipe) {
+        name.value = defaultRecipe.name;
+        recipe.value = defaultRecipe.recipe;
+        description.value = defaultRecipe.description;
+        hours.value = Math.floor(defaultRecipe.time / 60);
+        minutes.value = defaultRecipe.time % 60;
+        time.value = defaultRecipe.time;
+        mealType.value = defaultRecipe.type;
+        difficulty.value = defaultRecipe.difficulty;
+        ingredients.value = [];
+        for (const ingredient of defaultRecipe.ingredients as ingredientsDB[]) {
+            const newIngredient = getEmptyIngredient();
+            newIngredient.ingredient.value.value = ingredient.ingredient;
+            newIngredient.unit.value.value = ingredient.unit;
+            newIngredient.amount.value.value = ingredient.amount;
+            newIngredient.category.value.value = ingredient.category;
+            newIngredient.id = ingredient.id;
+            newIngredient.defaultID = false;
+
+            ingredients.value.push(newIngredient);
+        }
+    } else {
+        setTimeout(() => {
+            toast.add({
+                severity: "error",
+                detail: `Recipe with ID '${props.recipeId}' doesn't exist.`,
+                life: 3000,
+            });
+        }, 100);
+        setTimeout(async () => {
+            await navigateTo("/recipes/add");
+        }, 4000);
+    }
+}
+
+function getEmptyIngredient() {
     const { errors, defineField, validate } = useForm({ validationSchema: toTypedSchema(insertIngredientSchema) });
 
     const [ingredient, ingredientAttrs] = defineField("ingredient");
@@ -281,7 +318,9 @@ function getEmptyRecipe() {
     return {
         errors,
         validate,
-        id: id++,
+        id: (id++).toString(),
+        /** Is this an ID that exists inside of the database, or assigned just to differentiate between ingredients inside the UI */
+        defaultID: true,
         ingredient: { value: ingredient, attributes: ingredientAttrs },
         amount: { value: amount, attributes: amountAttrs },
         unit: { value: unit, attributes: unitAttrs },
@@ -305,44 +344,52 @@ async function save() {
         if (validated.valid) validated = val;
     }
 
-    if (validated.valid || true) {
+    if (validated.valid) {
+        const sendIngredients = ingredients.value.map((ingredient) => {
+            return {
+                id: ingredient.defaultID ? undefined : ingredient.id,
+                ingredient: ingredient.ingredient.value,
+                amount: ingredient.amount.value,
+                unit: ingredient.unit.value,
+                category: ingredient.category.value,
+            };
+        });
+        const sendRecipe = {
+            name: name.value,
+            location: "TODO",
+            ingredients: sendIngredients,
+            description: description.value,
+            recipe: recipe.value,
+            thumbnail: thumbnail.value,
+            time: time.value,
+            type: mealType.value,
+            difficulty: difficulty.value,
+        };
+
+        let res: any;
         if (!props.recipeId) {
-            const sendIngredients = ingredients.value.map((ingredient) => {
-                return {
-                    ingredient: ingredient.ingredient.value,
-                    amount: ingredient.amount.value,
-                    unit: ingredient.unit.value,
-                    category: ingredient.category.value,
-                };
-            });
-            const res = await useFetch("/api/recipes", {
+            res = await useFetch("/api/recipes", {
                 method: "post",
-                body: {
-                    id: props.recipeId,
-                    name: name.value,
-                    location: "TODO",
-                    ingredients: sendIngredients,
-                    description: description.value,
-                    recipe: recipe.value,
-                    thumbnail: thumbnail.value,
-                    time: time.value,
-                    type: mealType.value,
-                    difficulty: difficulty.value,
-                },
+                body: sendRecipe,
             });
-            let id: string;
-            if (res.status.value === "success") {
-                id = res.data.value;
-            } else if (res.status.value === "error") {
-                toast.add({
-                    severity: "error",
-                    detail: res.error.value?.data.message,
-                    life: 3000,
-                });
-                return;
-            }
-            toast.add({ severity: "success", detail: "Successfully saved the recipe.", life: 3000 });
+        } else {
+            res = await useFetch(`/api/recipes/${props.recipeId}`, {
+                method: "post",
+                body: sendRecipe,
+            });
         }
+        let id: string;
+        if (res.status.value === "success") {
+            id = res.data.value;
+        } else if (res.status.value === "error") {
+            toast.add({
+                severity: "error",
+                detail: res.error.value?.data.message,
+                life: 3000,
+            });
+            return;
+        }
+        toast.add({ severity: "success", detail: "Successfully saved the recipe.", life: 3000 });
     } else {
         const firstError = Object.keys(validated.errors)[0];
         const el = document.querySelector(`[name="${firstError}"]`);
@@ -432,5 +479,9 @@ const onUpload = (event: any) => {
 
 .p-image {
     border: 1px solid grey;
+}
+
+.card {
+    margin-top: 20px;
 }
 </style>
