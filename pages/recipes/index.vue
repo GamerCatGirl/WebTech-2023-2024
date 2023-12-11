@@ -20,8 +20,8 @@ const route = useRoute();
 const queryParams = route.query;
 const query = (queryParams.query?.valueOf() as string) || "";
 const page = parseInt(queryParams.page?.valueOf() as string) || 0;
-const mealTypes = getParamArray(queryParams.mealType) as Meal[];
-const mealDifficulties = getParamArray(queryParams.mealDifficulty) as Difficulty[];
+const mealTypes = getParamArray(queryParams.type) as Meal[];
+const mealDifficulties = getParamArray(queryParams.difficulty) as Difficulty[];
 
 /** Change the URL to reflect the state of the `recipesList` */
 function updateQueryParams(queryParams: LocationQuery) {
