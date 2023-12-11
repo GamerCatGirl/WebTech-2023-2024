@@ -141,14 +141,17 @@ import { ref } from "vue";
 const { data } = useAuth()
 const user = data.value?.user?.id ?? ""
 
-const value = ref(3); //score of recipy still needs to be added in the database
+const value = ref(3); // score of recipy still needs to be added in the database
 const route = useRoute();
 const id = route.params.id;
-const comboRouting = "&";
-const splitedId = id.split(comboRouting);
-const recipyID = splitedId[1];
 
-const recipy = await $fetch(`/api/recipes/${id}`);
+const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
+if (!recipy)
+	showError({
+	  statusCode: 404,
+	  statusMessage: "This recipe does not exist."
+	})
+
 const recipyScore = ref(Number(recipy.score));
 
 const comments = ref(recipy.comments);
