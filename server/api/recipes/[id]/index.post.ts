@@ -7,9 +7,9 @@ import { getServerSession } from "#auth";
 export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
     // Make sure the user is authenticated
-    if (!session) throw createError({ statusCode: 401, statusMessage: "You need to be logged in to create new recipes." });
+    if (!session) throw createError({ statusCode: 401, statusMessage: "You need to be logged in to update recipes." });
     if (!session.user)
-        throw createError({ statusCode: 401, statusMessage: "You need to be logged in to create new recipes." });
+        throw createError({ statusCode: 401, statusMessage: "You need to be logged in to update recipes." });
 
     // Make sure that the ID exists
     if (!event.context.params) throw createError({ statusCode: 400, statusMessage: "ID is not defined" });
