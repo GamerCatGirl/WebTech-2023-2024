@@ -159,4 +159,9 @@ a {
 :deep(.p-menubar-end) {
     display: flex;
 }
+
+:deep(.avatarButton .p-ink),
+:deep(.avatarButton .p-ink-active) {
+    display: none;
+}
 </style>

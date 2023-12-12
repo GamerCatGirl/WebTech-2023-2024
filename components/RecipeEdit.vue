@@ -197,6 +197,7 @@
                                     v-model="item.amount.value"
                                     name="amount"
                                     v-bind="item.amount.attributes"
+                                    show-buttons
                                     :max-fraction-digits="2"
                                     :min="0"
                                     :class="{ 'p-invalid': item.errors.amount }"
@@ -505,5 +506,15 @@ const onUpload = (event: any) => {
 
 .card {
     margin-top: 20px;
+}
+
+:deep(.p-orderlist-item .p-ink),
+:deep(.p-orderlist-item .p-ink-active) {
+    display: none;
+}
+
+:deep(.p-orderlist-item > * .p-ink),
+:deep(.p-orderlist-item > * .p-ink-active) {
+    display: initial;
 }
 </style>
