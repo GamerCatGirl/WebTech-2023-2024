@@ -392,17 +392,18 @@ async function save() {
                 method: "post",
                 body: sendRecipe,
             });
+            let id: string;
+            if (res.status.value === "success") {
+                id = res.data.value;
+                await navigateTo(`/recipes/${id}/edit`);
+            }
         } else {
             res = await useFetch(`/api/recipes/${props.editRecipe.id}`, {
                 method: "post",
                 body: sendRecipe,
             });
         }
-        let id: string;
-        if (res.status.value === "success") {
-            id = res.data.value;
-            await navigateTo(`/recipes/${id}/edit`);
-        } else if (res.status.value === "error") {
+        if (res.status.value === "error") {
             toast.add({
                 severity: "error",
                 detail: res.error.value?.data.message,
