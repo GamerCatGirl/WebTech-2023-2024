@@ -378,6 +378,7 @@ async function save() {
         let id: string;
         if (res.status.value === "success") {
             id = res.data.value;
+            await navigateTo(`/recipes/${id}/edit`);
         } else if (res.status.value === "error") {
             toast.add({
                 severity: "error",
