@@ -18,6 +18,13 @@
             </template>
             <template #end>
                 <Button label="Save" icon="pi pi-check" class="mr-2" @click="() => save()" />
+                <Button
+                    v-if="editRecipe"
+                    label="Show recipe"
+                    severity="success"
+                    class="mr-2"
+                    @click="() => navigateTo(`/recipes/${editRecipe?.id}`)"
+                />
                 <Button label="Delete" icon="pi pi-times" severity="danger" class="mr-2" />
                 <!-- TODO: Warn user when leaving the page before saving -->
             </template>
@@ -341,7 +348,7 @@ async function save() {
                 amount: ingredient.amount.value,
                 unit: ingredient.unit.value,
                 category: ingredient.category.value,
-                index: index,
+                index,
             };
         });
         const sendRecipe = {
