@@ -1,5 +1,5 @@
 <template>
-  <Button v-if="user === recipy.user" icon="pi pi-upload" severity="success" label="Edit recipe" @click="() => navigateTo(`/recipes/${id}/edit`)"></Button>
+  <Button v-if="user === recipy.user" icon="pi pi-file-edit" severity="success" label="Edit recipe" @click="() => navigateTo(`/recipes/${id}/edit`)"></Button>
   <div class="card">
     <Steps :model="items" :readonly="false" />
   </div>
