@@ -9,7 +9,7 @@ export default defineEventHandler((event) => {
     return database.query.recipes.findFirst({
         where: (recipe, { eq }) => eq(recipe.id, id),
         with: {
-            ingredients: true,
+            ingredients: { orderBy: ({ index }, { asc }) => [asc(index)] },
             comments: {
                 where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
                 with: { user: { columns: { id: true, name: true } } },

@@ -271,6 +271,8 @@ const ingredients = ref([getEmptyIngredient()]);
 
 if (props.editRecipe) {
     const editRecipe = props.editRecipe;
+    console.log(editRecipe);
+    name.value = editRecipe.name;
     recipe.value = editRecipe.recipe;
     description.value = editRecipe.description;
     hours.value = Math.floor(editRecipe.time / 60);
@@ -299,6 +301,8 @@ function getEmptyIngredient() {
     const [amount, amountAttrs] = defineField("amount");
     const [unit, unitAttrs] = defineField("unit");
     const [category, categoryAttrs] = defineField("category");
+    const [index] = defineField("index");
+    index.value = 0;
 
     return {
         errors,
@@ -330,13 +334,14 @@ async function save() {
     }
 
     if (validated.valid) {
-        const sendIngredients = ingredients.value.map((ingredient) => {
+        const sendIngredients = ingredients.value.map((ingredient, index) => {
             return {
                 id: ingredient.defaultID ? undefined : ingredient.id,
                 ingredient: ingredient.ingredient.value,
                 amount: ingredient.amount.value,
                 unit: ingredient.unit.value,
                 category: ingredient.category.value,
+                index: index,
             };
         });
         const sendRecipe = {
