@@ -45,6 +45,8 @@ const props = withDefaults(
         initialMealTypes?: Meal[];
         /** the difficulties on which to filter */
         initialMealDifficulties?: Difficulty[];
+        /** Whether or not to hide the username on the recipes */
+        hideUsername?: boolean;
     }>(),
     {
         highlightMatches: false,
@@ -160,27 +162,10 @@ function sort(event: { originalEvent: Event; value: any }) {
         sortKey.value = sortValue;
     }
 }
-
-const zoom = ref(6);
 </script>
 
 <template>
-    <div>
-        <div class="card flex justify-content-left">
-            <Button v-show="viewButton" label="View on map" icon="pi pi-compass" @click="viewOnMap()" />
-        </div>
-
-        <div v-if="map" style="height: 80vh; width: 50vw">
-            <LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]">
-                <LTileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-                    layer-type="base"
-                    name="OpenStreetMap"
-                />
-            </LMap>
-        </div>
-
+    <div class="recipesList">
         <div v-show="dataView">
             <DataView :value="recipes" :rows="pageSize" :layout="layout" data-key="1">
                 <template #header>
@@ -218,7 +203,11 @@ const zoom = ref(6);
                     </div>
                 </template>
                 <template #list="{ data: recipe }">
-                    <recipe-card :show-recipe="recipe" :highlight-matches="highlightMatches" />
+                    <recipe-card
+                        :show-recipe="recipe"
+                        :highlight-matches="highlightMatches"
+                        :hide-username="hideUsername"
+                    />
                 </template>
                 <template v-if="totalAmount > pageSize" #footer>
                     <Paginator
@@ -253,5 +242,13 @@ const zoom = ref(6);
 .notFound {
     text-align: center;
     font-size: 1.5rem;
+}
+
+.recipesList {
+    margin-top: 10px;
+    border-radius: 10px;
+    border-right: 1px solid var(--surface-100);
+    border-left: 1px solid var(--surface-100);
+    overflow: hidden;
 }
 </style>

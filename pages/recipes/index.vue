@@ -67,10 +67,10 @@ async function getRecipes(
 </script>
 <template>
     <recipes-list
+        highlight-matches
         :get-recipes="getRecipes"
-        :highlight-matches="true"
         :initial-query="query"
-        :initialpage="page"
+        :initial-page="page"
         :initial-meal-types="mealTypes"
         :initial-meal-difficulties="mealDifficulties"
         @query-parameters-changed="updateQueryParams"
