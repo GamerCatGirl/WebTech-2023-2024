@@ -252,20 +252,25 @@
       </OrderList>
     </TabPanel>
 
-    <!-- TODO: standard marker on current location met geolocation api -->
     <TabPanel header="Location">
-      <div style="--tab-index: 3"></div>
-      <div style="height: 80vh; width: 50vw">
-        <LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]">
+    <!-- TODO: implement buttons -->
+    <div class="flex gap-3">
+    <Button label="add marker" icon="pi pi-map" />
+    <Button label="Reset marker" icon="pi pi-history" @click="getLocation()" />
+    </div>
+      <!-- <div style="--tab-index: 3"></div> -->
+      <div style="height: 80vh; width: 90vw">
+        <LMap ref="map" :zoom="zoom" :center="marker">
           <LTileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
             layer-type="base"
             name="OpenStreetMap"
           />
-          <LMarker :lat-lng="[50, 50]"></LMarker>
+          <LMarker :lat-lng="marker"></LMarker>
         </LMap>
       </div>
+
     </TabPanel>
   </TabView>
 </template>
@@ -290,6 +295,8 @@ import {
 } from "@vue-leaflet/vue-leaflet";
 
 const zoom = ref(6);
+const marker = ref([0, 0]);
+//const map = ref();
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
 const units = [...Object.values(MassUnit), ...Object.values(VolumeUnit)];
@@ -370,6 +377,27 @@ if (props.recipeId) {
   }
 }
 
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    // TODO: add toast
+    // "Geolocation is not supported by this browser.";
+  }
+}
+
+getLocation();
+
+function onMapClick(e) {
+    alert("You clicked the map at " + e.latlng);
+}
+
+//map.on('click', onMapClick);
+
+function showPosition(position) {
+  marker.value = [position.coords.latitude, position.coords.longitude];
+}
+
 function getEmptyIngredient() {
   const { errors, defineField, validate } = useForm({
     validationSchema: toTypedSchema(insertIngredientSchema),
@@ -394,6 +422,9 @@ function getEmptyIngredient() {
 }
 
 async function save() {
+
+// TODO: add location from var marker.value to database 
+
   let validated = await validate();
   if (validated.valid && ingredients.value.length === 0) {
     toast.add({
