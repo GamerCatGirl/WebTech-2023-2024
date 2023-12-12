@@ -40,7 +40,7 @@ const props = withDefaults(
         /** The amount of recipes to display per page */
         pageSize?: number;
         /** The current page */
-        initalPage?: number;
+        initialPage?: number;
         /** The meals on which to filter */
         initialMealTypes?: Meal[];
         /** the difficulties on which to filter */
@@ -50,7 +50,7 @@ const props = withDefaults(
         highlightMatches: false,
         initialQuery: "",
         pageSize: 20,
-        initalPage: 0,
+        initialPage: 0,
         initialMealTypes: () => [],
         initialMealDifficulties: () => [],
     }
@@ -79,7 +79,7 @@ const input = ref("");
 const route = useRoute();
 const queryParams = route.query;
 const query = ref(props.initialQuery);
-const page = ref(props.initalPage);
+const page = ref(props.initialPage);
 const mealTypes = ref(props.initialMealTypes);
 const mealDifficulties = ref(props.initialMealDifficulties);
 const sortKey: Ref<sortOption | undefined> = ref(undefined);
@@ -218,8 +218,9 @@ const zoom = ref(6);
                 <template #list="{ data: recipe }">
                     <recipe-card :show-recipe="recipe" :highlight-matches="highlightMatches" />
                 </template>
-                <template #footer>
+                <template v-if="totalAmount > pageSize" #footer>
                     <Paginator
+                        :first="page * pageSize"
                         :always-show-paginator="false"
                         :rows="pageSize"
                         :total-records="totalAmount"
@@ -227,7 +228,7 @@ const zoom = ref(6);
                     />
                 </template>
             </DataView>
-            <p v-if="recipes?.length == 0">No recipes found</p>
+            <p v-if="totalAmount == 0" class="notFound">No recipes found</p>
         </div>
     </div>
 </template>
@@ -245,5 +246,10 @@ const zoom = ref(6);
 .p-multiselect {
     margin: 5px;
     margin-left: 0px;
+}
+
+.notFound {
+    text-align: center;
+    font-size: 1.5rem;
 }
 </style>
