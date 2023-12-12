@@ -29,7 +29,7 @@ function updateQueryParams(queryParams: LocationQuery) {
 }
 
 /** Get all the recipes that match the current search terms */
-function getRecipes(
+async function getRecipes(
     query: Ref<string>,
     page: Ref<number>,
     size: number,
@@ -37,8 +37,8 @@ function getRecipes(
     mealType: Ref<Meal[]>,
     sortOn: Ref<string>,
     sortOrder: Ref<number>
-): Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }> {
-    const { data } = useFetch("/api/recipes", {
+): Promise<Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>> {
+    const { data } = await useFetch("/api/recipes", {
         query: {
             query,
             page,
@@ -50,6 +50,8 @@ function getRecipes(
             highStart: "<b>",
             highEnd: "</b>",
         },
+        // A key is necessary here, because otherwise nuxt sends the request both on server-side and on client-side, resulting in a hydration mismatch
+        key: "recipes",
     });
     return computed(() => {
         return (

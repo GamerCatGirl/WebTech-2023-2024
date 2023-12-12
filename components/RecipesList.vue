@@ -27,7 +27,7 @@ const props = withDefaults(
             mealType: Ref<Meal[]>,
             sortOn: Ref<string>,
             sortOrder: Ref<number>
-        ) => Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>;
+        ) => Promise<Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>>;
         /**
          * Whether or not to highlight the matches that match the `query` parameter given to `getRecipes`.
          *
@@ -129,7 +129,7 @@ watch([mealDifficulties, mealTypes, page, sortKey], updateURL, { deep: true });
 
 const layout: Ref<"list" | "grid" | undefined> = ref("list");
 
-const data = props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes, sortField, sortOrder);
+const data = await props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes, sortField, sortOrder);
 /** The recipes that mach the current search and sort parameters */
 const recipes = computed(() => data.value.recipes);
 const totalAmount = computed(() => data.value.totalAmount);
