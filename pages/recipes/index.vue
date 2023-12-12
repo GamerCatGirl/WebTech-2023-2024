@@ -54,8 +54,10 @@ function getRecipes(
     return computed(() => {
         return (
             {
-                recipes: (data.value?.valueOf() as (Recipe & { userName: string; totalAmount: number })[]) || [],
-                totalAmount: ((data.value?.valueOf() || []) as (Recipe & { totalAmount: number })[])[0]?.totalAmount || 0,
+                recipes:
+                    (data.value?.valueOf() as { recipes: (Recipe & { userName: string })[]; totalAmount: number })
+                        ?.recipes || [],
+                totalAmount: (data.value?.valueOf() as { recipes: Recipe; totalAmount: number })?.totalAmount || 0,
             } ?? { recipes: [], totalAmount: 0 }
         );
     });
@@ -66,7 +68,7 @@ function getRecipes(
         :get-recipes="getRecipes"
         :highlight-matches="true"
         :initial-query="query"
-        :initial-page="page"
+        :initialpage="page"
         :initial-meal-types="mealTypes"
         :initial-meal-difficulties="mealDifficulties"
         @query-parameters-changed="updateQueryParams"
