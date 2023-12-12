@@ -25,7 +25,14 @@
                     class="mr-2"
                     @click="() => navigateTo(`/recipes/${editRecipe?.id}`)"
                 />
-                <Button label="Delete" icon="pi pi-times" severity="danger" class="mr-2" />
+                <Button
+                    v-if="editRecipe"
+                    label="Delete recipe"
+                    icon="pi pi-times"
+                    severity="danger"
+                    class="mr-2"
+                    @click="deleteRecipe"
+                />
                 <!-- TODO: Warn user when leaving the page before saving -->
             </template>
         </Toolbar>
@@ -157,7 +164,7 @@
                         <Button
                             icon="pi pi-times"
                             severity="danger"
-                            label="Delete recipe"
+                            label="Delete ingredient"
                             @click="
                                 () =>
                                     (ingredients = ingredients.filter(
@@ -255,6 +262,23 @@ const props = defineProps<{
     editRecipe?: Recipe;
 }>();
 
+async function deleteRecipe() {
+    if (!props.editRecipe) return;
+    const res = confirm("Are you sure you want to delete this recipe?");
+    if (res) {
+        const result = await useFetch(`/api/recipes/${props.editRecipe.id}/delete`, { method: "post" });
+        if (result.status.value === "success") {
+            toast.add({ severity: "success", detail: "Recipe was deleted", life: 3000 });
+            await navigateTo("/recipes");
+        } else if (result.status.value === "error")
+            toast.add({
+                severity: "error",
+                detail: result.error.value?.data.message,
+                life: 3000,
+            });
+    }
+}
+
 configure({
     validateOnBlur: false,
     validateOnChange: false,
@@ -278,7 +302,6 @@ const ingredients = ref([getEmptyIngredient()]);
 
 if (props.editRecipe) {
     const editRecipe = props.editRecipe;
-    console.log(editRecipe);
     name.value = editRecipe.name;
     recipe.value = editRecipe.recipe;
     description.value = editRecipe.description;
