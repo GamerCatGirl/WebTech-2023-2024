@@ -74,6 +74,7 @@ const ingredients = [
         amount: "500",
         unit: "gramms",
         category: "cheese",
+        index: 0,
     },
     {
         id: crypto.randomUUID(),
@@ -82,6 +83,7 @@ const ingredients = [
         amount: "3",
         unit: "Pieces",
         category: "Dairy",
+        index: 1,
     },
     {
         id: crypto.randomUUID(),
@@ -90,6 +92,7 @@ const ingredients = [
         amount: "150",
         unit: "gramms",
         category: "Dry Goods",
+        index: 2,
     },
     {
         id: crypto.randomUUID(),
@@ -98,6 +101,7 @@ const ingredients = [
         amount: "24",
         unit: "gramms",
         category: "Dry Goods",
+        index: 3,
     },
     {
         id: crypto.randomUUID(),
@@ -106,6 +110,7 @@ const ingredients = [
         amount: "2",
         unit: "Packs",
         category: "Dry Goods",
+        index: 4,
     },
     {
         id: crypto.randomUUID(),
@@ -114,6 +119,7 @@ const ingredients = [
         amount: "3",
         unit: "Cups",
         category: "Liquids",
+        index: 5,
     },
     {
         id: crypto.randomUUID(),
@@ -122,6 +128,7 @@ const ingredients = [
         amount: "40",
         unit: "ml",
         category: "Liquids",
+        index: 6,
     },
     {
         id: crypto.randomUUID(),
@@ -130,6 +137,7 @@ const ingredients = [
         amount: "/",
         unit: "/",
         category: "Dry Goods",
+        index: 6,
     },
 ];
 export const seedData = { users, recipes, ingredients };

@@ -1,5 +1,6 @@
 <template>
     <header>
+        <Toast />
         <div class="card">
             <Menubar :model="items">
                 <template #item="{ item, props, hasSubmenu }">
@@ -109,9 +110,8 @@ const accountItems = ref([
     {
         label: "Account",
         icon: "pi pi-user",
-        route: "/profile/username",
+        route: `/profile/${data.value?.user?.id}`,
     },
-    { label: "Settings", icon: "pi pi-cog" },
     { label: "Logout", icon: "pi pi-sign-out", command: () => signOut() },
 ]);
 </script>
@@ -158,5 +158,10 @@ a {
 
 :deep(.p-menubar-end) {
     display: flex;
+}
+
+:deep(.avatarButton .p-ink),
+:deep(.avatarButton .p-ink-active) {
+    display: none;
 }
 </style>

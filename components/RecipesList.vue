@@ -27,7 +27,7 @@ const props = withDefaults(
             mealType: Ref<Meal[]>,
             sortOn: Ref<string>,
             sortOrder: Ref<number>
-        ) => Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>;
+        ) => Promise<Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>>;
         /**
          * Whether or not to highlight the matches that match the `query` parameter given to `getRecipes`.
          *
@@ -40,17 +40,19 @@ const props = withDefaults(
         /** The amount of recipes to display per page */
         pageSize?: number;
         /** The current page */
-        initalPage?: number;
+        initialPage?: number;
         /** The meals on which to filter */
         initialMealTypes?: Meal[];
         /** the difficulties on which to filter */
         initialMealDifficulties?: Difficulty[];
+        /** Whether or not to hide the username on the recipes */
+        hideUsername?: boolean;
     }>(),
     {
         highlightMatches: false,
         initialQuery: "",
         pageSize: 20,
-        initalPage: 0,
+        initialPage: 0,
         initialMealTypes: () => [],
         initialMealDifficulties: () => [],
     }
@@ -79,7 +81,7 @@ const input = ref("");
 const route = useRoute();
 const queryParams = route.query;
 const query = ref(props.initialQuery);
-const page = ref(props.initalPage);
+const page = ref(props.initialPage);
 const mealTypes = ref(props.initialMealTypes);
 const mealDifficulties = ref(props.initialMealDifficulties);
 const sortKey: Ref<sortOption | undefined> = ref(undefined);
@@ -129,12 +131,14 @@ watch([mealDifficulties, mealTypes, page, sortKey], updateURL, { deep: true });
 
 const layout: Ref<"list" | "grid" | undefined> = ref("list");
 
-const data = props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes, sortField, sortOrder);
+const data = await props.getRecipes(query, page, props.pageSize, mealDifficulties, mealTypes, sortField, sortOrder);
 /** The recipes that mach the current search and sort parameters */
 const recipes = computed(() => data.value.recipes);
 const totalAmount = computed(() => data.value.totalAmount);
 const meals = Object.values(Meal);
 const difficulty = Object.values(Difficulty);
+
+watch(totalAmount, () => (page.value = Math.min(page.value, Math.ceil(totalAmount.value / props.pageSize) - 1)));
 
 const dataView = ref(true);
 const map = ref(false);
@@ -158,27 +162,10 @@ function sort(event: { originalEvent: Event; value: any }) {
         sortKey.value = sortValue;
     }
 }
-
-const zoom = ref(6);
 </script>
 
 <template>
-    <div>
-        <div class="card flex justify-content-left">
-            <Button v-show="viewButton" label="View on map" icon="pi pi-compass" @click="viewOnMap()" />
-        </div>
-
-        <div v-if="map" style="height: 80vh; width: 50vw">
-            <LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]">
-                <LTileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-                    layer-type="base"
-                    name="OpenStreetMap"
-                />
-            </LMap>
-        </div>
-
+    <div class="recipesList">
         <div v-show="dataView">
             <DataView :value="recipes" :rows="pageSize" :layout="layout" data-key="1">
                 <template #header>
@@ -216,10 +203,15 @@ const zoom = ref(6);
                     </div>
                 </template>
                 <template #list="{ data: recipe }">
-                    <recipe-card :show-recipe="recipe" :highlight-matches="highlightMatches" />
+                    <recipe-card
+                        :show-recipe="recipe"
+                        :highlight-matches="highlightMatches"
+                        :hide-username="hideUsername"
+                    />
                 </template>
-                <template #footer>
+                <template v-if="totalAmount > pageSize" #footer>
                     <Paginator
+                        :first="page * pageSize"
                         :always-show-paginator="false"
                         :rows="pageSize"
                         :total-records="totalAmount"
@@ -227,7 +219,7 @@ const zoom = ref(6);
                     />
                 </template>
             </DataView>
-            <p v-if="recipes?.length == 0">No recipes found</p>
+            <p v-if="totalAmount == 0" class="notFound">No recipes found</p>
         </div>
     </div>
 </template>
@@ -245,5 +237,18 @@ const zoom = ref(6);
 .p-multiselect {
     margin: 5px;
     margin-left: 0px;
+}
+
+.notFound {
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+.recipesList {
+    margin-top: 10px;
+    border-radius: 10px;
+    border-right: 1px solid var(--surface-100);
+    border-left: 1px solid var(--surface-100);
+    overflow: hidden;
 }
 </style>

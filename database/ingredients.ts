@@ -13,6 +13,7 @@ export const ingredients = sqliteTable("ingredients", {
     ingredient: text("ingredient").notNull(),
     amount: integer("amount").notNull(),
     unit: text("unit").notNull(),
+    index: integer("order").notNull(),
     category: text("category").notNull(),
 });
 
@@ -31,6 +32,7 @@ export const insertIngredientSchema = createInsertSchema(ingredients, {
         notValue(0, "Please specify an amount greater than 0."),
     ]),
     recipyId: undefined_("Don't specify the recipeID."),
+    index: number("Please specify the index of this ingredient", [minValue(0, "Please specify a postive index.")]),
     unit: string("Please specify the unit of your ingredient.", [minLength(1)]),
     category: string("Please specify the category of your ingredient.", [minLength(1)]),
 });

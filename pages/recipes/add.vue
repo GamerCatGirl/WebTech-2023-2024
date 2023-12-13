@@ -1,14 +1,7 @@
 <template>
-  <RecipeEdit />
+    <RecipeEdit />
 </template>
 
 <script>
-//imports
-import { resetVariables, idRecipe, userID, setUserID } from "~/composables/edit_add"
-
-
-//put all values to original values first
-resetVariables();
-setUserID(2);
-
+definePageMeta({ middleware: "auth", navigateUnauthenticatedTo: "/login?callbackUrl=/recipes/add" });
 </script>

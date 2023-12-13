@@ -11,6 +11,8 @@ const props = defineProps<{
      * If you are using `/api/recipes` as the api, you can set `highStart` to `<b>` and `highEnd` to `</b>` when sending the request, this will surround your matches with `b` tags automatically.
      */
     highlightMatches: boolean;
+    /** Whether or not to hide the username */
+    hideUsername?: boolean;
 }>();
 
 const visualRecipe = computed(() => {
@@ -47,7 +49,7 @@ const visualRecipe = computed(() => {
             />
             <Tag :value="visualRecipe.type" />
         </template>
-        <template v-if="visualRecipe.userName" #subtitle>
+        <template v-if="!hideUsername && visualRecipe.userName" #subtitle>
             Made by
             <NuxtLink :to="'/profile/' + visualRecipe.user">{{ visualRecipe.userName }}</NuxtLink>
         </template>

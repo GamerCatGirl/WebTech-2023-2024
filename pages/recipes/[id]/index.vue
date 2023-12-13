@@ -1,4 +1,5 @@
 <template>
+  <Button v-if="user === recipy.user" icon="pi pi-file-edit" severity="success" label="Edit recipe" @click="() => navigateTo(`/recipes/${id}/edit`)"></Button>
   <div class="card">
     <Steps :model="items" :readonly="false" />
   </div>
@@ -211,6 +212,7 @@
 <script setup>
 import { ref } from "vue";
 const { data } = useAuth();
+const user = data.value?.user?.id ?? ""
 const value = ref(3); //score of recipy still needs to be added in the database
 const valueRating = ref();
 const route = useRoute();
@@ -221,7 +223,13 @@ const splitedId = id.split(comboRouting);
 const recipyID = splitedId[1];
 const tabIndex = ref();
 
-const recipy = await $fetch(`/api/recipes/${id}`);
+const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
+if (!recipy)
+	showError({
+	  statusCode: 404,
+	  statusMessage: "This recipe does not exist."
+	})
+
 const recipyScore = ref(Number(recipy.score));
 
 const comments = ref(recipy.comments);

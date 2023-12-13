@@ -1,5 +1,4 @@
 <template>
-    <Toast />
     <div class="card">
         <Toolbar>
             <template #start>
@@ -19,7 +18,21 @@
             </template>
             <template #end>
                 <Button label="Save" icon="pi pi-check" class="mr-2" @click="() => save()" />
-                <Button label="Delete" icon="pi pi-times" severity="danger" class="mr-2" />
+                <Button
+                    v-if="editRecipe"
+                    label="Show recipe"
+                    severity="success"
+                    class="mr-2"
+                    @click="() => navigateTo(`/recipes/${editRecipe?.id}`)"
+                />
+                <Button
+                    v-if="editRecipe"
+                    label="Delete recipe"
+                    icon="pi pi-times"
+                    severity="danger"
+                    class="mr-2"
+                    @click="deleteRecipe"
+                />
                 <!-- TODO: Warn user when leaving the page before saving -->
             </template>
         </Toolbar>
@@ -151,7 +164,7 @@
                         <Button
                             icon="pi pi-times"
                             severity="danger"
-                            label="Delete recipe"
+                            label="Delete ingredient"
                             @click="
                                 () =>
                                     (ingredients = ingredients.filter(
@@ -184,6 +197,7 @@
                                     v-model="item.amount.value"
                                     name="amount"
                                     v-bind="item.amount.attributes"
+                                    show-buttons
                                     :max-fraction-digits="2"
                                     :min="0"
                                     :class="{ 'p-invalid': item.errors.amount }"
@@ -199,6 +213,7 @@
                                     v-bind="item.unit.attributes"
                                     :class="{ 'p-invalid': item.errors.unit }"
                                     :options="units"
+                                    :option-label="(unit: Unit) => unitNames[unit]"
                                     class="w-full md:w-14rem"
                                     name="unit"
                                 />
@@ -251,7 +266,7 @@
 import { toTypedSchema } from "@vee-validate/valibot";
 import { configure, useForm } from "vee-validate";
 import { useToast } from "primevue/usetoast";
-import { insertRecipeSchema } from "~/database/recipe";
+import { Recipe, insertRecipeSchema } from "~/database/recipe";
 import { insertIngredientSchema, ingredientsDB } from "~/database/ingredients";
 import {
     LMap,
@@ -276,13 +291,29 @@ const ingredientTypes = ref(["Vegtable", "Meat", "Fish"]);
 const thumbnail = ref("/placeholder.svg");
 const selectedIngredients = ref();
 const toast = useToast();
-// definePageMeta({ middleware: 'auth', navigateUnauthenticatedTo: '/login?callbackUrl=/recipes/add' })
 
 const tabIndex = ref();
 const props = defineProps<{
     /** The ID of the recipe you want to edit, if you want to create a new recipe, you should leave this empty */
-    recipeId?: string;
+    editRecipe?: Recipe;
 }>();
+
+async function deleteRecipe() {
+    if (!props.editRecipe) return;
+    const res = confirm("Are you sure you want to delete this recipe?");
+    if (res) {
+        const result = await useFetch(`/api/recipes/${props.editRecipe.id}/delete`, { method: "post" });
+        if (result.status.value === "success") {
+            toast.add({ severity: "success", detail: "Recipe was deleted", life: 3000 });
+            await navigateTo("/recipes");
+        } else if (result.status.value === "error")
+            toast.add({
+                severity: "error",
+                detail: result.error.value?.data.message,
+                life: 3000,
+            });
+    }
+}
 
 configure({
     validateOnBlur: false,
@@ -307,40 +338,27 @@ watch([hours, minutes], () => (time.value = (hours.value ?? 0) * 60 + (minutes.v
 let id = 0;
 const ingredients = ref([getEmptyIngredient()]);
 
-if (props.recipeId) {
-    const defaultRecipe = (await useFetch(`/api/recipes/${props.recipeId}`)).data.value;
-    if (defaultRecipe) {
-        name.value = defaultRecipe.name;
-        recipe.value = defaultRecipe.recipe;
-        description.value = defaultRecipe.description;
-        hours.value = Math.floor(defaultRecipe.time / 60);
-        minutes.value = defaultRecipe.time % 60;
-        time.value = defaultRecipe.time;
-        mealType.value = defaultRecipe.type;
-        difficulty.value = defaultRecipe.difficulty;
-        ingredients.value = [];
-        for (const ingredient of defaultRecipe.ingredients as ingredientsDB[]) {
-            const newIngredient = getEmptyIngredient();
-            newIngredient.ingredient.value.value = ingredient.ingredient;
-            newIngredient.unit.value.value = ingredient.unit;
-            newIngredient.amount.value.value = ingredient.amount;
-            newIngredient.category.value.value = ingredient.category;
-            newIngredient.id = ingredient.id;
-            newIngredient.defaultID = false;
+if (props.editRecipe) {
+    const editRecipe = props.editRecipe;
+    name.value = editRecipe.name;
+    recipe.value = editRecipe.recipe;
+    description.value = editRecipe.description;
+    hours.value = Math.floor(editRecipe.time / 60);
+    minutes.value = editRecipe.time % 60;
+    time.value = editRecipe.time;
+    mealType.value = editRecipe.type;
+    difficulty.value = editRecipe.difficulty;
+    ingredients.value = [];
+    for (const ingredient of editRecipe.ingredients as ingredientsDB[]) {
+        const newIngredient = getEmptyIngredient();
+        newIngredient.ingredient.value.value = ingredient.ingredient;
+        newIngredient.unit.value.value = ingredient.unit;
+        newIngredient.amount.value.value = ingredient.amount;
+        newIngredient.category.value.value = ingredient.category;
+        newIngredient.id = ingredient.id;
+        newIngredient.defaultID = false;
 
-            ingredients.value.push(newIngredient);
-        }
-    } else {
-        setTimeout(() => {
-            toast.add({
-                severity: "error",
-                detail: `Recipe with ID '${props.recipeId}' doesn't exist.`,
-                life: 3000,
-            });
-        }, 100);
-        setTimeout(async () => {
-            await navigateTo("/recipes/add");
-        }, 4000);
+        ingredients.value.push(newIngredient);
     }
 }
 
@@ -374,6 +392,8 @@ function getEmptyIngredient() {
     const [amount, amountAttrs] = defineField("amount");
     const [unit, unitAttrs] = defineField("unit");
     const [category, categoryAttrs] = defineField("category");
+    const [index] = defineField("index");
+    index.value = 0;
 
     return {
         errors,
@@ -407,13 +427,14 @@ async function save() {
     }
 
     if (validated.valid) {
-        const sendIngredients = ingredients.value.map((ingredient) => {
+        const sendIngredients = ingredients.value.map((ingredient, index) => {
             return {
                 id: ingredient.defaultID ? undefined : ingredient.id,
                 ingredient: ingredient.ingredient.value,
                 amount: ingredient.amount.value,
                 unit: ingredient.unit.value,
                 category: ingredient.category.value,
+                index,
             };
         });
         const sendRecipe = {
@@ -429,21 +450,23 @@ async function save() {
         };
 
         let res: any;
-        if (!props.recipeId) {
+        if (!props.editRecipe) {
             res = await useFetch("/api/recipes", {
                 method: "post",
                 body: sendRecipe,
             });
+            let id: string;
+            if (res.status.value === "success") {
+                id = res.data.value;
+                await navigateTo(`/recipes/${id}/edit`);
+            }
         } else {
-            res = await useFetch(`/api/recipes/${props.recipeId}`, {
+            res = await useFetch(`/api/recipes/${props.editRecipe.id}`, {
                 method: "post",
                 body: sendRecipe,
             });
         }
-        let id: string;
-        if (res.status.value === "success") {
-            id = res.data.value;
-        } else if (res.status.value === "error") {
+        if (res.status.value === "error") {
             toast.add({
                 severity: "error",
                 detail: res.error.value?.data.message,
@@ -549,5 +572,15 @@ const onUpload = (event: any) => {
 
 .card {
     margin-top: 20px;
+}
+
+:deep(.p-orderlist-item .p-ink),
+:deep(.p-orderlist-item .p-ink-active) {
+    display: none;
+}
+
+:deep(.p-orderlist-item > * .p-ink),
+:deep(.p-orderlist-item > * .p-ink-active) {
+    display: initial;
 }
 </style>

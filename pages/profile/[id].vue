@@ -1,276 +1,126 @@
 <script setup lang="ts">
-/*definePageMeta({
-    name:"testlalal1", //verandert enkel wat na "/profile" komt, wordt overschreven als onderste twee defined zijn
-    //alias:"/elyiscool", //verandert heel de path of na '/profile'
-    title: 'Blablabla'
-})*/
-useHead({
-    //titleTemplate: '%s blabla', //can put a function here instead of string
-    titleTemplate: (x)=>('test'),
-})
-const value = ref(3);
+import { LocationQuery, LocationQueryValue } from "vue-router";
+import { Recipe } from "~/database/recipe";
+import { Meal, Difficulty } from "~/composables/recipes";
+
+const route = useRoute();
+const id = route.params.id;
+const { data: user } = await useFetch(`/api/users/${id}`);
+if (!user)
+    showError({
+        statusCode: 404,
+        statusMessage: "This user does not exist.",
+    });
+
+async function getUserRecipes(
+    query: Ref<string>,
+    page: Ref<number>,
+    size: number,
+    difficulty: Ref<Difficulty[]>,
+    mealType: Ref<Meal[]>,
+    sortOn: Ref<string>,
+    sortOrder: Ref<number>
+): Promise<Ref<{ recipes: (Recipe & { userName: string | undefined })[]; totalAmount: number }>> {
+    const { data } = await useFetch("/api/recipes", {
+        query: {
+            query,
+            page,
+            size,
+            difficulty,
+            mealType,
+            sortOn,
+            user: id,
+            sort: sortOrder,
+            highStart: "<b>",
+            highEnd: "</b>",
+        },
+        // A key is necessary here, because otherwise nuxt sends the request both on server-side and on client-side, resulting in a hydration mismatch
+        key: "recipes",
+    });
+    return computed(() => {
+        return (
+            {
+                recipes:
+                    (data.value?.valueOf() as { recipes: (Recipe & { userName: string })[]; totalAmount: number })
+                        ?.recipes || [],
+                totalAmount: (data.value?.valueOf() as { recipes: Recipe; totalAmount: number })?.totalAmount || 0,
+            } ?? { recipes: [], totalAmount: 0 }
+        );
+    });
+}
+
+/**
+ * Make an array of `locationQuery` out of a variable that is either a singleton, an array or undefined.
+ * If `array` is undefined, this returns the empty array, if `array` is a singleton, this returns an array with only that element inside of it, otherwise it just returns the array itself.
+ *
+ * @param array - The `locationQuery`
+ * @returns An array of all `locationquerie`s inside of `array`
+ */
+function getParamArray(array: LocationQueryValue | LocationQueryValue[] | undefined): LocationQueryValue[] {
+    if (!array) return [];
+    else if (Array.isArray(array)) return array;
+    else return [array];
+}
+
+const queryParams = route.query;
+const query = (queryParams.query?.valueOf() as string) || "";
+const page = parseInt(queryParams.page?.valueOf() as string) || 0;
+const mealTypes = getParamArray(queryParams.type) as Meal[];
+const mealDifficulties = getParamArray(queryParams.difficulty) as Difficulty[];
+
+/** Change the URL to reflect the state of the `recipesList` */
+function updateQueryParams(queryParams: LocationQuery) {
+    navigateTo({ path: route.path, query: queryParams, replace: true });
+}
 </script>
 
 <template>
-  <div class="flex align-items-center">
-    <Card class="profileCard">
-      <template #header>
-        <img alt="user header" src="Tiramisu.png" />
-      </template>
-      <template #title> User1 </template>
-      <template #subtitle>
-        @mail <br />
-        Based in flag <br />
-        <p class="info">Followers: 5, Following: 20</p>
-        <Button icon="pi pi-user-plus" label="FIND USERS" />
-        <Button icon="pi pi-upload" />
-      </template>
-      <template #content>
-        <p class="m-0">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore
-          sed consequuntur error repudiandae numquam deserunt quisquam repellat
-          libero asperiores earum nam nobis, culpa ratione quam perferendis
-          esse, cupiditate neque quas!
-        </p>
-      </template>
-      <template #footer> User since ... </template>
-    </Card>
-
-    <Card class="profileCard">
-      <template #title> Settings </template>
-      <template #content> </template>
-    </Card>
-  </div>
-
-  <Card>
-    <template #title> My Recipies </template>
-    <template #content>
-      <div class="card flex justify-content-center gap-2">
-        <Card>
-          <template #title> Tiramisu </template>
-          <template #content>
-            <div class="flex flex-wrap gap-2">
-              <Tag value="Dessert"></Tag>
-              <Tag icon="" value="Easy" severity="success"></Tag>
-              <Tag
-                icon="pi pi-clock"
-                value="'15"
-                severity="success"
-                rounded
-              ></Tag>
-            </div>
-
-            <!--Insert a picture-->
-            <div class="card flex">
-              <Image src="Tiramisu.png" alt="Image" width="200" />
-            </div>
-
-            <p class="m-0">Made by @Silken</p>
-            <!-- Display kind of recipy: dessert, lunch, ...--->
-            <!--Display figures like meat, vegi, halal, vegan, ...-->
-            <!-- Display the time and dificulty-->
-            <!--Display de rating -->
-            <div class="card flex">
-              <Rating
-                v-model="value"
-                readonly
-                :cancel="false"
-                class="flex gap-2"
-              />
-            </div>
-          </template>
-        </Card>
-
-        <Card>
-          <template #title> Tiramisu </template>
-          <template #content>
-            <div class="flex flex-wrap gap-2">
-              <Tag value="Dessert"></Tag>
-              <Tag icon="" value="Easy"></Tag>
-              <Tag
-                icon="pi pi-clock"
-                value="'30"
-                severity="warning"
-                rounded
-              ></Tag>
-            </div>
-
-            <!--Insert a picture-->
-            <div class="card flex justify-content-center">
-              <Image src="Tiramisu.png" alt="Image" width="200" />
-            </div>
-
-            <p class="m-0">Made by @Silken</p>
-            <!-- Display kind of recipy: dessert, lunch, ...--->
-            <!--Display figures like meat, vegi, halal, vegan, ...-->
-            <!-- Display the time and dificulty-->
-            <!--Display de rating -->
-            <div class="card">
-              <Rating v-model="value" readonly :cancel="false" />
-            </div>
-          </template>
-        </Card>
-
-        <Card>
-          <template #title> Tiramisu </template>
-          <template #content>
-            <div class="flex flex-wrap gap-2">
-              <Tag value="Dessert"></Tag>
-              <Tag icon="" value="Easy" severity="success"></Tag>
-              <Tag
-                icon="pi pi-clock"
-                value="'60"
-                severity="danger"
-                rounded
-              ></Tag>
-            </div>
-
-            <!--Insert a picture-->
-            <div class="card flex">
-              <Image src="Tiramisu.png" alt="Image" width="200" />
-            </div>
-
-            <p class="m-0">Made by @Silken</p>
-            <!-- Display kind of recipy: dessert, lunch, ...--->
-            <!--Display figures like meat, vegi, halal, vegan, ...-->
-            <!-- Display the time and dificulty-->
-            <!--Display de rating -->
-            <div class="card flex">
-              <Rating
-                v-model="value"
-                readonly
-                :cancel="false"
-                class="flex gap-2"
-              />
-            </div>
-          </template>
-        </Card>
-      </div>
-
-      <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
-        consequuntur error repudiandae numquam deserunt quisquam repellat libero
-        asperiores earum nam nobis, culpa ratione quam perferendis esse,
-        cupiditate neque quas!
-      </p>
-    </template>
-   
-  </Card>
-
-  <Card>
-    <template #title> Saved Recipies </template>
-    <template #content>
-
-
-  <div class="card flex justify-content-center gap-2">
-    <Card>
-      <template #title> Tiramisu </template>
-      <template #content>
-        <div class="flex flex-wrap gap-2">
-          <Tag value="Dessert"></Tag>
-          <Tag icon="" value="Easy" severity="success"></Tag>
-          <Tag icon="pi pi-clock" value="'15" severity="success" rounded></Tag>
+    <div class="profile">
+        <div class="profileInfo">
+            <Avatar v-if="user?.image" :image="user?.image ?? ''" shape="circle" preview />
+            <Avatar v-else icon="pi pi-user" class="mt-2" shape="circle" />
+            <h1>{{ user?.name }}</h1>
         </div>
-
-        <!--Insert a picture-->
-        <div class="card flex">
-          <Image
-            src="Tiramisu.png"
-            alt="Image"
-            width="200"
-          />
+        <br />
+        These are {{ user?.name }}'s recipes:
+        <br />
+        <div class="listDiv">
+            <RecipesList
+                :get-recipes="getUserRecipes"
+                :page-size="5"
+                class="recipesList"
+                hide-username
+                highlight-matches
+                :initial-query="query"
+                :initial-page="page"
+                :initial-meal-types="mealTypes"
+                :initial-meal-difficulties="mealDifficulties"
+                @query-parameters-changed="updateQueryParams"
+            />
         </div>
-
-        <p class="m-0">Made by @Silken</p>
-        <!-- Display kind of recipy: dessert, lunch, ...--->
-        <!--Display figures like meat, vegi, halal, vegan, ...-->
-        <!-- Display the time and dificulty-->
-        <!--Display de rating -->
-        <div class="card flex">
-          <Rating v-model="value" readonly :cancel="false" class="flex gap-2" />
-        </div>
-      </template>
-    </Card>
-
-    <Card>
-      <template #title> Tiramisu </template>
-      <template #content>
-        <div class="flex flex-wrap gap-2">
-          <Tag value="Dessert"></Tag>
-          <Tag icon="" value="Easy"></Tag>
-          <Tag icon="pi pi-clock" value="'30" severity="warning" rounded></Tag>
-        </div>
-
-        <!--Insert a picture-->
-        <div class="card flex justify-content-center">
-          <Image
-            src="Tiramisu.png"
-            alt="Image"
-            width="200"
-          />
-        </div>
-
-        <p class="m-0">Made by @Silken</p>
-        <!-- Display kind of recipy: dessert, lunch, ...--->
-        <!--Display figures like meat, vegi, halal, vegan, ...-->
-        <!-- Display the time and dificulty-->
-        <!--Display de rating -->
-        <div class="card">
-          <Rating v-model="value" readonly :cancel="false" />
-        </div>
-      </template>
-    </Card>
-
-    <Card>
-      <template #title> Tiramisu </template>
-      <template #content>
-        <div class="flex flex-wrap gap-2">
-          <Tag value="Dessert"></Tag>
-          <Tag icon="" value="Easy" severity="success"></Tag>
-          <Tag icon="pi pi-clock" value="'60" severity="danger" rounded></Tag>
-        </div>
-
-        <!--Insert a picture-->
-        <div class="card flex">
-          <Image
-            src="Tiramisu.png"
-            alt="Image"
-            width="200"
-          />
-        </div>
-
-        <p class="m-0">Made by @Silken</p>
-        <!-- Display kind of recipy: dessert, lunch, ...--->
-        <!--Display figures like meat, vegi, halal, vegan, ...-->
-        <!-- Display the time and dificulty-->
-        <!--Display de rating -->
-        <div class="card flex">
-          <Rating v-model="value" readonly :cancel="false" class="flex gap-2" />
-        </div>
-      </template>
-    </Card>
-  </div>
-
-      <p class="m-0">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed
-        consequuntur error repudiandae numquam deserunt quisquam repellat libero
-        asperiores earum nam nobis, culpa ratione quam perferendis esse,
-        cupiditate neque quas!
-      </p>
-    </template>
-   
-  </Card>
+    </div>
 </template>
 
-<style>
-.info {
-  color: white;
-  font-weight: bold;
+<style scoped>
+.profile {
+    margin: 8px;
 }
 
-.profileCard {
-  width: 50%;
+.profileInfo {
+    display: flex;
+    margin-top: 20px;
+}
+
+.profileInfo > .p-avatar {
+    margin-top: 2px;
+}
+
+.profileInfo > h1 {
+    margin: 0px;
+    margin-left: 8px;
+}
+
+.recipesList {
+    border: 1px solid var(--surface-100);
 }
 </style>
-
-

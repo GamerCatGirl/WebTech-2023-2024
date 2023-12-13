@@ -11,7 +11,7 @@ function testArray(object: any, column: SQLiteColumn<any>) {
     } else return eq(column, object);
 }
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     const queryParams = getSeachVars(query);
     const pageSize = queryParams.pageSize;
@@ -60,7 +60,13 @@ export default defineEventHandler((event) => {
             .leftJoin(recipes, eq(recipes.id, sub.id))
             .leftJoin(users, eq(recipes.user, users.id));
         if (query.sortOn && query.sort) dbQuery.orderBy(sortFunction(recipes[query.sortOn.valueOf() as string]));
-        return dbQuery;
+        const amountQuery = database
+            .select({ totalAmount: sql`COUNT(*)` })
+            .from(sub)
+            .where(and(...conditions))
+            .leftJoin(recipes, eq(recipes.id, sub.id))
+            .leftJoin(users, eq(recipes.user, users.id));
+        return { recipes: await dbQuery.execute(), ...(await amountQuery.execute())[0] };
     } else {
         const dbQuery = database
             // @ts-ignore
@@ -70,6 +76,7 @@ export default defineEventHandler((event) => {
             .offset(pageSize * page)
             .leftJoin(users, eq(recipes.user, users.id));
         if (query.sortOn && query.sort) dbQuery.orderBy(sortFunction(recipes[query.sortOn.valueOf() as string]));
-        return dbQuery;
+        const amountQuery = database.select({ totalAmount: sql`COUNT(*)` }).from(recipes);
+        return { recipes: await dbQuery.execute(), ...(await amountQuery.execute())[0] };
     }
 });
