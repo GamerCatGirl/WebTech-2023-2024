@@ -302,7 +302,7 @@ async function deleteRecipe() {
     if (!props.editRecipe) return;
     const res = confirm("Are you sure you want to delete this recipe?");
     if (res) {
-        const result = await useFetch(`/api/recipes/${props.editRecipe.id}/delete`, { method: "post" });
+        const result = await useFetch(`/api/recipes/${props.editRecipe.id}`, { method: "delete" });
         if (result.status.value === "success") {
             toast.add({ severity: "success", detail: "Recipe was deleted", life: 3000 });
             await navigateTo("/recipes");
