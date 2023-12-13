@@ -1,8 +1,5 @@
 <template>
   <Button v-if="user === recipy.user" icon="pi pi-file-edit" severity="success" label="Edit recipe" @click="() => navigateTo(`/recipes/${id}/edit`)"></Button>
-  <div class="card">
-    <Steps :model="items" :readonly="false" />
-  </div>
 
   <TabView>
     <TabPanel header="Info">
@@ -105,9 +102,8 @@
         <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
       </Card>
     </TabPanel>
-  </TabView>
 
-	<div class="card InfoCard" v-show="Ingredients">
+	<TabPanel header="Ingredients">
 		<DataTable :value="ingredients" tableStyle="min-width: 50rem">
 			<Column field="ingredient" header="Ingredient"/>
 			<Column field="amount" header="Amount">
@@ -125,14 +121,15 @@
 			</Column>
 			<Column field="category" header="Category"/>
 		</DataTable>
-	</div>
+	</TabPanel>
 
-  <div class="card" v-show="RecipyText">
+
+  <TabPanel header="Recipe">
     <Editor v-model="recipeSteps" editorStyle="height: 320px" readonly />
-  </div>
+  </TabPanel>
 
   <!-- TODO: fix the layout of this horizontal bar -->
-  <div v-show="Comments">
+  <TabPanel header="Comments">
     <!-- input text -->
     <Textarea v-model="addComment" rows="1" cols="90" />
     <!-- TODO: make this dynamic!!!! -->
@@ -213,7 +210,8 @@
         </Divider>
       </div>
     </div>
-  </div>
+  </TabPanel>
+  </TabView>
 </template>
 
 <script setup>
@@ -227,8 +225,6 @@ const id = route.params.id;
 const loggedInUser = 2; //data.id // TODO: make this work with the logged in user
 const comboRouting = "&";
 const splitedId = id.split(comboRouting);
-const recipyID = splitedId[1];
-const tabIndex = ref();
 
 const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 if (!recipy)
