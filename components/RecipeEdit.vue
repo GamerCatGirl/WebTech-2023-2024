@@ -28,7 +28,7 @@
                 <Button
                     v-if="editRecipe"
                     label="Delete recipe"
-                    icon="pi pi-times"
+                    icon="pi pi-trash"
                     severity="danger"
                     class="mr-2"
                     @click="deleteRecipe"
@@ -162,7 +162,7 @@
                             @click="() => ingredients.push(getEmptyIngredient())"
                         />
                         <Button
-                            icon="pi pi-times"
+                            icon="pi pi-trash"
                             severity="danger"
                             label="Delete ingredient"
                             @click="
@@ -214,9 +214,18 @@
                                     :class="{ 'p-invalid': item.errors.unit }"
                                     :options="units"
                                     :option-label="(unit: Unit) => unitNames[unit]"
+                                    option-group-label="label"
+                                    option-group-children="items"
+                                    editable
                                     class="w-full md:w-14rem"
                                     name="unit"
-                                />
+                                >
+                                    <template #optiongroup="{ option }">
+                                        <div :alt="option.label" :class="`pi pi-${option.icon}`">
+                                            &VeryThinSpace;{{ option.label }}
+                                        </div>
+                                    </template>
+                                </Dropdown>
                                 <label for="unit">Unit</label>
                             </span>
                             <small class="p-error">{{ item.errors.unit || "" }}</small>
@@ -286,8 +295,11 @@ const marker = ref([0, 0]);
 //const map = ref();
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
-const units = [...Object.values(MassUnit), ...Object.values(VolumeUnit)];
-const ingredientTypes = ref(["Vegtable", "Meat", "Fish"]);
+const units = [
+    { label: "Mass", logo: "", items: [...Object.values(MassUnit)] },
+    { label: "Volume", logo: "", items: [...Object.values(VolumeUnit)] },
+];
+const ingredientTypes = [...Object.values(Ingredient)];
 const thumbnail = ref("/placeholder.svg");
 const selectedIngredients = ref();
 const toast = useToast();
