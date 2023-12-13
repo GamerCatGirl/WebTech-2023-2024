@@ -1,6 +1,7 @@
-export enum UnitTypes {
+export enum UnitType {
     Volume = "Vol",
     Mass = "Mass",
+    Custom = "Custom",
 }
 
 export enum MassUnit {
@@ -12,6 +13,7 @@ export enum MassUnit {
 
 export enum VolumeUnit {
     Liter = "L",
+    MilliLiter = "mL",
     Centiliter = "cL",
     GallonUS = "[gal_us]",
     GallonBR = "[gal_br]",
@@ -31,6 +33,7 @@ export const unitNames = {
     [MassUnit.Milligram]: "milligram",
     [MassUnit.Pound]: "pound",
     [VolumeUnit.Liter]: "liter",
+    [VolumeUnit.MilliLiter]: "milliliter",
     [VolumeUnit.Centiliter]: "centiliter",
     [VolumeUnit.GallonUS]: "gallon - US",
     [VolumeUnit.GallonBR]: "gallon - British",

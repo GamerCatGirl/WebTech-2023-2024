@@ -3,6 +3,7 @@ export enum Meal {
   Brunch = "Brunch",
   Lunch = "Lunch",
   Diner = "Diner",
+  Dessert = "Dessert",
   Soup = "Soup",
   Halal = "Halal",
   Vegi = "Vegi",
@@ -15,14 +16,14 @@ export enum Difficulty {
   Hard = "Hard",
 }
 
-export enum Ingredients {
+export enum Ingredient {
   Vegtable = "Vegetable",
+  Dairy = "Dairy",
   Meat = "Meat",
-  Fish = "Fish",
-}
-
-export enum AmountTypes {
-  Pieces = "Pieces",
-  Gramms = "Gramms",
-  Mililiter = "Mililiter",
+  Seafood = "Seafood",
+  Liquid = "Liquid",
+  Sugar = "Sugar",
+  Fruit = "Fruit",
+  Spice = "Spice",
+  Other = "Other",
 }

@@ -4,8 +4,7 @@
     <Steps :model="items" :readonly="false" />
   </div>
 
-  <TabView
-  >
+  <TabView>
     <TabPanel header="Info">
       <Card class="InfoCard" v-show="InfoCard">
         <template #title>
@@ -108,20 +107,28 @@
     </TabPanel>
   </TabView>
 
-  <div class="card InfoCard" v-show="Ingredients">
-    <DataTable :value="ingredients" tableStyle="min-width: 50rem">
-      <Column
-        v-for="col of columns"
-        :key="col.field"
-        :field="col.field"
-        :header="col.header"
-      >
-      </Column>
-    </DataTable>
-  </div>
+	<div class="card InfoCard" v-show="Ingredients">
+		<DataTable :value="ingredients" tableStyle="min-width: 50rem">
+			<Column field="ingredient" header="Ingredient"/>
+			<Column field="amount" header="Amount">
+				<template #body="{ data }">
+					<div v-if="data.requestStatus === 'success'">{{ data.amount }}</div>
+					<Skeleton v-else width="3em" height="2em"></Skeleton>
+				</template>
+			</Column>
+			<Column field="unit" header="Unit">
+				<template #body="{ data }">
+					<Dropdown v-if="data.unitType === UnitType.Mass" :options="massUnits" v-model="data.unit" :option-label="(unit) => unitNames[unit]" />
+					<Dropdown v-else-if="data.unitType === UnitType.Volume" :options="volumeUnits" v-model="data.unit" :option-label="(unit) => unitNames[unit]" />
+					<Dropdown v-else v-model="data.unit" :options="[data.unit]" disabled />
+				</template>
+			</Column>
+			<Column field="category" header="Category"/>
+		</DataTable>
+	</div>
 
   <div class="card" v-show="RecipyText">
-    <Editor v-model="value" editorStyle="height: 320px" readonly />
+    <Editor v-model="text" editorStyle="height: 320px" readonly />
   </div>
 
   <!-- TODO: fix the layout of this horizontal bar -->
@@ -347,18 +354,33 @@ async function setupReaction() {
 
 setupReaction();
 
-//const allIngredients = await $fetch(`/api/ingredients`);
-
 const recipyName = recipy.name;
-const text = ref(recipy.thumbnail);
-const ingredients = recipy.ingredients;
+const text = ref(recipy.recipe);
+const ingredients = await Promise.all(recipy.ingredients.map(async (ingredient) => {
+	if (ingredient.unitType === UnitType.Custom) {
+		ingredient.requestStatus = "success"
+		return ingredient;
+	}
+	const initialUnit = ingredient.unit;
+	const initialAmount = ingredient.amount;
+	// This ref is used here to avoid unwrapping of references
+	const unit = ref(ingredient.unit);
+	ingredient.unit = unit;
 
-const columns = [
-  { field: "ingredient", header: "Ingredient" },
-  { field: "amount", header: "Amount" },
-  { field: "type", header: "Type" },
-  { field: "category", header: "Category" },
-];
+	const { data, status } = await useFetch("/api/units", {
+		method: "get",
+		query: { fromUnit: initialUnit, toUnit: unit, quantity: initialAmount },
+		key: initialUnit + unit + initialAmount,
+	});
+	ingredient.requestStatus = status
+	ingredient.amount = data;
+
+	return ingredient;
+}));
+// console.log(ingredients)
+
+const massUnits = [...Object.values(MassUnit)]
+const volumeUnits = [...Object.values(VolumeUnit)]
 
 const InfoCard = ref(true);
 const Ingredients = ref(false);

@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
     const quantity = query.quantity ?? 1;
     const toUnit = (query.toUnit as string).replace("[", "%5B").replace("]", "%5D");
     const fromUnit = (query.fromUnit as string).replace("[", "%5B").replace("]", "%5D");
+	if (toUnit === fromUnit) return quantity;
 
     const res = await $fetch(
         `https://ucum.nlm.nih.gov/ucum-service/v1/ucumtransform/${quantity}/from/${fromUnit}/to/${toUnit}`,
