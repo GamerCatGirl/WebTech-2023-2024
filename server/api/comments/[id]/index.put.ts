@@ -20,23 +20,29 @@ export default defineEventHandler(async (event) => {
       .where(eq(comments.id, id));
   };
 
-  console.log("update comment")
+  const InsertLikedComment = async (data: InsertLikedComments) => {
+	  return database.insert(likedComments).values(data);
+  }
+
+  console.log("update comment" + id)
   updateComment(comment.LikeAmount);
 
-  const post = {
-	  dislike: false,
-	  user_id: comment.userThatLiked,
-	  comment_id: id,
+  let post: InsertLikedComments = {
+	  dislike: 0,
+	  user: comment.userThatLiked,
+	  comment:"" +  id,
   }
 
  console.log("likedComments")
   if (!comment.changeLike && !comment.cancel){
-	  console.log("new post ")
 	  if (comment.dislike){
 		  console.log("post dislike")
-		  post.dislike = true; 
+		  post.dislike = 1; 
 		  // TODO: post a dislike
-		  database.insert(likedComments).values(post);
+		  console.log(post);
+		  console.log(InsertLikedComment(post))
+		  //await database.insert(likedComments).values(post);
+		  console.log("posted")
 	  } else {
 		  // TODO: post a like 
 	  }
@@ -51,6 +57,8 @@ export default defineEventHandler(async (event) => {
 	  console.log("cancel like");
 	  // TODO: delete like/dislike from database 
   }
+
+  console.log("done")
 
 
 

@@ -88,11 +88,13 @@ function sort(event: { originalEvent: Event; value: any }) {
 
 //Leaflet map components 
 const zoom = ref(6);
+const labelButton = ref("View on map")
 //const marker = ref(latLng(51,-0.99));
 </script>
 <template>
     <div class="card flex justify-content-left">
-      <Button v-show="viewButton" label="View on map" icon="pi pi-compass" @click="viewOnMap()" />
+      <!-- TODO: edit ViewOnMap so we can also go back to the original view -->
+      <Button v-show="viewButton" :label="labelButton" icon="pi pi-compass" @click="viewOnMap()" />
     </div>
 
     <div v-if="map" style="height: 80vh; width: 50vw">

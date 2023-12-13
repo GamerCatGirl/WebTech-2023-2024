@@ -18,7 +18,7 @@ export const likedComments = sqliteTable("liked comments", {
 	id: text("id")
 		.primaryKey()
 		.$defaultFn(() => crypto.randomUUID()),
-	dislike: text("dislike"),
+	dislike: integer("dislike"),
 	user: text("user_id")
 		.references(() => users.id)
 		.notNull(),
