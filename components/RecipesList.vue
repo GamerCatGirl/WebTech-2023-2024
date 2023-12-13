@@ -73,8 +73,8 @@ const sortOptions: sortOption[] = [
     { label: "Rating worst to best", sort: "score", order: 1 },
     { label: "Time shortest to longest", sort: "time", order: 1 },
     { label: "Time longest to shortest", sort: "time", order: -1 },
-    { label: "Newest to oldest", sort: "createdAt", order: 1 },
-    { label: "Oldest to newest", sort: "createdAt", order: -1 },
+    { label: "Newest to oldest", sort: "createdAt", order: -1 },
+    { label: "Oldest to newest", sort: "createdAt", order: 1 },
 ];
 
 const input = ref("");
