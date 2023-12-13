@@ -481,7 +481,7 @@ async function comment() {
 //const recipyName
 </script>
 
-<style>
+<style scoped>
 .InfoCard {
   width: 80%;
   margin: auto;
