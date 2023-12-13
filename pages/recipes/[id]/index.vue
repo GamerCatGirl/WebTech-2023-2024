@@ -128,7 +128,7 @@
 	</div>
 
   <div class="card" v-show="RecipyText">
-    <Editor v-model="text" editorStyle="height: 320px" readonly />
+    <Editor v-model="recipeSteps" editorStyle="height: 320px" readonly />
   </div>
 
   <!-- TODO: fix the layout of this horizontal bar -->
@@ -355,7 +355,7 @@ async function setupReaction() {
 setupReaction();
 
 const recipyName = recipy.name;
-const text = ref(recipy.recipe);
+const recipeSteps = ref(recipy.recipe);
 const ingredients = await Promise.all(recipy.ingredients.map(async (ingredient) => {
 	if (ingredient.unitType === UnitType.Custom) {
 		ingredient.requestStatus = "success"
@@ -497,5 +497,15 @@ async function comment() {
 
 .amountStyle {
   font-size: 35px;
+}
+
+.p-editor-toolbar {
+	display: none;
+}
+
+.p-editor-content {
+	border: 1px solid var(--surface-border) !important;
+	border-radius: var(--border-radius);
+	overflow: hidden;
 }
 </style>
