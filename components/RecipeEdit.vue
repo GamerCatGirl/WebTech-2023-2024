@@ -159,6 +159,7 @@
                         <Button
                             icon="pi pi-plus"
                             label="Add ingredient"
+                            class="mr-2"
                             @click="() => ingredients.push(getEmptyIngredient())"
                         />
                         <Button
@@ -213,7 +214,7 @@
                                     v-bind="item.unit.attributes"
                                     :class="{ 'p-invalid': item.errors.unit }"
                                     :options="units"
-                                    :option-label="(unit: Unit) => unitNames[unit]"
+                                    :option-label="(unit: [string, Unit] | string) => unit[0] ?? unit"
                                     option-group-label="label"
                                     option-group-children="items"
                                     editable
@@ -296,8 +297,8 @@ const marker = ref([0, 0]);
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
 const units = [
-    { label: "Mass", logo: "", items: [...Object.values(MassUnit)] },
-    { label: "Volume", logo: "", items: [...Object.values(VolumeUnit)] },
+    { label: "Mass", items: Object.entries(MassUnit) },
+    { label: "Volume", items: Object.entries(VolumeUnit) },
 ];
 const ingredientTypes = [...Object.values(Ingredient)];
 const thumbnail = ref("/placeholder.svg");
