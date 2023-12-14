@@ -51,7 +51,6 @@ export default defineEventHandler(async (event) => {
                 name: sub.name,
                 description: sub.description,
                 userName: users.name,
-                totalAmount: sql<number>`COUNT(*) OVER()`,
             })
             .from(sub)
             .where(and(...conditions))
@@ -70,7 +69,7 @@ export default defineEventHandler(async (event) => {
     } else {
         const dbQuery = database
             // @ts-ignore
-            .select({ ...recipes, userName: users.name, totalAmount: sql<number>`COUNT(*) OVER()` })
+            .select({ ...recipes, userName: users.name })
             .from(recipes)
             .limit(pageSize)
             .offset(pageSize * page)
