@@ -2,8 +2,9 @@ import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { minLength, minValue, notValue, number, optional, string, undefined_ } from "valibot";
+import { enum_, minLength, minValue, notValue, number, optional, string, undefined_ } from "valibot";
 import { recipes } from "./recipe";
+import { Ingredient } from "@/composables/recipes";
 
 export const ingredients = sqliteTable("ingredients", {
     id: text("id")
@@ -34,5 +35,5 @@ export const insertIngredientSchema = createInsertSchema(ingredients, {
     recipyId: undefined_("Don't specify the recipeID."),
     index: number("Please specify the index of this ingredient", [minValue(0, "Please specify a postive index.")]),
     unit: string("Please specify the unit of your ingredient.", [minLength(1)]),
-    category: string("Please specify the category of your ingredient.", [minLength(1)]),
+    category: enum_(Ingredient, "Please specify the category of your ingredient."),
 });
