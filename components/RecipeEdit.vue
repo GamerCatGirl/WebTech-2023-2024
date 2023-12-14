@@ -214,7 +214,6 @@
                                     v-bind="item.unit.attributes"
                                     :class="{ 'p-invalid': item.errors.unit }"
                                     :options="units"
-                                    :option-label="(unit: [string, Unit] | string) => unit[0] ?? unit"
                                     option-group-label="label"
                                     option-group-children="items"
                                     editable
@@ -297,8 +296,8 @@ const marker = ref([0, 0]);
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
 const units = [
-    { label: "Mass", items: Object.entries(MassUnit) },
-    { label: "Volume", items: Object.entries(VolumeUnit) },
+    { label: "Mass", items: Object.values(MassUnit).map((unit) => unitNames[unit]) },
+    { label: "Volume", items: Object.values(VolumeUnit).map((unit) => unitNames[unit]) },
 ];
 const ingredientTypes = [...Object.values(Ingredient)];
 const thumbnail = ref("/placeholder.svg");
@@ -365,7 +364,8 @@ if (props.editRecipe) {
     for (const ingredient of editRecipe.ingredients as ingredientsDB[]) {
         const newIngredient = getEmptyIngredient();
         newIngredient.ingredient.value.value = ingredient.ingredient;
-        newIngredient.unit.value.value = ingredient.unit;
+        // @ts-expect-error
+        newIngredient.unit.value.value = unitNames[ingredient.unit] ?? ingredient.unit;
         newIngredient.amount.value.value = ingredient.amount;
         newIngredient.category.value.value = ingredient.category;
         newIngredient.id = ingredient.id;
@@ -416,7 +416,7 @@ function getEmptyIngredient() {
         defaultID: true,
         ingredient: { value: ingredient, attributes: ingredientAttrs },
         amount: { value: amount, attributes: amountAttrs },
-        unit: { value: unit, attributes: unitAttrs },
+        unit: { value: unit, attributes: unitAttrs, unit: "" },
         category: { value: category, attributes: categoryAttrs },
     };
 }
@@ -435,6 +435,10 @@ async function save() {
         return;
     }
     for (const ingredient of ingredients.value) {
+        const unit = getUnit(ingredient.unit.value);
+        if (unit) ingredient.unit.value = unitNames[unit];
+
+        ingredient.unit.unit = unit ?? ingredient.unit.value;
         const val = await ingredient.validate();
         if (validated.valid) validated = val;
     }
@@ -445,7 +449,7 @@ async function save() {
                 id: ingredient.defaultID ? undefined : ingredient.id,
                 ingredient: ingredient.ingredient.value,
                 amount: ingredient.amount.value,
-                unit: ingredient.unit.value,
+                unit: ingredient.unit.unit,
                 category: ingredient.category.value,
                 index,
             };

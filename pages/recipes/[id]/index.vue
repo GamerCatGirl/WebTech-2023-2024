@@ -353,6 +353,7 @@ setupReaction();
 const recipyName = recipy.name;
 const recipeSteps = ref(recipy.recipe);
 const ingredients = await Promise.all(recipy.ingredients.map(async (ingredient) => {
+	ingredient.unitType = getUnitType(ingredient.unit)
 	if (ingredient.unitType === UnitType.Custom) {
 		ingredient.requestStatus = "success"
 		return ingredient;

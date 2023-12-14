@@ -62,13 +62,13 @@ and for searching `%` and `_` should be used.
 
 ### `/api/units`
 
-> For specifying units you can use the `enums` in [`composables/api.ts`](./composables/api.ts), these can be directly given to the API, 
+> For specifying units you can use the `enums` in [`composables/unit.ts`](./composables/unit.ts), these can be directly given to the API, 
 > if you want the full name use the `unitNames` dictionary inside of this file to convert units to full names.
 
 API route used for converting between to units, this request should include a `fromUnit`, a `toUnit` and an `quantity`.
 The `fromUnit` and `toUnit` define the units you are converting from and to, these units should be of the same type,
 e.g. both measures of length, or both measures of mass, if this is not the case, an error will be thrown.
-These units should also be of type `Unit` defined in [`composables/api.ts`](./composables/api.ts).
+These units should also be of type `Unit` defined in [`composables/unit.ts`](./composables/unit.ts).
 The `quantity` is how much of the `fromUnit` you have that should be converted to the `toUnit`, if `quantity` is not specified an `quantity` of 1 is assumed.
 
 This returns a singular number, this is the converted value.
@@ -76,12 +76,12 @@ If you specified the wrong values (e.g. converting kilogram into liters) or you 
 
 ### `/api/units/search`
 
-> For specifying units you can use the `enums` in [`composables/api.ts`](./composables/api.ts), these can be directly given to the API.
+> For specifying units you can use the `enums` in [`composables/unit.ts`](./composables/unit.ts), these can be directly given to the API.
  
 API route used for searching for new units, this request should include a `query` and a `unitType`.
 The `query` parameter is simple the query you are searching for.
 The `unitType` is the type of the unit you would like to get e.g. volume, mass, ....
-`unitType` should be of the `UnitTypes` type in [`composables/api.ts`](./composables/api.ts).
+`unitType` should be of the `UnitTypes` type in [`composables/unit.ts`](./composables/unit.ts).
 
 This returns an array of of arrays containing the units code and the units name, the name can be used to display to the user,
 while the code should be used for converting between this unit and another unit using `/api/units`

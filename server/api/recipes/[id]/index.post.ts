@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { recipes, InsertRecipe, insertRecipeSchema } from "~/database/recipe";
 import { InsertIngredients, ingredients as ingredientsTable, insertIngredientSchema } from "~/database/ingredients";
 import { getServerSession } from "#auth";
+import { getUnit } from "@/composables/unit";
 
 export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
@@ -42,6 +43,9 @@ export default defineEventHandler(async (event) => {
 
         // Find the ingredients that should be added, updated or removed
         for (const ingredient of body.ingredients) {
+            const unit = getUnit(ingredient.unit);
+            console.log(ingredient.unit, unit);
+            if (unit) ingredient.unit = unit;
             const parsedIngredient = { ...parse(insertIngredientSchema, ingredient), recipyId: id };
 
             if (
@@ -53,9 +57,9 @@ export default defineEventHandler(async (event) => {
                     }
                     return false;
                 })
-            )
+            ) {
                 updateIngredients.push(parsedIngredient);
-            else if (parsedIngredient.id)
+            } else if (parsedIngredient.id)
                 throw createError({ statusCode: 400, statusMessage: "Please do not specify an ID for new ingredients." });
             else insertIngredients.push(parsedIngredient);
         }
