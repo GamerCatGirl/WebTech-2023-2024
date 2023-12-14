@@ -1,5 +1,7 @@
 .editOverview {
     margin-top: 50px;
+    margin-bottom:50px;
+    width:1100px;
 }
 
 .editOverview .editElement {
@@ -13,4 +15,12 @@
 
 .inputBox {
     width: 250px;
+}
+
+.editOverview .errorMessage {
+    width: 250px;
+}
+
+.editOverview .editFields {
+    width: auto;
 }

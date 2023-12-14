@@ -24,7 +24,8 @@ const countries = ref(["Turkey", "Germany", "Belgium"]);
             </Dropdown>
         </div>
         <div class="editElement flex flex-row align-items-center justify-content-center">
-            <Button>
+            <Button
+            @click="">
                 Save changes
             </Button>
         </div>

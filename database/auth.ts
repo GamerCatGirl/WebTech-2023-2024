@@ -2,29 +2,29 @@ import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core"
 
 import type { AdapterAccount } from "@auth/core/adapters"
 import crypto from "crypto";
-import {comments} from "../database/recipe"
+import { comments } from "../database/recipe"
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const users = sqliteTable("user", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
   email: text("email").notNull(),
-  emailVerified: text("emailVerified"),//integer("emailVerified", { mode: "timestamp_ms" }),
+  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image")
 })
 
 
 ///// LIKED comments ///// 
 export const likedComments = sqliteTable("liked comments", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	user: text("user_id")
-		.references(() => users.id)
-		.notNull(),
-	comment: text("comment_id")
-		.references(() => comments.id)
-		.notNull(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  user: text("user_id")
+    .references(() => users.id)
+    .notNull(),
+  comment: text("comment_id")
+    .references(() => comments.id)
+    .notNull(),
 })
 
 export type LikedComments = InferSelectModel<typeof likedComments>;
