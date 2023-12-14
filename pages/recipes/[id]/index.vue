@@ -3,7 +3,7 @@
 
   <TabView>
     <TabPanel header="Info">
-      <Card class="InfoCard" v-show="InfoCard">
+      <Card class="InfoCard">
         <template #title>
           {{ recipyName }}
 
@@ -353,6 +353,7 @@ setupReaction();
 const recipyName = recipy.name;
 const recipeSteps = ref(recipy.recipe);
 const ingredients = await Promise.all(recipy.ingredients.map(async (ingredient) => {
+	ingredient.unitType = getUnitType(ingredient.unit)
 	if (ingredient.unitType === UnitType.Custom) {
 		ingredient.requestStatus = "success"
 		return ingredient;
@@ -377,50 +378,6 @@ const ingredients = await Promise.all(recipy.ingredients.map(async (ingredient) 
 
 const massUnits = [...Object.values(MassUnit)]
 const volumeUnits = [...Object.values(VolumeUnit)]
-
-const InfoCard = ref(true);
-const Ingredients = ref(false);
-const RecipyText = ref(false);
-const Comments = ref(false);
-
-const items = ref([
-  {
-    label: "Info",
-    command: () => {
-      InfoCard.value = true;
-      Ingredients.value = false;
-      RecipyText.value = false;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Ingredients",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = true;
-      RecipyText.value = false;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Steps",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = false;
-      RecipyText.value = true;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Comments",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = false;
-      RecipyText.value = false;
-      Comments.value = true;
-    },
-  },
-]);
 
 function switchAddReaction(comment) {
   if (comment.showReaction) {
@@ -481,7 +438,7 @@ async function comment() {
 //const recipyName
 </script>
 
-<style>
+<style scoped>
 .InfoCard {
   width: 80%;
   margin: auto;

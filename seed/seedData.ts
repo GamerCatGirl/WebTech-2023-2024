@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { MassUnit, VolumeUnit, UnitType } from "~/composables/api";
+import { MassUnit, VolumeUnit } from "~/composables/unit";
 import { Meal, Difficulty, Ingredient } from "~/composables/recipes";
 
 const users = [
@@ -74,7 +74,6 @@ const ingredients = [
         ingredient: "Mascarpone",
         amount: 500,
         unit: MassUnit.Gram,
-        unitType: UnitType.Mass,
         category: Ingredient.Dairy,
         index: 0,
     },
@@ -84,7 +83,6 @@ const ingredients = [
         ingredient: "Eggs",
         amount: 3,
         unit: "/",
-        unitType: UnitType.Custom,
         category: Ingredient.Other,
         index: 1,
     },
@@ -94,7 +92,6 @@ const ingredients = [
         ingredient: "Sugar",
         amount: 150,
         unit: MassUnit.Gram,
-        unitType: UnitType.Mass,
         category: Ingredient.Sugar,
         index: 2,
     },
@@ -104,7 +101,6 @@ const ingredients = [
         ingredient: "Vanilla Sugar",
         amount: 24,
         unit: MassUnit.Gram,
-        unitType: UnitType.Mass,
         category: Ingredient.Sugar,
         index: 3,
     },
@@ -114,7 +110,6 @@ const ingredients = [
         ingredient: "Boudoir (Cookies)",
         amount: 2,
         unit: "Packs",
-        unitType: UnitType.Custom,
         category: Ingredient.Other,
         index: 4,
     },
@@ -124,7 +119,6 @@ const ingredients = [
         ingredient: "Coffee",
         amount: 30,
         unit: VolumeUnit.Centiliter,
-        unitType: UnitType.Volume,
         category: Ingredient.Liquid,
         index: 5,
     },
@@ -134,7 +128,6 @@ const ingredients = [
         ingredient: "Amaretto",
         amount: 40,
         unit: VolumeUnit.MilliLiter,
-        unitType: UnitType.Volume,
         category: Ingredient.Liquid,
         index: 6,
     },
@@ -144,7 +137,6 @@ const ingredients = [
         ingredient: "Cacao",
         amount: 0,
         unit: "Some amount",
-        unitType: UnitType.Custom,
         category: Ingredient.Other,
         index: 6,
     },

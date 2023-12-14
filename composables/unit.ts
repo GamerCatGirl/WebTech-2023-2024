@@ -48,3 +48,41 @@ export const unitNames = {
 };
 
 export type Unit = VolumeUnit | MassUnit;
+
+const units: { [key: string]: Unit } = {
+    ...Object.entries(MassUnit).reduce((map, value) => {
+        // @ts-expect-error
+        map[value[1].toLowerCase()] = value[1];
+        // @ts-expect-error
+        map[value[0].toLowerCase()] = value[1];
+        return map;
+    }, {}),
+    ...Object.entries(VolumeUnit).reduce((map, value) => {
+        // @ts-expect-error
+        map[value[1].toLowerCase()] = value[1];
+        // @ts-expect-error
+        map[value[0].toLowerCase()] = value[1];
+        return map;
+    }, {}),
+};
+
+export function getUnit(name: string): Unit | undefined {
+    return units[name.toLowerCase()];
+}
+
+const massUnits = Object.values(MassUnit).map((value) => value.toLowerCase());
+const volumeUnits = Object.values(VolumeUnit).map((value) => value.toLowerCase());
+
+export function getUnitType(unit: Unit | undefined): UnitType {
+    if (!unit) return UnitType.Custom;
+
+    const lowerUnit = unit.toLowerCase();
+    if (massUnits.includes(lowerUnit)) return UnitType.Mass;
+    else if (volumeUnits.includes(lowerUnit)) return UnitType.Volume;
+    else return UnitType.Custom;
+}
+
+export function getUnitByName(name: string): UnitType {
+    const unit = getUnit(name);
+    return unit ? getUnitType(unit) : UnitType.Custom;
+}
