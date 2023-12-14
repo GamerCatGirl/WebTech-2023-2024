@@ -6,6 +6,10 @@ export default defineEventHandler(async (event) => {
 	};
 
 	const body = await readBody(event);
+	console.log(body);
+
+	body.userId = body.user;
+
 	await putComments(body);
 	return true;
 })

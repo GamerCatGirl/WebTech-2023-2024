@@ -1,5 +1,8 @@
 <script setup lang="ts">
-definePageMeta({ middleware: "auth", auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/home" } });
+definePageMeta({
+  middleware: "auth",
+  auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/home" },
+});
 const { signIn } = useAuth();
 const route = useRoute();
 const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
@@ -8,7 +11,6 @@ const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
 <template>
   <div>
     <title>Good Food</title>
-  
   </div>
 
   <div class="card">
@@ -45,6 +47,7 @@ const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
           @click="navigateTo('register')"
         ></Button>
       </div>
+
       <div class="w-full md:w-2">
         <Divider layout="vertical" class="hidden md:flex"><b>OR</b></Divider>
         <Divider layout="horizontal" class="flex md:hidden" align="center"

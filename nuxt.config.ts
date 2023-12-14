@@ -1,7 +1,7 @@
 //  https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     devtools: { enabled: true },
-    modules: ["@sidebase/nuxt-auth", "@nuxtjs/color-mode", "nuxt-primevue", "nuxt3-leaflet"],
+    modules: ["@sidebase/nuxt-auth", "@nuxtjs/color-mode", "nuxt-primevue", "nuxt3-leaflet", '@stefanobartoletti/nuxt-social-share'],
 
     // alls comments are from the documentation website of primevue
     primevue: {
@@ -50,4 +50,5 @@ export default defineNuxtConfig({
     },
     // config a prime vue team that needs to be used as css
     css: ["primeflex/primeflex.css", "primevue/resources/primevue.min.css", "primeicons/primeicons.css"],
+    socialShare: {}
 });

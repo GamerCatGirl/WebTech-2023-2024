@@ -1,5 +1,6 @@
 <template>
     <header>
+        <Toast />
         <div class="card">
             <Menubar :model="items">
                 <template #item="{ item, props, hasSubmenu }">
@@ -26,7 +27,7 @@
                     />
                     <div v-if="status === 'authenticated'" class="flex">
                         <Button unstyled class="avatarButton" @click="(event: any) => menu.toggle(event)">
-                            <Avatar image="Tiramisu.png" size="normal" shape="circle" />
+                            <Avatar :image="userIcon" size="normal" shape="circle" />
                         </Button>
                         <Menu id="overlay_menu" ref="menu" :model="accountItems" :popup="true">
                             <template #item="{ item, props }">
@@ -61,8 +62,10 @@
 
 <script setup lang="ts">
 import { getTheme, Theme } from "~/composables/theme";
+
 const theme = getTheme();
-const { signOut, status } = useAuth();
+const { signOut, status, data } = useAuth();
+const userIcon = data.value?.user?.image ?? "/placeholder.svg";
 const route = useRoute();
 const menu = ref();
 const useLightTheme = ref(theme.value === Theme.light);
@@ -107,10 +110,9 @@ const accountItems = ref([
     {
         label: "Account",
         icon: "pi pi-user",
-        route: "/profile/username",
+        route: `/profile/${data.value?.user?.id}`,
     },
-    { label: "Settings", icon: "pi pi-cog" },
-    { label: "Logout", icon: "pi pi-sign-out", command: signOut },
+    { label: "Logout", icon: "pi pi-sign-out", command: () => signOut() },
 ]);
 </script>
 
@@ -156,5 +158,10 @@ a {
 
 :deep(.p-menubar-end) {
     display: flex;
+}
+
+:deep(.avatarButton .p-ink),
+:deep(.avatarButton .p-ink-active) {
+    display: none;
 }
 </style>

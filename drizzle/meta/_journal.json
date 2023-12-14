@@ -64,6 +64,27 @@
       "when": 1701609450634,
       "tag": "0008_low_rocket_racer",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1702287058389,
+      "tag": "0009_colorful_azazel",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1702287096510,
+      "tag": "0010_quick_flatman",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1702287170905,
+      "tag": "0011_nervous_tinkerer",
+      "breakpoints": true
     }
   ]
 }

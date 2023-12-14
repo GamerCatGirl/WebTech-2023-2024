@@ -1,4 +1,7 @@
 <template>
-	This is the add page
-<edit />
+    <RecipeEdit />
 </template>
+
+<script>
+definePageMeta({ middleware: "auth", navigateUnauthenticatedTo: "/login?callbackUrl=/recipes/add" });
+</script>

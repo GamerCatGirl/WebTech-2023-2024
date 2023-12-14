@@ -6,8 +6,8 @@ export default defineEventHandler((event) => {
         });
     }
     const id = event.context.params.id as string;
-    return database.query.recipes.findFirst({
-        where: (recipe, { eq }) => eq(recipe.id, id),
-        with: { images: true, ingredients: true, comments: true },
+    return database.query.comments.findFirst({
+        where: (comment, { eq }) => eq(comment.id, id),
+        with: { replies: { with: { user: { columns: { name: true, id: true } } } } },
     });
 });
