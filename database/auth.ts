@@ -12,6 +12,10 @@ export const users = sqliteTable("user", {
   image: text("image")
 })
 
+export const apiKey = sqliteTable("apiKey", {
+	key: text("id").notNull().primaryKey(),
+	user: text("user").references(() => users.id).notNull(),
+})
 
 ///// LIKED comments ///// 
 export const likedComments = sqliteTable("liked comments", {

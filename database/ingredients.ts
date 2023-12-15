@@ -4,7 +4,7 @@ import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-valibot";
 import { enum_, minLength, minValue, notValue, number, optional, string, undefined_ } from "valibot";
 import { recipes } from "./recipe";
-import { Ingredient } from "@/composables/recipes";
+import { Ingredient } from "../composables/recipes";
 
 export const ingredients = sqliteTable("ingredients", {
     id: text("id")
