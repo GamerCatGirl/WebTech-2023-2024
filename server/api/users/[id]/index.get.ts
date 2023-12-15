@@ -1,4 +1,4 @@
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     if (!event.context.params) {
         throw createError({
             statusCode: 400,
@@ -7,5 +7,17 @@ export default defineEventHandler((event) => {
     }
     const id = event.context.params.id;
 
-    return database.query.users.findFirst({ where: (user, { eq }) => eq(user.id, id) });
+    const user = await database.query.users
+        .findFirst({
+            where: (user, { eq }) => eq(user.id, id),
+            columns: { id: true, name: true, image: true },
+        })
+        .execute();
+
+    if (user) return user;
+    else
+        throw createError({
+            statusCode: 404,
+            message: "The user with ID '" + id + "' does not exist.",
+        });
 });
