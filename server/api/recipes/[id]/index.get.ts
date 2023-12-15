@@ -1,3 +1,6 @@
+import { desc } from "drizzle-orm";
+import { comments } from "~/database/recipe";
+
 export default defineEventHandler((event) => {
     if (!event.context.params) {
         throw createError({
@@ -13,6 +16,7 @@ export default defineEventHandler((event) => {
             comments: {
                 where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
                 with: { user: { columns: { id: true, name: true } } },
+                orderBy: [desc(comments.likes)],
             },
         },
     });
