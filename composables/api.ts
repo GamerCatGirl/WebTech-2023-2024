@@ -1,6 +1,6 @@
 export type ApiRoute = {
     title: string;
-    description: string;
+    description?: string;
     routes: {
         method: "GET" | "POST" | "PUT" | "DELETE";
         title: string;
@@ -9,8 +9,9 @@ export type ApiRoute = {
         example: {
             url: string;
             body?: string;
-            run?: { res: Ref<any | undefined>; apiKey?: string | undefined; authRequired?: boolean };
+            run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
         };
+        authRequired?: boolean;
         returnExplanation?: string;
         returnType: any;
         bodyExplanation?: string;
@@ -34,7 +35,6 @@ function getValues(object: string[]) {
 export const apiRoutes: ApiRoute = [
     {
         title: "Status",
-        description: "",
         routes: [
             {
                 method: "GET",
@@ -52,7 +52,6 @@ export const apiRoutes: ApiRoute = [
     },
     {
         title: "Recipes",
-        description: "",
         routes: [
             {
                 method: "GET",
@@ -229,8 +228,9 @@ export const apiRoutes: ApiRoute = [
                         null,
                         2
                     ),
-                    run: { res: ref(), authRequired: true, apiKey: "" },
+                    run: { res: ref(), apiKey: "" },
                 },
+                authRequired: true,
             },
             {
                 method: "GET",
@@ -321,9 +321,10 @@ export const apiRoutes: ApiRoute = [
                         "...",
                     ],
                 },
+                authRequired: true,
                 example: {
                     url: "/api/recipes/[ID]",
-                    run: { res: ref(), apiKey: "", authRequired: true },
+                    run: { res: ref(), apiKey: "" },
                     body: JSON.stringify(
                         {
                             name: "APIRecipe",
@@ -356,16 +357,16 @@ export const apiRoutes: ApiRoute = [
                 explanation: "Deletes the given recipe, in order to use this request you need to be logged in first.",
                 route: "/api/recipes/[ID]",
                 returnType: "boolean",
+                authRequired: true,
                 example: {
                     url: "/api/recipes/[ID]",
-                    run: { res: ref(), authRequired: true, apiKey: "" },
+                    run: { res: ref(), apiKey: "" },
                 },
             },
         ],
     },
     {
         title: "Users",
-        description: "",
         routes: [
             {
                 method: "GET",
@@ -416,7 +417,6 @@ export const apiRoutes: ApiRoute = [
     },
     {
         title: "units",
-        description: "",
         routes: [
             {
                 method: "GET",

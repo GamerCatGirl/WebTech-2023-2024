@@ -79,6 +79,7 @@ function selectBlock(event: MouseEvent) {
         <code>/api/recipes?apiKey=[MySecretAPIKey]</code>.
         <div v-for="topRoutes in apiRoutes" :key="topRoutes.title">
             <h2>{{ topRoutes.title }}</h2>
+            <p>{{ topRoutes.description }}</p>
             <Accordion multiple class="apiRoute">
                 <AccordionTab v-for="route in topRoutes.routes" :key="route.route">
                     <template #header>
@@ -94,7 +95,18 @@ function selectBlock(event: MouseEvent) {
                         {{ route.explanation }}
                     </p>
                     <Accordion multiple>
-                        <AccordionTab v-if="route.params" header="Query parameters">
+                        <AccordionTab v-if="route.authRequired || route.params" header="Query parameters">
+                            <Card class="queryParam">
+                                <template #title>
+                                    <Tag value="Required" severity="danger" />
+                                    apiKey
+                                </template>
+                                <template #subtitle>string</template>
+                                <template #content
+                                    >Your API key, this is used to authenticate you, so you should keep this a secret. If
+                                    you do not yet have an API key you can get one when you visit your profile.</template
+                                >
+                            </Card>
                             <Card v-for="param in route.params" :key="param.name" class="queryParam">
                                 <template #title>
                                     <Tag v-if="param.required" value="Required" severity="danger" />
@@ -166,7 +178,7 @@ function selectBlock(event: MouseEvent) {
                                     "
                                 />
                             </div>
-                            <div v-if="route.example.run?.authRequired" class="runAuth">
+                            <div v-if="route.authRequired && route.example.run" class="runAuth">
                                 <p>API key:</p>
                                 <InputText v-model="route.example.run.apiKey" type="text" />
                             </div>
