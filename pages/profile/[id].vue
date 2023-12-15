@@ -9,7 +9,7 @@ const { data: user } = await useFetch(`/api/users/${id}`);
 if (!user)
     showError({
         statusCode: 404,
-        statusMessage: "This user does not exist.",
+        message: "This user does not exist.",
     });
 
 async function getUserRecipes(

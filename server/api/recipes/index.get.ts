@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     const page = queryParams.page;
 
     if (query.sortOn && query.sort && !recipesColumns.includes(query.sortOn as string))
-        throw createError({ statusCode: 400, statusMessage: "`sortOn` is not a column of recipes" });
+        throw createError({ statusCode: 400, message: "`sortOn` is not a column of recipes" });
     const sortFunction = parseInt(query.sort as string) === 1 ? asc : desc;
 
     if (queryParams.query || query.mealType || query.difficulty || query.user) {

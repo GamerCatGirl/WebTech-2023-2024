@@ -230,7 +230,7 @@ const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 if (!recipy)
 	showError({
 	  statusCode: 404,
-	  statusMessage: "This recipe does not exist."
+	  message: "This recipe does not exist."
 	})
 
 const recipyScore = ref(Number(recipy.score));

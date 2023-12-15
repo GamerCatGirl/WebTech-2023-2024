@@ -12,11 +12,11 @@ const { data: recipe } = await useFetch(`/api/recipes/${id}`);
 if (!recipe.value)
     showError({
         statusCode: 404,
-        statusMessage: "This recipe does not exist.",
+        message: "This recipe does not exist.",
     });
 else if (recipe.value && data.value?.user?.id !== recipe.value.user)
     showError({
         statusCode: 401,
-        statusMessage: "You are not allowed to edit this recipe.",
+        message: "You are not allowed to edit this recipe.",
     });
 </script>
