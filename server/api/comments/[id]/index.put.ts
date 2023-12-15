@@ -3,10 +3,11 @@ import { likedComments, InsertLikedComments} from "~/database/auth";
 import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
+
   if (!event.context.params) {
     throw createError({
       statusCode: 400,
-      statusMessage: "ID is not defined",
+      message: "ID is not defined",
     });
   }
   const id = event.context.params.id;
@@ -24,7 +25,9 @@ export default defineEventHandler(async (event) => {
 	  return database.insert(likedComments).values(data);
   }
 
-  console.log("update comment" + id)
+  const deleteLikedComment = 0;
+  const changeLikedComment = 0;
+
   updateComment(comment.LikeAmount);
 
   let post: InsertLikedComments = {
@@ -33,18 +36,12 @@ export default defineEventHandler(async (event) => {
 	  comment:"" +  id,
   }
 
- console.log("likedComments")
   if (!comment.changeLike && !comment.cancel){
 	  if (comment.dislike){
-		  console.log("post dislike")
 		  post.dislike = 1; 
-		  // TODO: post a dislike
-		  console.log(post);
-		  console.log(InsertLikedComment(post))
-		  //await database.insert(likedComments).values(post);
-		  console.log("posted")
+		  InsertLikedComment(post)
 	  } else {
-		  // TODO: post a like 
+		  InsertLikedComment(post)
 	  }
   } else if (comment.changeLike){
 	  console.log("change like");

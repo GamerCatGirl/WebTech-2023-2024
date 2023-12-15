@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     const page = queryParams.page;
 
     if (query.sortOn && query.sort && !recipesColumns.includes(query.sortOn as string))
-        throw createError({ statusCode: 400, statusMessage: "`sortOn` is not a column of recipes" });
+        throw createError({ statusCode: 400, message: "`sortOn` is not a column of recipes" });
     const sortFunction = parseInt(query.sort as string) === 1 ? asc : desc;
 
     if (queryParams.query || query.mealType || query.difficulty || query.user) {
@@ -51,7 +51,6 @@ export default defineEventHandler(async (event) => {
                 name: sub.name,
                 description: sub.description,
                 userName: users.name,
-                totalAmount: sql<number>`COUNT(*) OVER()`,
             })
             .from(sub)
             .where(and(...conditions))
@@ -70,7 +69,7 @@ export default defineEventHandler(async (event) => {
     } else {
         const dbQuery = database
             // @ts-ignore
-            .select({ ...recipes, userName: users.name, totalAmount: sql<number>`COUNT(*) OVER()` })
+            .select({ ...recipes, userName: users.name })
             .from(recipes)
             .limit(pageSize)
             .offset(pageSize * page)

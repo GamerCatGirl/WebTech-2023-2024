@@ -1,37 +1,36 @@
 import { ValiError, parse } from "valibot";
 import { eq } from "drizzle-orm";
-import { recipes, InsertRecipe, insertRecipeSchema } from "~/database/recipe";
-import { InsertIngredients, ingredients as ingredientsTable, insertIngredientSchema } from "~/database/ingredients";
-import { getServerSession } from "#auth";
+import { recipes, InsertRecipe, insertRecipeSchema, Recipe } from "~/database/recipe";
+import {
+    InsertIngredients,
+    ingredientsDB,
+    ingredients as ingredientsTable,
+    insertIngredientSchema,
+} from "~/database/ingredients";
 import { getUnit } from "@/composables/unit";
 
 export default defineEventHandler(async (event) => {
-    const session = await getServerSession(event);
-    // Make sure the user is authenticated
-    if (!session) throw createError({ statusCode: 401, statusMessage: "You need to be logged in to update recipes." });
-    if (!session.user)
-        throw createError({ statusCode: 401, statusMessage: "You need to be logged in to update recipes." });
-
     // Make sure that the ID exists
-    if (!event.context.params) throw createError({ statusCode: 400, statusMessage: "ID is not defined" });
+    if (!event.context.params) throw createError({ statusCode: 400, message: "ID is not defined" });
     const id = event.context.params.id as string;
-    if (!id) throw createError({ statusCode: 400, statusMessage: "ID is not defined" });
+    if (!id) throw createError({ statusCode: 400, message: "ID is not defined" });
 
-    // Get the recipe the user wants to edit
-    const recipe = await database.query.recipes.findFirst({
-        where: ({ id: recipeID }, { eq }) => eq(recipeID, id),
-        with: { ingredients: true },
+    let recipe: (Recipe & { ingredients: ingredientsDB[] }) | undefined;
+    const userID = await authenticate(event, async () => {
+        // Get the recipe the user wants to edit
+        // @ts-ignore
+        recipe = await database.query.recipes.findFirst({
+            where: ({ id: recipeID }, { eq }) => eq(recipeID, id),
+            with: { ingredients: true },
+        });
+        return recipe?.user ?? "";
     });
-    // Make sure that the user has access to this recipe
-    if (!recipe) throw createError({ statusCode: 400, statusMessage: `Cannot find recipe with ID: '${id}'` });
-    if (recipe.user !== session.user.id)
-        throw createError({ statusCode: 401, statusMessage: "You do not have access to this recipe." });
+    if (!recipe) throw createError({ statusCode: 400, message: `Cannot find recipe with ID: '${id}'` });
 
     const body = await readBody(event);
     if (!(body.ingredients instanceof Array))
-        throw createError({ statusCode: 400, statusMessage: "Please specify an array of ingredients." });
-    if (body.ingredients.length === 0)
-        throw createError({ statusCode: 400, statusMessage: "Please specify some ingredients." });
+        throw createError({ statusCode: 400, message: "Please specify an array of ingredients." });
+    if (body.ingredients.length === 0) throw createError({ statusCode: 400, message: "Please specify some ingredients." });
 
     let updateRecipe: InsertRecipe;
     const ingredients: InsertIngredients[] = recipe.ingredients;
@@ -39,12 +38,11 @@ export default defineEventHandler(async (event) => {
     const insertIngredients: InsertIngredients[] = [];
     try {
         // parse recipe
-        updateRecipe = { ...parse(insertRecipeSchema, body, { abortEarly: true }), user: session.user.id };
+        updateRecipe = { ...parse(insertRecipeSchema, body, { abortEarly: true }), user: userID };
 
         // Find the ingredients that should be added, updated or removed
         for (const ingredient of body.ingredients) {
             const unit = getUnit(ingredient.unit);
-            console.log(ingredient.unit, unit);
             if (unit) ingredient.unit = unit;
             const parsedIngredient = { ...parse(insertIngredientSchema, ingredient), recipyId: id };
 
@@ -60,11 +58,11 @@ export default defineEventHandler(async (event) => {
             ) {
                 updateIngredients.push(parsedIngredient);
             } else if (parsedIngredient.id)
-                throw createError({ statusCode: 400, statusMessage: "Please do not specify an ID for new ingredients." });
+                throw createError({ statusCode: 400, message: "Please do not specify an ID for new ingredients." });
             else insertIngredients.push(parsedIngredient);
         }
     } catch (e) {
-        if (e instanceof ValiError) throw createError({ statusCode: 400, statusMessage: e.message });
+        if (e instanceof ValiError) throw createError({ statusCode: 400, message: e.message });
         else throw e;
     }
 
@@ -84,4 +82,6 @@ export default defineEventHandler(async (event) => {
         // Insert new ingredients
         if (insertIngredients.length > 0) await tx.insert(ingredientsTable).values(insertIngredients);
     });
+
+    return true;
 });

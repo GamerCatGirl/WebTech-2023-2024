@@ -96,31 +96,33 @@ const labelButton = ref("View on map")
 //const marker = ref(latLng(51,-0.99));
 </script>
 <template>
-    <div class="card flex justify-content-left">
-      <!-- TODO: edit ViewOnMap so we can also go back to the original view -->
-      <Button v-show="viewButton" :label="labelButton" icon="pi pi-compass" @click="viewOnMap()" />
-    </div>
+	<div>
+		<div class="card flex justify-content-left">
+			<!-- TODO: edit ViewOnMap so we can also go back to the original view -->
+			<Button v-show="viewButton" :label="labelButton" icon="pi pi-compass" @click="viewOnMap()" />
+		</div>
 
-    <div v-if="map" style="height: 80vh; width: 50vw">
+		<div v-if="map" style="height: 80vh; width: 50vw">
 
-      <LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]" >
-        <LTileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-          layer-type="base"
-          name="OpenStreetMap"
-        />
-      <LMarker :lat-lng="[50, 50]"></LMarker>
-      </LMap>
-    </div>
+			<LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]" >
+				<LTileLayer
+					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+					attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+					layer-type="base"
+					name="OpenStreetMap"
+				/>
+				<LMarker :lat-lng="[50, 50]"></LMarker>
+			</LMap>
+		</div>
 
-    <recipes-list
-        highlight-matches
-        :get-recipes="getRecipes"
-        :initial-query="query"
-        :initial-page="page"
-        :initial-meal-types="mealTypes"
-        :initial-meal-difficulties="mealDifficulties"
-        @query-parameters-changed="updateQueryParams"
-    />
+		<recipes-list
+			highlight-matches
+			:get-recipes="getRecipes"
+			:initial-query="query"
+			:initial-page="page"
+			:initial-meal-types="mealTypes"
+			:initial-meal-difficulties="mealDifficulties"
+			@query-parameters-changed="updateQueryParams"
+		/>
+	</div>
 </template>

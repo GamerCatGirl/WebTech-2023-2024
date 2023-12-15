@@ -1,5 +1,7 @@
 <template>
-    <RecipeEdit />
+    <div>
+        <RecipeEdit />
+    </div>
 </template>
 
 <script>
