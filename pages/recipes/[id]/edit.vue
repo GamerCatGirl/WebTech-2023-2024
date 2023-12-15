@@ -1,5 +1,7 @@
 <template>
-    <RecipeEdit :edit-recipe="recipe" />
+    <div>
+        <RecipeEdit :edit-recipe="recipe" />
+    </div>
 </template>
 
 <script setup lang="ts">
