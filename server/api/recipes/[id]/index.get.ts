@@ -1,4 +1,7 @@
-export default defineEventHandler(async (event) => {
+import { desc } from "drizzle-orm";
+import { comments } from "~/database/recipe";
+
+export default defineEventHandler((event) => {
     if (!event.context.params) {
         throw createError({
             statusCode: 400,
@@ -6,18 +9,16 @@ export default defineEventHandler(async (event) => {
         });
     }
     const id = event.context.params.id as string;
-    const recipe = await database.query.recipes
-        .findFirst({
-            where: (recipe, { eq }) => eq(recipe.id, id),
-            with: {
-                ingredients: { orderBy: ({ index }, { asc }) => [asc(index)] },
-                comments: {
-                    where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
-                    with: { user: { columns: { id: true, name: true } } },
-                },
+
+    return database.query.recipes.findFirst({
+        where: (recipe, { eq }) => eq(recipe.id, id),
+        with: {
+            ingredients: { orderBy: ({ index }, { asc }) => [asc(index)] },
+            comments: {
+                where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
+                with: { user: { columns: { id: true, name: true } } },
+                orderBy: [desc(comments.likes)],
             },
         })
         .execute();
-    if (recipe) return recipe;
-    else throw createError({ statusCode: 404, message: "Recipe with id '" + id + "' does not exist" });
 });
