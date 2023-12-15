@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta( {
+    middleware:"auth",//redirects to /login when loggedIn is false
+});
 const username = "[username]";
 const countryTypes = "";
 const countries = ref(["Turkey", "Germany", "Belgium"]);
