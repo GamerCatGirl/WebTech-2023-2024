@@ -127,6 +127,24 @@ export const apiRoutes: ApiRoute = [
                         description:
                             "How to sort this, `1` is for sorting in ascending order, `-1` is for sorting in descending order",
                     },
+                    {
+                        name: "high",
+                        type: "string",
+                        description:
+                            "If a query is provided all matched words in the name and description will be surrounded with the provided string. If you, for example, set `high` to `==` and `query` to `fried` you could get a recipe with the name `French ==fries==`",
+                    },
+                    {
+                        name: "highStart",
+                        type: "string",
+                        description:
+                            "If a query is provided all matched words in the name and description will be preceded with the provided string. If you, for example, set `highStart` to `==` and `query` to `fried` you could get a recipe with the name `French ==fries`",
+                    },
+                    {
+                        name: "highEnd",
+                        type: "string",
+                        description:
+                            "If a query is provided all matched words in the name and description will be preceded with the provided string. If you, for example, set `highEnd` to `==` and `query` to `fried` or `fries` you could get a recipe with the name `French fries==`",
+                    },
                 ],
                 example: {
                     url: {
@@ -139,6 +157,9 @@ export const apiRoutes: ApiRoute = [
                             mealType: ref(""),
                             sortOn: ref(""),
                             sort: ref(0),
+                            high: ref(""),
+                            highStart: ref(""),
+                            highEnd: ref(""),
                         },
                         url: ref("/api/recipes"),
                         extra: "",
