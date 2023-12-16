@@ -87,7 +87,7 @@ function selectBlock(event: MouseEvent) {
                 </p>
                 <Accordion multiple>
                     <AccordionTab v-if="route.authRequired || route.params" header="Query parameters">
-                        <Card class="queryParam">
+                        <Card v-if="route.authRequired" class="queryParam">
                             <template #title>
                                 <Tag value="Required" severity="danger" />
                                 apiKey
