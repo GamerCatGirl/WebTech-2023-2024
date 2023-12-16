@@ -394,6 +394,19 @@ export const apiRoutes: ApiRoute = [
                     run: { res: ref(), apiKey: "" },
                 },
             },
+            {
+                method: "DELETE",
+                title: "Delete rating",
+                explanation: "",
+                route: "/api/recipes/[ID]/rate",
+                returnType: "int",
+                returnExplanation: "The new rating of the given recipe",
+                authRequired: true,
+                example: {
+                    url: "/api/recipes/[ID]/rate",
+                    run: { res: ref(), apiKey: "" },
+                },
+            },
         ],
     },
     {
