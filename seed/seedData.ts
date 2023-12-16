@@ -43,7 +43,7 @@ const recipes = [
     {
         id: crypto.randomUUID(),
         description: "desc2",
-        location: "loc2",
+        location: "50/50",
         name: "name2",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",
