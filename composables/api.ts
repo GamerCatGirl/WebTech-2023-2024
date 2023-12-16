@@ -363,6 +363,17 @@ export const apiRoutes: ApiRoute = [
                     run: { res: ref(), apiKey: "" },
                 },
             },
+            {
+                method: "GET",
+                title: "Get rating",
+                explanation: "Get the rating for this recipe and a given user.",
+                returnType: "integer | false",
+                route: "/api/recipes/[ID]/rating",
+                example: {
+                    url: "/api/recipes/[ID]/rating",
+                    run: { res: ref() },
+                },
+            },
         ],
     },
     {
