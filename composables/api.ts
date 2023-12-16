@@ -10,8 +10,7 @@ export type ApiRoute = {
             url:
                 | string
                 | { url: Ref<string>; parameters: { [key: string]: Ref<string | number | undefined> }; extra: string };
-            body?: string;
-            hasBody?: boolean;
+            body?: { body: string; edit: Ref<boolean> };
             run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
         };
         authRequired?: boolean;
@@ -242,31 +241,33 @@ export const apiRoutes: ApiRoute = [
                 returnExplanation: "This is the ID of the newly created recipe.",
                 example: {
                     url: "/api/recipes",
-                    hasBody: true,
-                    body: JSON.stringify(
-                        {
-                            name: "APIRecipe",
-                            location: "location",
-                            description:
-                                "This is the amazing description of your recipe, that we are going to add using our amazing API.",
-                            recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
-                            thumbnail: "/placeholder.svg",
-                            time: 15,
-                            type: "Breakfast",
-                            difficulty: "Hard",
-                            ingredients: [
-                                {
-                                    ingredient: "Ingredient",
-                                    amount: 1,
-                                    index: 0,
-                                    unit: VolumeUnit.TablespoonUS,
-                                    category: Ingredient.Other,
-                                },
-                            ],
-                        },
-                        null,
-                        2
-                    ),
+                    body: {
+                        body: JSON.stringify(
+                            {
+                                name: "APIRecipe",
+                                location: "location",
+                                description:
+                                    "This is the amazing description of your recipe, that we are going to add using our amazing API.",
+                                recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
+                                thumbnail: "/placeholder.svg",
+                                time: 15,
+                                type: "Breakfast",
+                                difficulty: "Hard",
+                                ingredients: [
+                                    {
+                                        ingredient: "Ingredient",
+                                        amount: 1,
+                                        index: 0,
+                                        unit: VolumeUnit.TablespoonUS,
+                                        category: Ingredient.Other,
+                                    },
+                                ],
+                            },
+                            null,
+                            4
+                        ),
+                        edit: ref(true),
+                    },
                     run: { res: ref(), apiKey: "" },
                 },
                 authRequired: true,
@@ -364,31 +365,33 @@ export const apiRoutes: ApiRoute = [
                 example: {
                     url: "/api/recipes/[ID]",
                     run: { res: ref(), apiKey: "" },
-                    hasBody: true,
-                    body: JSON.stringify(
-                        {
-                            name: "APIRecipe",
-                            location: "location",
-                            description:
-                                "This is the amazing description of your recipe, that we are going to add using our amazing API.",
-                            recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
-                            thumbnail: "/placeholder.svg",
-                            time: 15,
-                            type: "Breakfast",
-                            difficulty: "Hard",
-                            ingredients: [
-                                {
-                                    ingredient: "Ingredient",
-                                    amount: 1,
-                                    index: 0,
-                                    unit: VolumeUnit.TablespoonUS,
-                                    category: Ingredient.Other,
-                                },
-                            ],
-                        },
-                        null,
-                        2
-                    ),
+                    body: {
+                        body: JSON.stringify(
+                            {
+                                name: "APIRecipe",
+                                location: "location",
+                                description:
+                                    "This is the amazing description of your recipe, that we are going to add using our amazing API.",
+                                recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
+                                thumbnail: "/placeholder.svg",
+                                time: 15,
+                                type: "Breakfast",
+                                difficulty: "Hard",
+                                ingredients: [
+                                    {
+                                        ingredient: "Ingredient",
+                                        amount: 1,
+                                        index: 0,
+                                        unit: VolumeUnit.TablespoonUS,
+                                        category: Ingredient.Other,
+                                    },
+                                ],
+                            },
+                            null,
+                            4
+                        ),
+                        edit: ref(true),
+                    },
                 },
             },
             {
@@ -444,8 +447,7 @@ export const apiRoutes: ApiRoute = [
                         bodyType: "int",
                         example: {
                             url: "/api/recipes/[ID]/rate",
-                            hasBody: true,
-                            body: "3",
+                            body: { body: "3", edit: ref(true) },
                             run: { res: ref(), apiKey: "" },
                         },
                     },

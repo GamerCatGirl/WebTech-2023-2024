@@ -7,12 +7,10 @@ const toast = useToast();
 
 let widthEl = process.client ? document.getElementById("widthEl") : undefined;
 function getWidth(s: string) {
-    console.log(widthEl);
     if (!process.client) return 100;
     if (!widthEl) widthEl = process.client ? document.getElementById("widthEl") : undefined;
     if (!widthEl) return 100;
     widthEl.innerHTML = s;
-    console.log(widthEl.getBoundingClientRect().width);
     return widthEl.getBoundingClientRect().width;
 }
 
@@ -20,6 +18,7 @@ function getWidth(s: string) {
 function syntaxHighlight(json: string, removeQoutes: boolean = false) {
     if (!json) return "";
 
+    // Using this with `innerHTML` is made safer by replacing `<` and `>` by HTML characters, this means that tags cannot be opened and closed
     json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     return json.replace(
         /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
@@ -99,8 +98,8 @@ function selectBlock(event: MouseEvent) {
     <div v-for="topRoutes in apiRoutes" :key="topRoutes.title">
         <h2>{{ topRoutes.title }}</h2>
         <p>{{ topRoutes.description }}</p>
-        <Accordion v-for="route in topRoutes.routes" :key="route.route" class="apiRoute" multiple>
-            <AccordionTab>
+        <Accordion class="apiRoute" multiple>
+            <AccordionTab v-for="route in topRoutes.routes" :key="route.route">
                 <template #header>
                     <Card :class="route.method">
                         <template #title>{{ route.method }}</template>
@@ -152,7 +151,7 @@ function selectBlock(event: MouseEvent) {
                     <AccordionTab v-if="route.bodyType" header="Request body">
                         <p v-if="route.bodyExplanation">{{ route.bodyExplanation }}</p>
                         <pre
-                            :innerHTML="syntaxHighlight(JSON.stringify(route.bodyType, null, 2), true)"
+                            :innerHTML="syntaxHighlight(JSON.stringify(route.bodyType, null, 4), true)"
                             class="highlightedJSON"
                             @dblclick="selectBlock"
                         />
@@ -160,7 +159,7 @@ function selectBlock(event: MouseEvent) {
                     <AccordionTab v-if="route.returnType" header="Return type">
                         <p v-if="route.returnExplanation">{{ route.returnExplanation }}</p>
                         <pre
-                            :innerHTML="syntaxHighlight(JSON.stringify(route.returnType, null, 2), true)"
+                            :innerHTML="syntaxHighlight(JSON.stringify(route.returnType, null, 4), true)"
                             class="highlightedJSON"
                             @dblclick="selectBlock"
                         />
@@ -185,7 +184,6 @@ function selectBlock(event: MouseEvent) {
                             <template v-if="typeof route.example.url !== 'string' && route.example.url.parameters">
                                 <p>?</p>
                                 <p v-for="[name, param] of Object.entries(route.example.url.parameters)" :key="name">
-                                    {{ console.log(param.value) }}
                                     <template v-if="param.value"> {{ name }}={{ param.value }}& </template>
                                 </p>
                                 <InputText v-model="route.example.url.extra" type="text" />
@@ -239,21 +237,45 @@ function selectBlock(event: MouseEvent) {
                                 </AccordionTab>
                             </Accordion>
                         </div>
-                        <div v-if="route.example.hasBody" class="bodyDiv">
+                        <div v-if="route.example.body" class="bodyDiv">
                             <Accordion class="mt-2">
                                 <AccordionTab header="Body">
-                                    <Textarea v-model="route.example.body" class="w-full" rows="15" />
+                                    <Textarea
+                                        v-if="route.example.body.edit.value"
+                                        v-model="route.example.body.body"
+                                        class="w-full"
+                                        rows="15"
+                                    />
+                                    <pre
+                                        v-else
+                                        class="highlightedJSON px-3"
+                                        :innerHTML="syntaxHighlight(route.example.body.body)"
+                                        @dblclick="selectBlock"
+                                    />
+                                    <template #header>
+                                        <div style="width: 100%">
+                                            <ToggleButton
+                                                v-model="route.example.body.edit.value"
+                                                style="margin-left: auto"
+                                                on-icon="pi pi-pencil"
+                                                off-icon="pi pi-eye"
+                                                on-label=""
+                                                off-label=""
+                                                @click="(event: any) => event.stopPropagation()"
+                                            />
+                                        </div>
+                                    </template>
                                 </AccordionTab>
                             </Accordion>
                         </div>
                         <div v-if="route.example.run?.res.value" class="exampleOutput">
-                            <Accordion class="mt-2">
+                            <Accordion class="mt-2" :active-index="0">
                                 <AccordionTab header="Output">
                                     <pre
                                         v-if="route.example.run.res.value.status === 'success'"
                                         class="highlightedJSON"
                                         :innerHTML="
-                                            syntaxHighlight(JSON.stringify(route.example.run.res.value.data, null, 2))
+                                            syntaxHighlight(JSON.stringify(route.example.run.res.value.data, null, 4))
                                         "
                                         @dblclick="selectBlock"
                                     />
@@ -462,6 +484,7 @@ input.p-inputtext.dynamicInput {
 
 :deep(.bodyDiv .p-accordion-content) {
     padding: 0px;
+    padding-top: 1px;
 }
 
 :deep(.exampleOutput .p-accordion-content) {
@@ -471,5 +494,14 @@ input.p-inputtext.dynamicInput {
 
 :deep(.bodyDiv .p-inputtextarea) {
     border: none;
+}
+
+:deep(.bodyDiv .p-button-label) {
+    height: 0px;
+}
+
+:deep(.bodyDiv .p-togglebutton) {
+    background-color: var(--surface-overlay);
+    border-color: var(--surface-border);
 }
 </style>
