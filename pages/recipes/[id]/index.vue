@@ -313,6 +313,7 @@ let location = recipy.location.split("/");
 location = location.map((str) => {
   return parseInt(str);
 });
+console.log(location);
 
 // TODO: when putting comments use number for likes instead of strings -> for sorting
 
