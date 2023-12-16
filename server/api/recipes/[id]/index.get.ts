@@ -21,7 +21,6 @@ export default defineEventHandler((event) => {
                     orderBy: [desc(comments.likes)],
                 },
             },
-        }
-    })
+        })
         .execute();
 });
