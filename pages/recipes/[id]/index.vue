@@ -12,8 +12,7 @@
 
 					<!-- TODO: add user possibility to rate -->
 					<div class="flex flex-wrap gap-2">
-						<Rating v-model="valueRating" />
-						<Button label="Rate" icon="pi pi-check" size="small" rounded />
+						<Rating v-if="user" v-model="rating" @click="rate"/>
 					</div>
 				</template>
 				<template #content>
@@ -168,17 +167,17 @@
 
 <script setup>
 import { ref } from "vue";
+import { useToast } from "primevue/usetoast";
 //import { useRoute } from "vue-router";
 const { data } = useAuth();
 const user = data.value?.user?.id ?? "";
-const value = ref(3); //score of recipy still needs to be added in the database
-const valueRating = ref();
 const route = useRoute();
 const id = route.params.id;
+const rating = user ? ref((await useFetch(`/api/recipes/${id}/rating`, {query: {user}})).data) : ref();
+if (!rating.value) rating.value = 0;
 const loggedInUser = data.value?.user?.id; 
 const loggedInUserName = data.value?.user?.name;
-const comboRouting = "&";
-const splitedId = id.split(comboRouting);
+const toast = useToast();
 
 const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 if (!recipy)
@@ -186,9 +185,25 @@ if (!recipy)
 	  statusCode: 404,
 	  message: "This recipe does not exist."
 	})
-
-
 const recipyScore = ref(Number(recipy.score));
+
+async function rate() {
+    const { status, error } = rating.value
+        ? await useFetch(`/api/recipes/${id}/rate`, { method: "POST", body: rating.value })
+        : await useFetch(`/api/recipes/${id}/rate`, { method: "DELETE" });
+	if (status.value === "success") {
+		toast.add({ severity: "success", detail: "Successfully rated", life: 3000 });
+		const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
+		recipyScore.value = Number(recipy.score);
+	}
+	else 
+		toast.add({
+			severity: "error",
+			summary: error.value?.statusCode?.toString() ?? "",
+			detail: error.value?.message ?? "",
+			life: 3000,
+		});
+}
 
 const comments = ref(recipy.comments);
 
