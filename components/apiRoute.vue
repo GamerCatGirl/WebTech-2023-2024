@@ -71,139 +71,139 @@ function selectBlock(event: MouseEvent) {
     <div v-for="topRoutes in apiRoutes" :key="topRoutes.title">
         <h2>{{ topRoutes.title }}</h2>
         <p>{{ topRoutes.description }}</p>
-        <div v-for="route in topRoutes.routes" :key="route.route" class="apiRoute">
-            <apiRoute v-if="route.isSubRoute" :api-routes="route.route" :base-u-r-l="baseURL" />
-            <Accordion v-else multiple>
-                <AccordionTab>
-                    <template #header>
-                        <Card :class="route.method">
-                            <template #title>{{ route.method }}</template>
+        <Accordion v-for="route in topRoutes.routes" :key="route.route" class="apiRoute" multiple>
+            <AccordionTab>
+                <template #header>
+                    <Card :class="route.method">
+                        <template #title>{{ route.method }}</template>
+                    </Card>
+                    <div>
+                        <h3>{{ route.title }}</h3>
+                        <p>{{ route.route }}</p>
+                    </div>
+                </template>
+                <p>
+                    {{ route.explanation }}
+                </p>
+                <Accordion multiple>
+                    <AccordionTab v-if="route.authRequired || route.params" header="Query parameters">
+                        <Card class="queryParam">
+                            <template #title>
+                                <Tag value="Required" severity="danger" />
+                                apiKey
+                            </template>
+                            <template #subtitle>string</template>
+                            <template #content
+                                >Your API key, this is used to authenticate you, so you should keep this a secret. If you
+                                do not yet have an API key you can get one when you visit your profile.</template
+                            >
                         </Card>
-                        <div>
-                            <h3>{{ route.title }}</h3>
-                            <p>{{ route.route }}</p>
-                        </div>
-                    </template>
-                    <p>
-                        {{ route.explanation }}
-                    </p>
-                    <Accordion multiple>
-                        <AccordionTab v-if="route.authRequired || route.params" header="Query parameters">
-                            <Card class="queryParam">
-                                <template #title>
-                                    <Tag value="Required" severity="danger" />
-                                    apiKey
-                                </template>
-                                <template #subtitle>string</template>
-                                <template #content
-                                    >Your API key, this is used to authenticate you, so you should keep this a secret. If
-                                    you do not yet have an API key you can get one when you visit your profile.</template
-                                >
-                            </Card>
-                            <Card v-for="param in route.params" :key="param.name" class="queryParam">
-                                <template #title>
-                                    <Tag v-if="param.required" value="Required" severity="danger" />
-                                    {{ param.name }}
-                                </template>
-                                <template #subtitle>
-                                    <div class="typeDiv">
-                                        {{ param.type }}
-                                        <div v-if="param.values">: {{ param.values }}</div>
-                                    </div>
-                                    <div v-if="param.default">Default: {{ param.default }}</div>
-                                </template>
-                                <template #content> {{ param.description }} </template>
-                                <template #footer>
-                                    <div v-if="param.info">
-                                        <h4 class="m-0">More info</h4>
-                                        <div v-for="info in param.info" :key="info.name">
-                                            <NuxtLink :to="info.link">{{ info.name }}</NuxtLink>
-                                        </div>
-                                    </div>
-                                </template>
-                            </Card>
-                        </AccordionTab>
-                        <AccordionTab v-if="route.bodyType" header="Request body">
-                            <p v-if="route.bodyExplanation">{{ route.bodyExplanation }}</p>
-                            <pre
-                                :innerHTML="syntaxHighlight(JSON.stringify(route.bodyType, null, 2), true)"
-                                class="highlightedJSON"
-                                @dblclick="selectBlock"
-                            />
-                        </AccordionTab>
-                        <AccordionTab v-if="route.returnType" header="Return type">
-                            <p v-if="route.returnExplanation">{{ route.returnExplanation }}</p>
-                            <pre
-                                :innerHTML="syntaxHighlight(JSON.stringify(route.returnType, null, 2), true)"
-                                class="highlightedJSON"
-                                @dblclick="selectBlock"
-                            />
-                        </AccordionTab>
-                        <AccordionTab header="Example">
-                            <div class="exampleURL">
-                                <p>{{ baseURL }}</p>
-                                <InputText v-model="route.example.url" type="text" />
-                                <Button
-                                    v-tooltip.top="'Copy into clipboard'"
-                                    icon="pi pi-copy"
-                                    severity="success"
-                                    class="ml-3"
-                                    @click="() => copyExample(route.example.url)"
-                                />
-                                <Button
-                                    v-if="route.example.run"
-                                    v-tooltip.top="'Run example query'"
-                                    label="run"
-                                    severity="info"
-                                    class="ml-2 py-3 m-auto"
-                                    icon="pi pi-sync"
-                                    @click="
-                                        async () => {
-                                            if (!route.example.run) return;
-                                            if (!route.example.run.res.value)
-                                                route.example.run.res.value = { status: 'pending' };
-                                            route.example.run.res.value = await useFetch(getURL(route.example.url), {
-                                                query: { apiKey: route.example.run.apiKey },
-                                                method: route.method,
-                                                body: route.example.body,
-                                            });
-                                        }
-                                    "
-                                />
-                            </div>
-                            <div v-if="route.authRequired && route.example.run" class="runAuth">
-                                <p>API key:</p>
-                                <InputText v-model="route.example.run.apiKey" type="text" />
-                            </div>
-                            <div v-if="route.example.hasBody">
-                                <h4>Body:</h4>
-                                <Textarea v-model="route.example.body" class="w-full" rows="15" />
-                            </div>
-                            <div v-if="route.example.run?.res.value" class="exampleOutput">
-                                <h4>Output:</h4>
-                                <pre
-                                    v-if="route.example.run.res.value.status === 'success'"
-                                    class="highlightedJSON"
-                                    :innerHTML="syntaxHighlight(JSON.stringify(route.example.run.res.value.data, null, 2))"
-                                    @dblclick="selectBlock"
-                                />
-                                <Skeleton
-                                    v-else-if="route.example.run.res.value.status === 'pending'"
-                                    width="20rem"
-                                    height="3rem"
-                                />
-                                <div v-if="route.example.run.res.value.status === 'error'">
-                                    <div class="errorStatus">
-                                        {{ route.example.run.res.value.error.statusCode }}:
-                                        {{ route.example.run.res.value.error.statusMessage }}
-                                    </div>
-                                    {{ route.example.run.res.value.error.data.message }}
+                        <Card v-for="param in route.params" :key="param.name" class="queryParam">
+                            <template #title>
+                                <Tag v-if="param.required" value="Required" severity="danger" />
+                                {{ param.name }}
+                            </template>
+                            <template #subtitle>
+                                <div class="typeDiv">
+                                    {{ param.type }}
+                                    <div v-if="param.values">: {{ param.values }}</div>
                                 </div>
+                                <div v-if="param.default">Default: {{ param.default }}</div>
+                            </template>
+                            <template #content> {{ param.description }} </template>
+                            <template #footer>
+                                <div v-if="param.info">
+                                    <h4 class="m-0">More info</h4>
+                                    <div v-for="info in param.info" :key="info.name">
+                                        <NuxtLink :to="info.link">{{ info.name }}</NuxtLink>
+                                    </div>
+                                </div>
+                            </template>
+                        </Card>
+                    </AccordionTab>
+                    <AccordionTab v-if="route.bodyType" header="Request body">
+                        <p v-if="route.bodyExplanation">{{ route.bodyExplanation }}</p>
+                        <pre
+                            :innerHTML="syntaxHighlight(JSON.stringify(route.bodyType, null, 2), true)"
+                            class="highlightedJSON"
+                            @dblclick="selectBlock"
+                        />
+                    </AccordionTab>
+                    <AccordionTab v-if="route.returnType" header="Return type">
+                        <p v-if="route.returnExplanation">{{ route.returnExplanation }}</p>
+                        <pre
+                            :innerHTML="syntaxHighlight(JSON.stringify(route.returnType, null, 2), true)"
+                            class="highlightedJSON"
+                            @dblclick="selectBlock"
+                        />
+                    </AccordionTab>
+                    <AccordionTab header="Example">
+                        <div class="exampleURL">
+                            <p>{{ baseURL }}</p>
+                            <InputText v-model="route.example.url" type="text" />
+                            <Button
+                                v-tooltip.top="'Copy into clipboard'"
+                                icon="pi pi-copy"
+                                severity="success"
+                                class="ml-3"
+                                @click="() => copyExample(route.example.url)"
+                            />
+                            <Button
+                                v-if="route.example.run"
+                                v-tooltip.top="'Run example query'"
+                                label="run"
+                                severity="info"
+                                class="ml-2 py-3 m-auto"
+                                icon="pi pi-sync"
+                                @click="
+                                    async () => {
+                                        if (!route.example.run) return;
+                                        if (!route.example.run.res.value)
+                                            route.example.run.res.value = { status: 'pending' };
+                                        route.example.run.res.value = await useFetch(getURL(route.example.url), {
+                                            query: { apiKey: route.example.run.apiKey },
+                                            method: route.method,
+                                            body: route.example.body,
+                                        });
+                                    }
+                                "
+                            />
+                        </div>
+                        <div v-if="route.authRequired && route.example.run" class="runAuth">
+                            <p>API key:</p>
+                            <InputText v-model="route.example.run.apiKey" type="text" />
+                        </div>
+                        <div v-if="route.example.hasBody">
+                            <h4>Body:</h4>
+                            <Textarea v-model="route.example.body" class="w-full" rows="15" />
+                        </div>
+                        <div v-if="route.example.run?.res.value" class="exampleOutput">
+                            <h4>Output:</h4>
+                            <pre
+                                v-if="route.example.run.res.value.status === 'success'"
+                                class="highlightedJSON"
+                                :innerHTML="syntaxHighlight(JSON.stringify(route.example.run.res.value.data, null, 2))"
+                                @dblclick="selectBlock"
+                            />
+                            <Skeleton
+                                v-else-if="route.example.run.res.value.status === 'pending'"
+                                width="20rem"
+                                height="3rem"
+                            />
+                            <div v-if="route.example.run.res.value.status === 'error'">
+                                <div class="errorStatus">
+                                    {{ route.example.run.res.value.error.statusCode }}:
+                                    {{ route.example.run.res.value.error.statusMessage }}
+                                </div>
+                                {{ route.example.run.res.value.error.data.message }}
                             </div>
-                        </AccordionTab>
-                    </Accordion>
-                </AccordionTab>
-            </Accordion>
+                        </div>
+                    </AccordionTab>
+                </Accordion>
+            </AccordionTab>
+        </Accordion>
+        <div class="apiRoute">
+            <apiRoute v-if="topRoutes.subRoutes" :api-routes="topRoutes.subRoutes" :base-u-r-l="baseURL" />
         </div>
     </div>
 </template>
