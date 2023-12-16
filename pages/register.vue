@@ -67,5 +67,5 @@ async function register() {
 </template>
 
 <style>
-@import "./assets/css/profile/edit.css"
+@import '~/assets/css/profile/edit.css'
 </style>
