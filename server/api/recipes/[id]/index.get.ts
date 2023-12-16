@@ -19,6 +19,7 @@ export default defineEventHandler((event) => {
                 with: { user: { columns: { id: true, name: true } } },
                 orderBy: [desc(comments.likes)],
             },
-        })
+        }
+    })
         .execute();
 });

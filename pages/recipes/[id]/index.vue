@@ -23,7 +23,6 @@
           <!--Insert a picture-->
           <div class="chunk">
             <img
-              @click="console.log(recipy.thumbnail)"
               :src="recipy.thumbnail"
               class="image"
               alt="Image"
@@ -246,7 +245,7 @@
               label="Delete"
               rounded
               severity="danger"
-              @click="deleteComment(comment.id)"
+              @click="deleteComment(comment.id, comments, comment.idx)"
             />
           </div>
         </div>
@@ -275,6 +274,16 @@
               @click="dislike(reaction)"
               rounded
             />
+
+            <Button
+              v-if="reaction.deleteButton"
+              label="Delete"
+              rounded
+              severity="danger"
+              @click="
+                deleteComment(reaction.id, comment.reactions, reaction.idx)
+              "
+            />
           </Divider>
         </div>
       </div>
@@ -286,36 +295,26 @@
 import { ref } from "vue";
 import {
   LMap,
-  LIcon,
   LTileLayer,
   LMarker,
-  LControlLayers,
-  LTooltip,
-  LPopup,
-  LPolyline,
-  LPolygon,
-  LRectangle,
 } from "@vue-leaflet/vue-leaflet";
-//import { useRoute } from "vue-router";
 const { data } = useAuth();
 const user = data.value?.user?.id ?? "";
-const value = ref(3); //score of recipy still needs to be added in the database
 const zoom = ref(6);
 const valueRating = ref();
 const route = useRoute();
 const id = route.params.id;
 const loggedInUser = data.value?.user?.id;
 const loggedInUserName = data.value?.user?.name;
-const comboRouting = "&";
-const splitedId = id.split(comboRouting);
 
 const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 
-console.log(recipy)
-console.log(recipy.location)
 let location = recipy.location.split("/");
-location = location.map((str) => {return parseInt(str);})
-console.log(location)
+location = location.map((str) => {
+  return parseInt(str);
+});
+
+// TODO: when putting comments use number for likes instead of strings -> for sorting
 
 if (!recipy)
   showError({
@@ -363,7 +362,6 @@ async function like(comment) {
 
   commentPost.LikeAmount = newLikeAmount;
 
-  console.log("pressed on button");
 
   await $fetch(`/api/comments/${idOfComment}`, {
     method: "put",
@@ -446,18 +444,29 @@ async function dislike(comment) {
   });
 }
 
-async function deleteComment(commentID) {
-  console.log("delete need to be implemented");
-  // TODO: to implement
+async function deleteComment(commentID, vect, idx) {
+
+  const data = await $fetch(`/api/comments/${commentID}`, {
+    method: "delete",
+  });
+
+  console.log(data);
+
+  vect.splice(idx, 1);
 }
 
 async function setupReaction() {
   // TODO: get the comments from most to least likes
   // example on how to do this in recipes.[id].index.get.ts
 
-  comments.value.map(async (comment) => {
+  let userLikes = await $fetch(`/api/users/${loggedInUser}/liked`, {
+    method: "get",
+  });
+
+  comments.value.map(async (comment, index) => {
     comment.showReaction = false;
     comment.addReaction = false;
+    comment.idx = index;
     comment.severityLike = "Primary";
     comment.logedInUser = loggedInUser;
 
@@ -465,14 +474,46 @@ async function setupReaction() {
       comment.deleteButton = true;
     }
 
-    // TODO: if comment is liked by  = currentUser than display the likes
+    let idexToDelete = undefined;
 
-    let user = await $fetch(`/api/users/${comment.user.id}`);
-    console.log(user);
+    userLikes.map((element, index) => {
+      if (element.comment == comment.id) {
+        if (element.dislike == 1) {
+          comment.severityDislike = "danger";
+        } else if (element.dislike == 0) {
+          comment.severityLike = "success";
+        }
+        idexToDelete = index;
+      }
+    });
 
-    //comment.user = "Need to be replaced"//user.name;
+    if (idexToDelete != undefined) {
+      delete userLikes[idexToDelete];
+    }
 
     let reactions = await $fetch(`/api/comments/${comment.id}`);
+
+    reactions.replies.map((comment, index) => {
+      if (comment.userId == loggedInUser) {
+        comment.deleteButton = true;
+      }
+      comment.idx = index;
+
+      userLikes.map((element, index) => {
+        if (element.comment == comment.id) {
+          if (element.dislike == 1) {
+            comment.severityDislike = "danger";
+          } else if (element.dislike == 0) {
+            comment.severityLike = "success";
+          }
+          idexToDelete = index;
+        }
+      });
+
+      if (idexToDelete != undefined) {
+        delete userLikes[idexToDelete];
+      }
+    });
 
     //test
     comment.reactions = reactions.replies;
@@ -513,48 +554,10 @@ const ingredients = await Promise.all(
     return ingredient;
   }),
 );
-// console.log(ingredients)
 
 const massUnits = [...Object.values(MassUnit)];
 const volumeUnits = [...Object.values(VolumeUnit)];
-const items = ref([
-  {
-    label: "Info",
-    command: () => {
-      InfoCard.value = true;
-      Ingredients.value = false;
-      RecipyText.value = false;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Ingredients",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = true;
-      RecipyText.value = false;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Steps",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = false;
-      RecipyText.value = true;
-      Comments.value = false;
-    },
-  },
-  {
-    label: "Comments",
-    command: () => {
-      InfoCard.value = false;
-      Ingredients.value = false;
-      RecipyText.value = false;
-      Comments.value = true;
-    },
-  },
-]);
+
 
 function switchAddReaction(comment) {
   if (comment.showReaction) {
@@ -619,13 +622,12 @@ async function comment() {
   justify-content: center;
 }
 
-
 .image {
   width: 80vw;
 }
 
 .map {
-   padding: 1rem;
+  padding: 1rem;
 }
 
 .InfoCard {
