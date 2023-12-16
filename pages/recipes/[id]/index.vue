@@ -1,202 +1,343 @@
 <template>
+  <Button
+    v-if="user === recipy.user"
+    icon="pi pi-file-edit"
+    severity="success"
+    label="Edit recipe"
+    @click="() => navigateTo(`/recipes/${id}/edit`)"
+  ></Button>
 
-	<Button v-if="user === recipy.user" icon="pi pi-file-edit" severity="success" label="Edit recipe"
-		@click="() => navigateTo(`/recipes/${id}/edit`)"></Button>
+  <TabView>
+    <TabPanel header="Info">
+      <Card class="InfoCard">
+        <template #title>
+          {{ recipyName }}
+
+          <!-- TODO: add user possibility to rate -->
+          <div class="flex flex-wrap gap-2">
+            <div class="flex flex-wrap gap-2">
+              <Rating v-if="user" v-model="rating" @click="rate" />
+            </div>
+          </div>
+        </template>
+        <template #content>
+          <!--Insert a picture-->
+          <div class="chunk">
+            <img :src="recipy.thumbnail" class="image" alt="Image" />
+
+            <div class="align-content-end align-items-end"></div>
+          </div>
 
 
-	<TabView>
-		<TabPanel header="Info">
-			<Card class="InfoCard">
-				<template #title>
-					{{ recipyName }}
+          <div class="chunk">
+            <div class="map">
+              <div style="height: 80vh; width: 80vw">
+                <LMap ref="map" :zoom="zoom" :center="location">
+                  <LTileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                    layer-type="base"
+                    name="OpenStreetMap"
+                  />
+                  <LMarker :lat-lng="location"></LMarker>
+                </LMap>
+              </div>
+            </div>
+          </div>
 
-					<!-- TODO: add user possibility to rate -->
-					<div class="flex flex-wrap gap-2">
-						<Rating v-if="user" v-model="rating" @click="rate"/>
-					</div>
-				</template>
-				<template #content>
-					<!--Insert a picture-->
-					<div class="card flex">
-						<Image @click="console.log(recipy.thumbnail)" class="imageCard"
-							:src="recipy.thumbnail" alt="Image" width="auto" />
-					</div>
+          <!-- Made by & Share -->
+          <div class="flex flex-column md:flex-row">
+            <div
+              class="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5"
+            >
+              <div
+                class="flex flex-wrap justify-content-center align-items-center gap-2"
+              >
+                <Tag :value="recipy.type"></Tag>
+                <Tag
+                  icon=""
+                  :value="recipy.difficulty"
+                  :severity="getColorDifficulty(recipy.difficulty)"
+                ></Tag>
+                <Tag
+                  icon="pi pi-clock"
+                  :value="recipy.time"
+                  :severity="getSeverity(recipy.time)"
+                  rounded
+                ></Tag>
+              </div>
 
-					<div class="flex flex-column md:flex-row">
-						<div
-							class="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
-							<div
-								class="flex flex-wrap justify-content-center align-items-center gap-2">
-								<Tag :value="recipy.type"></Tag>
-								<Tag icon="" :value="recipy.difficulty"
-									:severity="getColorDifficulty(recipy.difficulty)"></Tag>
-								<Tag icon="pi pi-clock" :value="recipy.time"
-									:severity="getSeverity(recipy.time)" rounded></Tag>
-							</div>
+              <p class="m-0">Made by @Silken</p>
+              <!--Display figures like meat, vegi, halal, vegan, ...-->
+              <div class="card flex">
+                <Rating
+                  v-model="recipyScore"
+                  readonly
+                  :cancel="false"
+                  class="flex gap-2"
+                />
+              </div>
+            </div>
 
-							<p class="m-0">Made by @Silken</p>
-							<!--Display figures like meat, vegi, halal, vegan, ...-->
-							<div class="card flex">
-								<Rating v-model="recipyScore" readonly :cancel="false"
-									class="flex gap-2" />
-							</div>
-						</div>
+            <div class="w-full md:w-2">
+              <Divider layout="vertical" class="hidden md:flex"
+                ><b></b
+              ></Divider>
+              <Divider
+                layout="horizontal"
+                class="flex md:hidden"
+                align="center"
+              >
+                <b></b>
+              </Divider>
+            </div>
+            <div class="align-content-end align-items-end">
+              <p>Share Recipe</p>
 
-						<div class="w-full md:w-2">
-							<Divider layout="vertical" class="hidden md:flex"><b></b></Divider>
-							<Divider layout="horizontal" class="flex md:hidden" align="center">
-								<b></b>
-							</Divider>
-						</div>
-						<div class="align-content-end align-items-end">
-							<p>Share Recipe</p>
-
-							<div
-								class="flex-column flex align-items-center justify-content-end gap-2">
-								<SocialShare v-for="network in [
-									'facebook',
-									'twitter',
-									'linkedin',
-									'email',
-									'whatsapp',
-								]" :key="network" :network="network" :styled="true" :label="false" class="p-2 rounded-none" />
-							</div>
-						</div>
-					</div>
-				</template>
-
-				<!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
-			</Card>
-		</TabPanel>
+              <div
+                class="flex-column flex align-items-center justify-content-end gap-2"
+              >
+                <SocialShare
+                  v-for="network in [
+                    'facebook',
+                    'twitter',
+                    'linkedin',
+                    'email',
+                    'whatsapp',
+                  ]"
+                  :key="network"
+                  :network="network"
+                  :styled="true"
+                  :label="false"
+                  class="p-2 rounded-none"
+                />
+              </div>
+            </div>
+          </div>
+        </template>
 
         <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
- 
-	<TabPanel header="Ingredients">
-		<DataTable :value="ingredients" tableStyle="min-width: 50rem">
-			<Column field="ingredient" header="Ingredient"/>
-			<Column field="amount" header="Amount">
-				<template #body="{ data }">
-					<div v-if="data.requestStatus === 'success'">{{ data.amount }}</div>
-					<Skeleton v-else width="3em" height="2em"></Skeleton>
-				</template>
-			</Column>
-			<Column field="unit" header="Unit">
-				<template #body="{ data }">
-					<Dropdown v-if="data.unitType === UnitType.Mass" :options="massUnits" v-model="data.unit" :option-label="(unit) => unitNames[unit]" />
-					<Dropdown v-else-if="data.unitType === UnitType.Volume" :options="volumeUnits" v-model="data.unit" :option-label="(unit) => unitNames[unit]" />
-					<Dropdown v-else v-model="data.unit" :options="[data.unit]" disabled />
-				</template>
-			</Column>
-			<Column field="category" header="Category"/>
-		</DataTable>
-	</TabPanel>
+      </Card>
+    </TabPanel>
 
+    <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
 
-  <TabPanel header="Recipe">
-    <Editor v-model="recipeSteps" editorStyle="height: 320px" readonly />
-  </TabPanel> 
+    <TabPanel header="Ingredients">
+      <DataTable :value="ingredients" tableStyle="min-width: 50rem">
+        <Column field="ingredient" header="Ingredient" />
+        <Column field="amount" header="Amount">
+          <template #body="{ data }">
+            <div v-if="data.requestStatus === 'success'">{{ data.amount }}</div>
+            <Skeleton v-else width="3em" height="2em"></Skeleton>
+          </template>
+        </Column>
+        <Column field="unit" header="Unit">
+          <template #body="{ data }">
+            <Dropdown
+              v-if="data.unitType === UnitType.Mass"
+              :options="massUnits"
+              v-model="data.unit"
+              :option-label="(unit) => unitNames[unit]"
+            />
+            <Dropdown
+              v-else-if="data.unitType === UnitType.Volume"
+              :options="volumeUnits"
+              v-model="data.unit"
+              :option-label="(unit) => unitNames[unit]"
+            />
+            <Dropdown
+              v-else
+              v-model="data.unit"
+              :options="[data.unit]"
+              disabled
+            />
+          </template>
+        </Column>
+        <Column field="category" header="Category" />
+      </DataTable>
+    </TabPanel>
 
-	<!-- TODO: fix the layout of this horizontal bar -->
-	<TabPanel header="Comments">
-		<!-- input text -->
-		<Textarea v-model="addComment" rows="1" cols="90" />
-		<!-- TODO: make this dynamic!!!! -->
-		<!--  cancel button -->
-		<Button label="Cancel" severity="warning" rounded />
-		<!--  comment button -->
-		<Button label="Comment" severity="success" @click="comment()" rounded>
-		</Button>
+    <TabPanel header="Recipe">
+      <Editor v-model="recipeSteps" editorStyle="height: 320px" readonly />
+    </TabPanel>
 
-		<div v-for="comment in comments">
-			<Divider align="right" type="solid">
-				<Button :label="comment.user.name" @click="goToProfile(comment.user.id)" severity="info" text />
-			</Divider>
+    <!-- TODO: fix the layout of this horizontal bar -->
+    <TabPanel header="Comments">
+      <!-- input text -->
+      <Textarea v-model="addComment" rows="1" cols="90" />
+      <!-- TODO: make this dynamic!!!! -->
+      <!--  cancel button -->
+      <Button label="Cancel" severity="warning" rounded />
+      <!--  comment button -->
+      <Button label="Comment" severity="success" @click="comment()" rounded>
+      </Button>
 
-			<p class="m-0">
-				{{ comment.comment }}
-			</p>
+      <div v-for="comment in comments">
+        <Divider align="right" type="solid">
+          <Button
+            :label="comment.user.name"
+            @click="goToProfile(comment.user.id)"
+            severity="info"
+            text
+          />
+        </Divider>
 
-			<div class="flex gap-5">
-				<div class="flex justify-content-left">
-					<!-- like button -->
-					<Button icon="pi pi-caret-up" :severity="comment.severityLike" @click="like(comment)"
-						rounded />
-					<!-- amount of likes -->
+        <p class="m-0">
+          {{ comment.comment }}
+        </p>
 
-					<span class="amountStyle">{{ comment.likes }}</span>
-					<!-- dislike button -->
+        <div class="flex gap-5">
+          <div class="flex justify-content-left">
+            <!-- like button -->
+            <Button
+              icon="pi pi-caret-up"
+              :severity="comment.severityLike"
+              @click="like(comment)"
+              rounded
+            />
+            <!-- amount of likes -->
 
-					<Button icon="pi pi-caret-down" :severity="comment.severityDislike"
-						@click="dislike(comment)" rounded />
-					<!-- answer button -->
-				</div>
-				<div class="flex justify-content-left gap-3">
-					<!--TODO: flex right doesn't work here-->
+            <span class="amountStyle">{{ comment.likes }}</span>
+            <!-- dislike button -->
 
-					<Textarea v-show="comment.addReaction" v-model="comment.addReactionInput" rows="1"
-						cols="90" />
-					<Button label="Cancel" rounded severity="warning" v-show="comment.addReaction"
-						@click="comment.addReaction = false" />
-					<Button label="Answer" rounded @click="clickOnCommandButton(comment)" />
+            <Button
+              icon="pi pi-caret-down"
+              :severity="comment.severityDislike"
+              @click="dislike(comment)"
+              rounded
+            />
+            <!-- answer button -->
+          </div>
+          <div class="flex justify-content-left gap-3">
+            <!--TODO: flex right doesn't work here-->
 
-						<Button v-if="comment.reactions?.length > 0" label="... reactions" icon="pi pi-angle-down"
-						@click="switchAddReaction(comment)" text />
+            <Textarea
+              v-show="comment.addReaction"
+              v-model="comment.addReactionInput"
+              rows="1"
+              cols="90"
+            />
+            <Button
+              label="Cancel"
+              rounded
+              severity="warning"
+              v-show="comment.addReaction"
+              @click="comment.addReaction = false"
+            />
+            <Button
+              label="Answer"
+              rounded
+              @click="clickOnCommandButton(comment)"
+            />
 
+            <Button
+              v-if="comment.reactions?.length > 0"
+              label="... reactions"
+              icon="pi pi-angle-down"
+              @click="switchAddReaction(comment)"
+              text
+            />
 
-					<Button v-if="comment.deleteButton" label="Delete" rounded severity="danger"
-						@click="deleteComment(comment.id)" />
-				</div>
-			</div>
+            <Button
+              v-if="comment.deleteButton"
+              label="Delete"
+              rounded
+              severity="danger"
+              @click="deleteComment(comment.id, comments, comment.idx)"
+            />
+          </div>
+        </div>
 
-			<div v-for="reaction in comment.reactions" v-show="comment.showReaction">
-				<Divider align="left gap-3" type="solid">
-					<b>{{ reaction.user.name }}</b>: {{ reaction.comment }}
-					<!-- like button -->
-					<Button icon="pi pi-caret-up" :severity="reaction.severityLike" @click="like(reaction)" rounded />
-					<!-- amount of likes -->
+        <div
+          v-for="reaction in comment.reactions"
+          v-show="comment.showReaction"
+        >
+          <Divider align="left gap-3" type="solid">
+            <b>{{ reaction.user.name }}</b
+            >: {{ reaction.comment }}
+            <!-- like button -->
+            <Button
+              icon="pi pi-caret-up"
+              :severity="reaction.severityLike"
+              @click="like(reaction)"
+              rounded
+            />
+            <!-- amount of likes -->
 
-					<span class="amountStyle">{{ reaction.likes }}</span>
-					<!-- dislike button -->
-					<Button icon="pi pi-caret-down" :severity="reaction.severityDislike" @click="dislike(reaction)" rounded />
-				</Divider>
-			</div>
-		</div>
-			</TabPanel>
-	</TabView>
+            <span class="amountStyle">{{ reaction.likes }}</span>
+            <!-- dislike button -->
+            <Button
+              icon="pi pi-caret-down"
+              :severity="reaction.severityDislike"
+              @click="dislike(reaction)"
+              rounded
+            />
+
+            <Button
+              v-if="reaction.deleteButton"
+              label="Delete"
+              rounded
+              severity="danger"
+              @click="
+                deleteComment(reaction.id, comment.reactions, reaction.idx)
+              "
+            />
+          </Divider>
+        </div>
+      </div>
+    </TabPanel>
+  </TabView>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
+import {
+  LMap,
+  LTileLayer,
+  LMarker,
+} from "@vue-leaflet/vue-leaflet";
 //import { useRoute } from "vue-router";
 const { data } = useAuth();
 const user = data.value?.user?.id ?? "";
 const route = useRoute();
 const id = route.params.id;
-const rating = user ? ref((await useFetch(`/api/recipes/${id}/rating`, {query: {user}})).data) : ref();
+const rating = user ? ref((await useFetch(`/api/recipes/${id}/rating`, { query: { user } })).data) : ref();
 if (!rating.value) rating.value = 0;
-const loggedInUser = data.value?.user?.id; 
+const loggedInUser = data.value?.user?.id;
 const loggedInUserName = data.value?.user?.name;
 const toast = useToast();
 
 const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 if (!recipy)
 	showError({
-	  statusCode: 404,
-	  message: "This recipe does not exist."
+		statusCode: 404,
+		message: "This recipe does not exist."
 	})
+const zoom = ref(6);
+
+
+let location = recipy.location.split("/");
+location = location.map((str) => {
+  return parseInt(str);
+});
+console.log(location);
+
+// TODO: when putting comments use number for likes instead of strings -> for sorting
+
+
 const recipyScore = ref(Number(recipy.score));
 
 async function rate() {
-    const { status, error } = rating.value
-        ? await useFetch(`/api/recipes/${id}/rate`, { method: "POST", body: rating.value })
-        : await useFetch(`/api/recipes/${id}/rate`, { method: "DELETE" });
+	const { status, error } = rating.value
+		? await useFetch(`/api/recipes/${id}/rate`, { method: "POST", body: rating.value })
+		: await useFetch(`/api/recipes/${id}/rate`, { method: "DELETE" });
 	if (status.value === "success") {
 		toast.add({ severity: "success", detail: "Successfully rated", life: 3000 });
 		const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 		recipyScore.value = Number(recipy.score);
 	}
-	else 
+	else
 		toast.add({
 			severity: "error",
 			summary: error.value?.statusCode?.toString() ?? "",
@@ -243,7 +384,6 @@ async function like(comment) {
 
 	commentPost.LikeAmount = newLikeAmount;
 
-	console.log("pressed on button");
 
 	await $fetch(`/api/comments/${idOfComment}`, {
 		method: "put",
@@ -270,8 +410,8 @@ async function clickOnCommandButton(comment) {
 		comment.showReaction = true;
 		let reaction = {
 			comment: commentData.comment,
-			user: {name: loggedInUserName}, 
-			likes: "0", 
+			user: { name: loggedInUserName },
+			likes: "0",
 		};
 		comment.reactions.unshift(reaction);
 
@@ -320,25 +460,35 @@ async function dislike(comment) {
 
 	commentPost.LikeAmount = newLikeAmount;
 
-
 	await $fetch(`/api/comments/${idOfComment}`, {
 		method: "put",
 		body: commentPost,
 	});
 }
 
-async function deleteComment(commentID) {
-	console.log("delete need to be implemented");
-	// TODO: to implement
+async function deleteComment(commentID, vect, idx) {
+
+	const data = await $fetch(`/api/comments/${commentID}`, {
+		method: "delete",
+	});
+
+	console.log(data);
+
+	vect.splice(idx, 1);
 }
 
 async function setupReaction() {
 	// TODO: get the comments from most to least likes
 	// example on how to do this in recipes.[id].index.get.ts
 
-	comments.value.map(async (comment) => {
+	let userLikes = await $fetch(`/api/users/${loggedInUser}/liked`, {
+		method: "get",
+	});
+
+	comments.value.map(async (comment, index) => {
 		comment.showReaction = false;
 		comment.addReaction = false;
+		comment.idx = index;
 		comment.severityLike = "Primary";
 		comment.logedInUser = loggedInUser;
 
@@ -346,15 +496,47 @@ async function setupReaction() {
 			comment.deleteButton = true;
 		}
 
-		// TODO: if comment is liked by  = currentUser than display the likes
+		let idexToDelete = undefined;
 
-		let user = await $fetch(`/api/users/${comment.user.id}`);
-		console.log(user);
+		userLikes.map((element, index) => {
+			if (element.comment == comment.id) {
+				if (element.dislike == 1) {
+					comment.severityDislike = "danger";
+				} else if (element.dislike == 0) {
+					comment.severityLike = "success";
+				}
+				idexToDelete = index;
+			}
+		});
 
-		//comment.user = "Need to be replaced"//user.name;
+		if (idexToDelete != undefined) {
+			delete userLikes[idexToDelete];
+		}
 
-		let reactions = await $fetch(`/api/comments/${comment.id}`)
-		
+		let reactions = await $fetch(`/api/comments/${comment.id}`);
+
+		reactions.replies.map((comment, index) => {
+			if (comment.userId == loggedInUser) {
+				comment.deleteButton = true;
+			}
+			comment.idx = index;
+
+			userLikes.map((element, index) => {
+				if (element.comment == comment.id) {
+					if (element.dislike == 1) {
+						comment.severityDislike = "danger";
+					} else if (element.dislike == 0) {
+						comment.severityLike = "success";
+					}
+					idexToDelete = index;
+				}
+			});
+
+			if (idexToDelete != undefined) {
+				delete userLikes[idexToDelete];
+			}
+		});
+
 		//test
 		comment.reactions = reactions.replies;
 	});
@@ -364,76 +546,40 @@ setupReaction();
 
 const recipyName = recipy.name;
 const recipeSteps = ref(recipy.recipe);
-const ingredients = await Promise.all(recipy.ingredients.map(async (ingredient) => {
-	ingredient.unitType = getUnitType(ingredient.unit)
-	if (ingredient.unitType === UnitType.Custom) {
-		ingredient.requestStatus = "success"
+const ingredients = await Promise.all(
+	recipy.ingredients.map(async (ingredient) => {
+		ingredient.unitType = getUnitType(ingredient.unit);
+		if (ingredient.unitType === UnitType.Custom) {
+			ingredient.requestStatus = "success";
+			return ingredient;
+		}
+		const initialUnit = ingredient.unit;
+		const initialAmount = ingredient.amount;
+		// This ref is used here to avoid unwrapping of references
+		const unit = ref(ingredient.unit);
+		ingredient.unit = unit;
+
+		const { data, status } = await useFetch("/api/units", {
+			method: "get",
+			query: { fromUnit: initialUnit, toUnit: unit, quantity: initialAmount },
+			key: initialUnit + unit + initialAmount,
+		});
+		ingredient.requestStatus = status;
+		ingredient.amount = data;
+		const columns = [
+			{ field: "ingredient", header: "Ingredient" },
+			{ field: "amount", header: "Amount" },
+			{ field: "type", header: "Type" },
+			{ field: "category", header: "Category" },
+		];
+
 		return ingredient;
-	}
-	const initialUnit = ingredient.unit;
-	const initialAmount = ingredient.amount;
-	// This ref is used here to avoid unwrapping of references
-	const unit = ref(ingredient.unit);
-	ingredient.unit = unit;
+	}),
+);
 
-	const { data, status } = await useFetch("/api/units", {
-		method: "get",
-		query: { fromUnit: initialUnit, toUnit: unit, quantity: initialAmount },
-		key: initialUnit + unit + initialAmount,
-	});
-	ingredient.requestStatus = status
-	ingredient.amount = data;
-const columns = [
-	{ field: "ingredient", header: "Ingredient" },
-	{ field: "amount", header: "Amount" },
-	{ field: "type", header: "Type" },
-	{ field: "category", header: "Category" },
-];
+const massUnits = [...Object.values(MassUnit)];
+const volumeUnits = [...Object.values(VolumeUnit)];
 
-	return ingredient;
-}));
-// console.log(ingredients)
-
-const massUnits = [...Object.values(MassUnit)]
-const volumeUnits = [...Object.values(VolumeUnit)]
-const items = ref([
-	{
-		label: "Info",
-		command: () => {
-			InfoCard.value = true;
-			Ingredients.value = false;
-			RecipyText.value = false;
-			Comments.value = false;
-		},
-	},
-	{
-		label: "Ingredients",
-		command: () => {
-			InfoCard.value = false;
-			Ingredients.value = true;
-			RecipyText.value = false;
-			Comments.value = false;
-		},
-	},
-	{
-		label: "Steps",
-		command: () => {
-			InfoCard.value = false;
-			Ingredients.value = false;
-			RecipyText.value = true;
-			Comments.value = false;
-		},
-	},
-	{
-		label: "Comments",
-		command: () => {
-			InfoCard.value = false;
-			Ingredients.value = false;
-			RecipyText.value = false;
-			Comments.value = true;
-		},
-	},
-]);
 
 function switchAddReaction(comment) {
 	if (comment.showReaction) {
@@ -492,26 +638,40 @@ async function comment() {
 </script>
 
 <style scoped>
+.chunk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image {
+  width: 80vw;
+}
+
+.map {
+  padding: 1rem;
+}
+
 .InfoCard {
-	width: 80%;
-	margin: auto;
+  width: 90vw;
+  margin: auto;
 }
 
 .imageCard {
-	width: 10%;
+  width: 10%;
 }
 
 .amountStyle {
-	font-size: 35px;
+  font-size: 35px;
 }
 
 .p-editor-toolbar {
-	display: none;
+  display: none;
 }
 
 .p-editor-content {
-	border: 1px solid var(--surface-border) !important;
-	border-radius: var(--border-radius);
-	overflow: hidden;
+  border: 1px solid var(--surface-border) !important;
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 </style>
