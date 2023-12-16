@@ -21,20 +21,28 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, message: "Please specify an array of ingredients." });
     if (body.ingredients.length === 0) throw createError({ statusCode: 400, message: "Please specify some ingredients." });
 
-    const [{ id }] = await database.insert(recipes).values(recipe).returning({ id: recipes.id });
-
     try {
         insertIngredients = body.ingredients.map((ingredient: any) => {
             if (ingredient.id || ingredient.id === 0)
                 throw createError({ statusCode: 400, message: "Please do not specify an ID for new ingredients." });
             const unit = getUnit(ingredient.unit);
             if (unit) ingredient.unit = unit;
-            return { ...parse(insertIngredientSchema, ingredient), recipyId: id };
+            return parse(insertIngredientSchema, ingredient);
         });
     } catch (e) {
         if (e instanceof ValiError) throw createError({ statusCode: 400, message: e.message });
         else throw e;
     }
-    await database.insert(ingredients).values(insertIngredients);
+    let id: string = "";
+    await database.transaction(async (tx) => {
+        const [{ id: recipeID }] = await tx.insert(recipes).values(recipe).returning({ id: recipes.id });
+        id = recipeID;
+        await tx.insert(ingredients).values(
+            insertIngredients.map((ingredient) => {
+                return { ...ingredient, recipyId: id };
+            })
+        );
+    });
+    if (!id) throw createError({ statusCode: 500 });
     return id;
 });
