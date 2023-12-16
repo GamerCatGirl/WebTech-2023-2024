@@ -9,7 +9,7 @@ import { ConsoleLogWriter } from 'drizzle-orm';
 */
 
 definePageMeta({
-    middleware:"auth",//redirects to /login when loggedIn is false
+    //middleware:"auth",//redirects to /login when loggedIn is false
 });
 const username = "[username]";
 const countryTypes = "";
@@ -17,11 +17,11 @@ const countries = ref([]);
 //TODO: take the picture from the database
 const countryFlag = "https://flagcdn.com/w320/cx.png";//placeholder for now
 
-/*TODO: sort the countries in alphabetical order**/
+//TODO: sort the countries in alphabetical order
 const fetchCountryData = async () => {
     const response = await fetch('https://restcountries.com/v3.1/all')
     const jsonData = await response.json();
-    countries.value = jsonData.map(country => country.name.common);
+    countries.value = jsonData.map((country:any) => country.name.common);
 };
 
 onMounted(fetchCountryData);
@@ -40,7 +40,7 @@ onMounted(fetchCountryData);
                 </Avatar>
             </div>
             <div class="flex flex-column" style="margin-left: 20px;">
-                <Avatar shape="circle" size="large" image=countryFlag>
+                <Avatar shape="circle" size="large" :image="countryFlag">
                 </Avatar>
             </div>
         </div>
