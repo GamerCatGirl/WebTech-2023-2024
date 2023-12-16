@@ -226,39 +226,51 @@ function selectBlock(event: MouseEvent) {
                             v-if="typeof route.example.url !== 'string' && route.example.url.parameters"
                             class="paramInputs"
                         >
-                            <div
-                                v-for="[name, param] in Object.entries(route.example.url.parameters)"
-                                :key="name"
-                                class="paramInput"
-                            >
-                                <p>{{ name }}:</p>
-                                <InputText v-model="param.value" type="text" />
-                            </div>
+                            <Accordion class="mt-2">
+                                <AccordionTab header="Query parameters">
+                                    <div
+                                        v-for="[name, param] in Object.entries(route.example.url.parameters)"
+                                        :key="name"
+                                        class="paramInput"
+                                    >
+                                        <p>{{ name }}:</p>
+                                        <InputText v-model="param.value" type="text" />
+                                    </div>
+                                </AccordionTab>
+                            </Accordion>
                         </div>
-                        <div v-if="route.example.hasBody">
-                            <h4>Body:</h4>
-                            <Textarea v-model="route.example.body" class="w-full" rows="15" />
+                        <div v-if="route.example.hasBody" class="bodyDiv">
+                            <Accordion class="mt-2">
+                                <AccordionTab header="Body">
+                                    <Textarea v-model="route.example.body" class="w-full" rows="15" />
+                                </AccordionTab>
+                            </Accordion>
                         </div>
                         <div v-if="route.example.run?.res.value" class="exampleOutput">
-                            <h4>Output:</h4>
-                            <pre
-                                v-if="route.example.run.res.value.status === 'success'"
-                                class="highlightedJSON"
-                                :innerHTML="syntaxHighlight(JSON.stringify(route.example.run.res.value.data, null, 2))"
-                                @dblclick="selectBlock"
-                            />
-                            <Skeleton
-                                v-else-if="route.example.run.res.value.status === 'pending'"
-                                width="20rem"
-                                height="3rem"
-                            />
-                            <div v-if="route.example.run.res.value.status === 'error'">
-                                <div class="errorStatus">
-                                    {{ route.example.run.res.value.error.statusCode }}:
-                                    {{ route.example.run.res.value.error.statusMessage }}
-                                </div>
-                                {{ route.example.run.res.value.error.data.message }}
-                            </div>
+                            <Accordion class="mt-2">
+                                <AccordionTab header="Output">
+                                    <pre
+                                        v-if="route.example.run.res.value.status === 'success'"
+                                        class="highlightedJSON"
+                                        :innerHTML="
+                                            syntaxHighlight(JSON.stringify(route.example.run.res.value.data, null, 2))
+                                        "
+                                        @dblclick="selectBlock"
+                                    />
+                                    <Skeleton
+                                        v-else-if="route.example.run.res.value.status === 'pending'"
+                                        width="20rem"
+                                        height="3rem"
+                                    />
+                                    <div v-if="route.example.run.res.value.status === 'error'">
+                                        <div class="errorStatus">
+                                            {{ route.example.run.res.value.error.statusCode }}:
+                                            {{ route.example.run.res.value.error.statusMessage }}
+                                        </div>
+                                        {{ route.example.run.res.value.error.data.message }}
+                                    </div>
+                                </AccordionTab>
+                            </Accordion>
                         </div>
                     </AccordionTab>
                 </Accordion>
@@ -446,5 +458,18 @@ input.p-inputtext.dynamicInput {
     padding: 0.6rem;
     margin: auto 0.8em;
     flex-grow: 1;
+}
+
+:deep(.bodyDiv .p-accordion-content) {
+    padding: 0px;
+}
+
+:deep(.exampleOutput .p-accordion-content) {
+    /* padding: 0px; */
+    padding-top: 1px;
+}
+
+:deep(.bodyDiv .p-inputtextarea) {
+    border: none;
 }
 </style>
