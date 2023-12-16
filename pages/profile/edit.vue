@@ -9,7 +9,7 @@ import { ConsoleLogWriter } from 'drizzle-orm';
 */
 
 definePageMeta({
-    //middleware:"auth",//redirects to /login when loggedIn is false
+    middleware:"auth",//redirects to /login when loggedIn is false
 });
 const username = "[username]";
 //TODO: fetch 
