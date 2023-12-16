@@ -7,7 +7,9 @@ export type ApiRoute = {
         route: string;
         explanation: string;
         example: {
-            url: string;
+            url:
+                | string
+                | { url: Ref<string>; parameters: { [key: string]: Ref<string | number | undefined> }; extra: string };
             body?: string;
             hasBody?: boolean;
             run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
@@ -127,7 +129,20 @@ export const apiRoutes: ApiRoute = [
                     },
                 ],
                 example: {
-                    url: "/api/recipes?size=2",
+                    url: {
+                        parameters: {
+                            size: ref(2),
+                            page: ref(0),
+                            query: ref(""),
+                            user: ref(""),
+                            difficulty: ref(""),
+                            mealType: ref(""),
+                            sortOn: ref(""),
+                            sort: ref(0),
+                        },
+                        url: ref("/api/recipes"),
+                        extra: "",
+                    },
                     run: { res: ref() },
                 },
                 returnType: {
@@ -379,8 +394,20 @@ export const apiRoutes: ApiRoute = [
                         explanation: "Get the rating for this recipe and a given user.",
                         returnType: "integer | false",
                         route: "/api/recipes/[ID]/rating",
+                        params: [
+                            {
+                                name: "user",
+                                required: true,
+                                type: "string",
+                                description: "The user ID for the user that you want the rating for",
+                            },
+                        ],
                         example: {
-                            url: "/api/recipes/[ID]/rating",
+                            url: {
+                                url: ref("/api/recipes/[ID]/rating"),
+                                parameters: { user: ref("") },
+                                extra: "",
+                            },
                             run: { res: ref() },
                         },
                     },
@@ -499,7 +526,11 @@ export const apiRoutes: ApiRoute = [
                     },
                 ],
                 example: {
-                    url: "/api/units?quantity=5&fromUnit=kg&toUnit=[lb_av]",
+                    url: {
+                        url: ref("/api/units"),
+                        extra: "",
+                        parameters: { quantity: ref(), fromUnit: ref("kg"), toUnit: ref("[lb_av]") },
+                    },
                     run: { res: ref() },
                 },
             },

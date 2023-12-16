@@ -5,6 +5,17 @@ const props = defineProps<{ apiRoutes: ApiRoute[]; baseURL: string }>();
 
 const toast = useToast();
 
+let widthEl = process.client ? document.getElementById("widthEl") : undefined;
+function getWidth(s: string) {
+    console.log(widthEl);
+    if (!process.client) return 100;
+    if (!widthEl) widthEl = process.client ? document.getElementById("widthEl") : undefined;
+    if (!widthEl) return 100;
+    widthEl.innerHTML = s;
+    console.log(widthEl.getBoundingClientRect().width);
+    return widthEl.getBoundingClientRect().width;
+}
+
 // https://stackoverflow.com/questions/4810841/pretty-print-json-using-javascript/7220510#7220510
 function syntaxHighlight(json: string, removeQoutes: boolean = false) {
     if (!json) return "";
@@ -42,12 +53,28 @@ function syntaxHighlight(json: string, removeQoutes: boolean = false) {
     );
 }
 
-function getURL(path: string) {
-    return props.baseURL + path;
+function getParamURL(url: {
+    url: Ref<string>;
+    parameters: { [key: string]: Ref<string | number | undefined> };
+    extra: string;
+}) {
+    let res = url.url.value + "?";
+    for (const [name, param] of Object.entries(url.parameters)) {
+        if (param.value) res += name + "=" + param.value + "&";
+    }
+    return props.baseURL + res + url.extra;
 }
 
-function copyExample(path: string) {
-    navigator.clipboard.writeText(getURL(path));
+function getURL(
+    url: string | { url: Ref<string>; parameters: { [key: string]: Ref<string | number | undefined> }; extra: string }
+) {
+    return typeof url === "string" ? props.baseURL + url : getParamURL(url);
+}
+
+function copyExample(
+    url: string | { url: Ref<string>; parameters: { [key: string]: Ref<string | number | undefined> }; extra: string }
+) {
+    navigator.clipboard.writeText(getURL(url));
     toast.add({
         severity: "success",
         detail: "Successfully copied URL.",
@@ -68,6 +95,7 @@ function selectBlock(event: MouseEvent) {
 </script>
 
 <template>
+    <p id="widthEl" />
     <div v-for="topRoutes in apiRoutes" :key="topRoutes.title">
         <h2>{{ topRoutes.title }}</h2>
         <p>{{ topRoutes.description }}</p>
@@ -140,7 +168,28 @@ function selectBlock(event: MouseEvent) {
                     <AccordionTab header="Example">
                         <div class="exampleURL">
                             <p>{{ baseURL }}</p>
-                            <InputText v-model="route.example.url" type="text" />
+
+                            <InputText
+                                v-if="typeof route.example.url === 'string'"
+                                v-model="route.example.url"
+                                type="text"
+                            />
+                            <!-- This is only possible on the client due to the way the dynamic rescaling of the element is implemented -->
+                            <ClientOnly v-else>
+                                <InputText
+                                    v-model="route.example.url.url.value"
+                                    class="dynamicInput"
+                                    :style="`width: ${getWidth(route.example.url.url.value) + 10}px;`"
+                                    type="text"
+                            /></ClientOnly>
+                            <template v-if="typeof route.example.url !== 'string' && route.example.url.parameters">
+                                <p>?</p>
+                                <p v-for="[name, param] of Object.entries(route.example.url.parameters)" :key="name">
+                                    {{ console.log(param.value) }}
+                                    <template v-if="param.value"> {{ name }}={{ param.value }}& </template>
+                                </p>
+                                <InputText v-model="route.example.url.extra" type="text" />
+                            </template>
                             <Button
                                 v-tooltip.top="'Copy into clipboard'"
                                 icon="pi pi-copy"
@@ -172,6 +221,19 @@ function selectBlock(event: MouseEvent) {
                         <div v-if="route.authRequired && route.example.run" class="runAuth">
                             <p>API key:</p>
                             <InputText v-model="route.example.run.apiKey" type="text" />
+                        </div>
+                        <div
+                            v-if="typeof route.example.url !== 'string' && route.example.url.parameters"
+                            class="paramInputs"
+                        >
+                            <div
+                                v-for="[name, param] in Object.entries(route.example.url.parameters)"
+                                :key="name"
+                                class="paramInput"
+                            >
+                                <p>{{ name }}:</p>
+                                <InputText v-model="param.value" type="text" />
+                            </div>
                         </div>
                         <div v-if="route.example.hasBody">
                             <h4>Body:</h4>
@@ -353,5 +415,36 @@ function selectBlock(event: MouseEvent) {
 .apiRoute {
     width: 98%;
     margin: 0px auto;
+}
+
+.inputRoute {
+    flex-shrink: 1;
+    width: fit-content;
+}
+
+#widthEl {
+    visibility: hidden;
+    position: absolute;
+    width: fit-content;
+}
+
+input.p-inputtext.dynamicInput {
+    flex-grow: 0;
+    padding-right: 0.2em;
+}
+
+.paramInput {
+    display: flex;
+    margin-bottom: 0.5em;
+}
+
+.paramInput p {
+    margin: auto 0px;
+}
+
+.paramInput .p-inputtext {
+    padding: 0.6rem;
+    margin: auto 0.8em;
+    flex-grow: 1;
 }
 </style>
