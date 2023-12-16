@@ -1,35 +1,35 @@
 export type ApiRoute = {
     title: string;
     description?: string;
-    routes: (
-        | {
-              method: "GET" | "POST" | "PUT" | "DELETE";
-              title: string;
-              route: string;
-              explanation: string;
-              example: {
-                  url: string;
-                  body?: string;
-                  hasBody?: boolean;
-                  run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
-              };
-              authRequired?: boolean;
-              returnExplanation?: string;
-              returnType: any;
-              bodyExplanation?: string;
-              bodyType?: any;
-              params?: {
-                  name: string;
-                  type: string;
-                  values?: string;
-                  description: string;
-                  required?: boolean;
-                  default?: string | number;
-                  info?: { name: string; link: string }[];
-              }[];
-          }
-        | { route: ApiRoute[]; isSubRoute: true }
-    )[];
+    routes: {
+        method: "GET" | "POST" | "PUT" | "DELETE";
+        title: string;
+        route: string;
+        explanation: string;
+        example: {
+            url:
+                | string
+                | { url: Ref<string>; parameters: { [key: string]: Ref<string | number | undefined> }; extra: string };
+            body?: string;
+            hasBody?: boolean;
+            run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
+        };
+        authRequired?: boolean;
+        returnExplanation?: string;
+        returnType: any;
+        bodyExplanation?: string;
+        bodyType?: any;
+        params?: {
+            name: string;
+            type: string;
+            values?: string;
+            description: string;
+            required?: boolean;
+            default?: string | number;
+            info?: { name: string; link: string }[];
+        }[];
+    }[];
+    subRoutes?: ApiRoute[];
 }[];
 
 function getValues(object: string[]) {
@@ -127,9 +127,43 @@ export const apiRoutes: ApiRoute = [
                         description:
                             "How to sort this, `1` is for sorting in ascending order, `-1` is for sorting in descending order",
                     },
+                    {
+                        name: "high",
+                        type: "string",
+                        description:
+                            "If a query is provided all matched words in the name and description will be surrounded with the provided string. If you, for example, set `high` to `==` and `query` to `fried` you could get a recipe with the name `French ==fries==`",
+                    },
+                    {
+                        name: "highStart",
+                        type: "string",
+                        description:
+                            "If a query is provided all matched words in the name and description will be preceded with the provided string. If you, for example, set `highStart` to `==` and `query` to `fried` you could get a recipe with the name `French ==fries`",
+                    },
+                    {
+                        name: "highEnd",
+                        type: "string",
+                        description:
+                            "If a query is provided all matched words in the name and description will be preceded with the provided string. If you, for example, set `highEnd` to `==` and `query` to `fried` or `fries` you could get a recipe with the name `French fries==`",
+                    },
                 ],
                 example: {
-                    url: "/api/recipes?size=2",
+                    url: {
+                        parameters: {
+                            size: ref(2),
+                            page: ref(0),
+                            query: ref(""),
+                            user: ref(""),
+                            difficulty: ref(""),
+                            mealType: ref(""),
+                            sortOn: ref(""),
+                            sort: ref(0),
+                            high: ref(""),
+                            highStart: ref(""),
+                            highEnd: ref(""),
+                        },
+                        url: ref("/api/recipes"),
+                        extra: "",
+                    },
                     run: { res: ref() },
                 },
                 returnType: {
@@ -369,55 +403,64 @@ export const apiRoutes: ApiRoute = [
                     run: { res: ref(), apiKey: "" },
                 },
             },
+        ],
+        subRoutes: [
             {
-                isSubRoute: true,
-                route: [
+                // @ts-expect-error
+                title: "Rating",
+                routes: [
                     {
-                        // @ts-expect-error
-                        title: "Rating",
-                        routes: [
+                        method: "GET",
+                        title: "Get rating",
+                        explanation: "Get the rating for this recipe and a given user.",
+                        returnType: "integer | false",
+                        route: "/api/recipes/[ID]/rating",
+                        params: [
                             {
-                                method: "GET",
-                                title: "Get rating",
-                                explanation: "Get the rating for this recipe and a given user.",
-                                returnType: "integer | false",
-                                route: "/api/recipes/[ID]/rating",
-                                example: {
-                                    url: "/api/recipes/[ID]/rating",
-                                    run: { res: ref() },
-                                },
-                            },
-                            {
-                                method: "POST",
-                                title: "Rate recipe",
-                                explanation: "",
-                                route: "/api/recipes/[ID]/rate",
-                                returnType: "int",
-                                returnExplanation: "The new rating of the given recipe",
-                                authRequired: true,
-                                bodyExplanation: "Your new rating, this should be a number between 0 and 5, inclusive.",
-                                bodyType: "int",
-                                example: {
-                                    url: "/api/recipes/[ID]/rate",
-                                    hasBody: true,
-                                    body: "3",
-                                    run: { res: ref(), apiKey: "" },
-                                },
-                            },
-                            {
-                                method: "DELETE",
-                                title: "Delete rating",
-                                explanation: "",
-                                route: "/api/recipes/[ID]/rate",
-                                returnType: "int",
-                                returnExplanation: "The new rating of the given recipe",
-                                authRequired: true,
-                                example: {
-                                    url: "/api/recipes/[ID]/rate",
-                                    run: { res: ref(), apiKey: "" },
-                                },
+                                name: "user",
+                                required: true,
+                                type: "string",
+                                description: "The user ID for the user that you want the rating for",
                             },
                         ],
+                        example: {
+                            url: {
+                                url: ref("/api/recipes/[ID]/rating"),
+                                parameters: { user: ref("") },
+                                extra: "",
+                            },
+                            run: { res: ref() },
+                        },
+                    },
+                    {
+                        method: "POST",
+                        title: "Rate recipe",
+                        explanation: "",
+                        route: "/api/recipes/[ID]/rate",
+                        returnType: "int",
+                        returnExplanation: "The new rating of the given recipe",
+                        authRequired: true,
+                        bodyExplanation: "Your new rating, this should be a number between 0 and 5, inclusive.",
+                        bodyType: "int",
+                        example: {
+                            url: "/api/recipes/[ID]/rate",
+                            hasBody: true,
+                            body: "3",
+                            run: { res: ref(), apiKey: "" },
+                        },
+                    },
+                    {
+                        method: "DELETE",
+                        title: "Delete rating",
+                        explanation: "",
+                        route: "/api/recipes/[ID]/rate",
+                        returnType: "int",
+                        returnExplanation: "The new rating of the given recipe",
+                        authRequired: true,
+                        example: {
+                            url: "/api/recipes/[ID]/rate",
+                            run: { res: ref(), apiKey: "" },
+                        },
                     },
                 ],
             },
@@ -504,7 +547,11 @@ export const apiRoutes: ApiRoute = [
                     },
                 ],
                 example: {
-                    url: "/api/units?quantity=5&fromUnit=kg&toUnit=[lb_av]",
+                    url: {
+                        url: ref("/api/units"),
+                        extra: "",
+                        parameters: { quantity: ref(), fromUnit: ref("kg"), toUnit: ref("[lb_av]") },
+                    },
                     run: { res: ref() },
                 },
             },
