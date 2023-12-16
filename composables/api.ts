@@ -9,6 +9,7 @@ export type ApiRoute = {
         example: {
             url: string;
             body?: string;
+            hasBody?: boolean;
             run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
         };
         authRequired?: boolean;
@@ -204,6 +205,7 @@ export const apiRoutes: ApiRoute = [
                 returnExplanation: "This is the ID of the newly created recipe.",
                 example: {
                     url: "/api/recipes",
+                    hasBody: true,
                     body: JSON.stringify(
                         {
                             name: "APIRecipe",
@@ -325,6 +327,7 @@ export const apiRoutes: ApiRoute = [
                 example: {
                     url: "/api/recipes/[ID]",
                     run: { res: ref(), apiKey: "" },
+                    hasBody: true,
                     body: JSON.stringify(
                         {
                             name: "APIRecipe",
@@ -372,6 +375,23 @@ export const apiRoutes: ApiRoute = [
                 example: {
                     url: "/api/recipes/[ID]/rating",
                     run: { res: ref() },
+                },
+            },
+            {
+                method: "POST",
+                title: "Rate recipe",
+                explanation: "",
+                route: "/api/recipes/[ID]/rate",
+                returnType: "int",
+                returnExplanation: "The new rating of the given recipe",
+                authRequired: true,
+                bodyExplanation: "Your new rating, this should be a number between 0 and 5, inclusive.",
+                bodyType: "int",
+                example: {
+                    url: "/api/recipes/[ID]/rate",
+                    hasBody: true,
+                    body: "3",
+                    run: { res: ref(), apiKey: "" },
                 },
             },
         ],
@@ -459,38 +479,6 @@ export const apiRoutes: ApiRoute = [
                 example: {
                     url: "/api/units?quantity=5&fromUnit=kg&toUnit=[lb_av]",
                     run: { res: ref() },
-                },
-            },
-        ],
-    },
-    {
-        title: "Rating",
-        routes: [
-            {
-                method: "POST",
-                title: "Rate recipe",
-                explanation: "",
-                route: "/api/rate",
-                returnType: "int",
-                returnExplanation: "The new rating of the given recipe",
-                authRequired: true,
-                bodyType: {
-                    deleteKey1: "==COMMENT==// The ID of the recipe you are trying to rate.",
-                    recipe: "string",
-                    deleteKey2: "==COMMENT==// Your new rating, this should be a number between 0 and 5.",
-                    rating: "int",
-                },
-                example: {
-                    url: "/api/rate",
-                    body: JSON.stringify(
-                        {
-                            recipe: "[recipeID]",
-                            rating: 3,
-                        },
-                        null,
-                        2
-                    ),
-                    run: { res: ref(), apiKey: "" },
                 },
             },
         ],

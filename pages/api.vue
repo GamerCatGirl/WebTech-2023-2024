@@ -8,6 +8,8 @@ const toast = useToast();
 
 // https://stackoverflow.com/questions/4810841/pretty-print-json-using-javascript/7220510#7220510
 function syntaxHighlight(json: string, removeQoutes: boolean = false) {
+    if (!json) return "";
+
     json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     return json.replace(
         /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
@@ -182,7 +184,7 @@ function selectBlock(event: MouseEvent) {
                                 <p>API key:</p>
                                 <InputText v-model="route.example.run.apiKey" type="text" />
                             </div>
-                            <div v-if="route.example.body">
+                            <div v-if="route.example.hasBody">
                                 <h4>Body:</h4>
                                 <Textarea v-model="route.example.body" class="w-full" rows="15" />
                             </div>
