@@ -1,32 +1,35 @@
 export type ApiRoute = {
     title: string;
     description?: string;
-    routes: {
-        method: "GET" | "POST" | "PUT" | "DELETE";
-        title: string;
-        route: string;
-        explanation: string;
-        example: {
-            url: string;
-            body?: string;
-            hasBody?: boolean;
-            run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
-        };
-        authRequired?: boolean;
-        returnExplanation?: string;
-        returnType: any;
-        bodyExplanation?: string;
-        bodyType?: any;
-        params?: {
-            name: string;
-            type: string;
-            values?: string;
-            description: string;
-            required?: boolean;
-            default?: string | number;
-            info?: { name: string; link: string }[];
-        }[];
-    }[];
+    routes: (
+        | {
+              method: "GET" | "POST" | "PUT" | "DELETE";
+              title: string;
+              route: string;
+              explanation: string;
+              example: {
+                  url: string;
+                  body?: string;
+                  hasBody?: boolean;
+                  run?: { res: Ref<any | undefined>; apiKey?: string | undefined };
+              };
+              authRequired?: boolean;
+              returnExplanation?: string;
+              returnType: any;
+              bodyExplanation?: string;
+              bodyType?: any;
+              params?: {
+                  name: string;
+                  type: string;
+                  values?: string;
+                  description: string;
+                  required?: boolean;
+                  default?: string | number;
+                  info?: { name: string; link: string }[];
+              }[];
+          }
+        | { route: ApiRoute[]; isSubRoute: true }
+    )[];
 }[];
 
 function getValues(object: string[]) {
@@ -367,45 +370,56 @@ export const apiRoutes: ApiRoute = [
                 },
             },
             {
-                method: "GET",
-                title: "Get rating",
-                explanation: "Get the rating for this recipe and a given user.",
-                returnType: "integer | false",
-                route: "/api/recipes/[ID]/rating",
-                example: {
-                    url: "/api/recipes/[ID]/rating",
-                    run: { res: ref() },
-                },
-            },
-            {
-                method: "POST",
-                title: "Rate recipe",
-                explanation: "",
-                route: "/api/recipes/[ID]/rate",
-                returnType: "int",
-                returnExplanation: "The new rating of the given recipe",
-                authRequired: true,
-                bodyExplanation: "Your new rating, this should be a number between 0 and 5, inclusive.",
-                bodyType: "int",
-                example: {
-                    url: "/api/recipes/[ID]/rate",
-                    hasBody: true,
-                    body: "3",
-                    run: { res: ref(), apiKey: "" },
-                },
-            },
-            {
-                method: "DELETE",
-                title: "Delete rating",
-                explanation: "",
-                route: "/api/recipes/[ID]/rate",
-                returnType: "int",
-                returnExplanation: "The new rating of the given recipe",
-                authRequired: true,
-                example: {
-                    url: "/api/recipes/[ID]/rate",
-                    run: { res: ref(), apiKey: "" },
-                },
+                isSubRoute: true,
+                route: [
+                    {
+                        // @ts-expect-error
+                        title: "Rating",
+                        routes: [
+                            {
+                                method: "GET",
+                                title: "Get rating",
+                                explanation: "Get the rating for this recipe and a given user.",
+                                returnType: "integer | false",
+                                route: "/api/recipes/[ID]/rating",
+                                example: {
+                                    url: "/api/recipes/[ID]/rating",
+                                    run: { res: ref() },
+                                },
+                            },
+                            {
+                                method: "POST",
+                                title: "Rate recipe",
+                                explanation: "",
+                                route: "/api/recipes/[ID]/rate",
+                                returnType: "int",
+                                returnExplanation: "The new rating of the given recipe",
+                                authRequired: true,
+                                bodyExplanation: "Your new rating, this should be a number between 0 and 5, inclusive.",
+                                bodyType: "int",
+                                example: {
+                                    url: "/api/recipes/[ID]/rate",
+                                    hasBody: true,
+                                    body: "3",
+                                    run: { res: ref(), apiKey: "" },
+                                },
+                            },
+                            {
+                                method: "DELETE",
+                                title: "Delete rating",
+                                explanation: "",
+                                route: "/api/recipes/[ID]/rate",
+                                returnType: "int",
+                                returnExplanation: "The new rating of the given recipe",
+                                authRequired: true,
+                                example: {
+                                    url: "/api/recipes/[ID]/rate",
+                                    run: { res: ref(), apiKey: "" },
+                                },
+                            },
+                        ],
+                    },
+                ],
             },
         ],
     },
