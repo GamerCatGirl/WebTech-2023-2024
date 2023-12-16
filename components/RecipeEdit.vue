@@ -302,7 +302,6 @@
               <LIcon icon-url="/food-marker.png" :icon-size="50"> </LIcon>
             </LMarker>
 
-            <!-- TODO: implement buttons -->
             <LControl position="bottomleft">
               <Button
                 label="Add location recipe"
