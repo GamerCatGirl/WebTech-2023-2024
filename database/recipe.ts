@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
-import { sqliteTable, text, sqliteView, real, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, sqliteView, real, integer, primaryKey } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { minLength, number, string, toTrimmed, undefined_, minValue, enum_ } from "valibot";
+import { minLength, number, string, toTrimmed, undefined_, minValue, enum_, maxValue } from "valibot";
 import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
@@ -58,7 +58,35 @@ export const recipes = sqliteTable("recipe", {
     type: text("type", { enum: mealsTuple }).notNull(),
     difficulty: text("difficulty", { enum: dificultyTuple }).notNull(),
     score: real("score").notNull().default(0),
+    ratings: integer("ratings").notNull().default(0),
     createdAt: integer("createdAt", { mode: "timestamp" }).$defaultFn(() => new Date()),
+});
+
+export const ratings = sqliteTable(
+    "rating",
+    {
+        recipe: text("recipe")
+            .references(() => recipes.id)
+            .notNull(),
+        user: text("user")
+            .references(() => users.id)
+            .notNull(),
+        rating: integer("rating").notNull(),
+    },
+    (ratings) => {
+        return { pk: primaryKey(ratings.recipe, ratings.user) };
+    }
+);
+
+export type Rating = InferSelectModel<typeof ratings>;
+
+export const rateSchema = createInsertSchema(ratings, {
+    recipe: string("Please specify the recipe you are trying to rate."),
+    user: undefined_("Please do not specify the user."),
+    rating: number("Please specify your rating.", [
+        minValue(0, "Please do not give a score lower than 0."),
+        maxValue(5, "Please do not give a score higher than 5"),
+    ]),
 });
 
 export type Recipe = InferSelectModel<typeof recipes>;
@@ -82,6 +110,7 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
     type: enum_(Meal, "Please select a valid meal type."),
     difficulty: enum_(Difficulty, "Please select a valid difficulty."),
     score: undefined_("Score should not be specified."),
+    ratings: undefined_("The amount of ratings should not be defined"),
     createdAt: undefined_("Creation date should not be specified."),
 });
 

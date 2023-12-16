@@ -452,4 +452,36 @@ export const apiRoutes: ApiRoute = [
             },
         ],
     },
+    {
+        title: "Rating",
+        routes: [
+            {
+                method: "POST",
+                title: "Rate recipe",
+                explanation: "",
+                route: "/api/rate",
+                returnType: "int",
+                returnExplanation: "The new rating of the given recipe",
+                authRequired: true,
+                bodyType: {
+                    deleteKey1: "==COMMENT==// The ID of the recipe you are trying to rate.",
+                    recipe: "string",
+                    deleteKey2: "==COMMENT==// Your new rating, this should be a number between 0 and 5.",
+                    rating: "int",
+                },
+                example: {
+                    url: "/api/rate",
+                    body: JSON.stringify(
+                        {
+                            recipe: "[recipeID]",
+                            rating: 3,
+                        },
+                        null,
+                        2
+                    ),
+                    run: { res: ref(), apiKey: "" },
+                },
+            },
+        ],
+    },
 ];
