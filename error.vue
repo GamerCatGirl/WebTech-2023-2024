@@ -9,10 +9,12 @@ const handleError = () => clearError({ redirect: "/" });
 </script>
 
 <template>
-    <div class="error errorPageDiv" :class="theme === Theme.light ? 'light' : 'dark'">
-        <h1>{{ error.statusCode }}</h1>
-        <h2>{{ error.message }}</h2>
-        <button @click="handleError">Go back home</button>
+    <div>
+        <div class="error errorPageDiv" :class="theme === Theme.light ? 'light' : 'dark'">
+            <h1>{{ error.statusCode }}</h1>
+            <h2>{{ error.message }}</h2>
+            <button @click="handleError">Go back home</button>
+        </div>
     </div>
 </template>
 
