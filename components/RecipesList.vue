@@ -158,12 +158,12 @@ const meals = Object.values(Meal);
 const difficulty = Object.values(Difficulty);
 
 watch(
-  totalAmount,
-  () =>
-    (page.value = Math.min(
-      page.value,
-      Math.ceil(totalAmount.value / props.pageSize) - 1,
-    )),
+	totalAmount,
+	() =>
+		(page.value = Math.max(0, Math.min(
+			page.value,
+			Math.ceil(totalAmount.value / props.pageSize) - 1,
+		))),
 );
 
 const dataView = ref(true);
