@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ConsoleLogWriter } from 'drizzle-orm';
 import { check } from 'drizzle-orm/sqlite-core';
+import { any } from 'valibot';
 
 /*TODO:
 - fix error with countryFlag
@@ -22,26 +23,24 @@ console.log(loggedInUserName);
 //TODO: fetch currentSelectedCountry from database
 let currentSelectedCountry = "Belgium"
 const countryTypes = "";
-const countries = ref([]);
-const countryFlag: globalThis.Ref<any> = ref([""]);
-
-//TODO: sort the countries in alphabetical order
-const fetchCountryData = async () => {
-    const response = await fetch('https://restcountries.com/v3.1/all')
-    const jsonData = await response.json();
-    countries.value = jsonData.map((country: any) => country.name.common);
-    if (checkIfCountrySelected()) {
-        const response2 = await fetch('https://restcountries.com/v3.1/name/' + currentSelectedCountry + '?fields=flags');
-        const jsonData2 = await response2.json();
-        countryFlag.value = jsonData2[0].flags.png;
-    }
-};
+const countries:Ref<Array<any>> = ref([]);
+const countryFlag: Ref<string> = ref("");
 
 function checkIfCountrySelected(): Boolean {
     return currentSelectedCountry.length != 0
 };
 
-onMounted(fetchCountryData);
+//countries are sorted by countryCode and not name
+async function fetchCountryJSON() {
+    const target = 'https://flagcdn.com/en/codes.json';
+    const response = await fetch(target);
+    const countryData = await response.json();
+    for(const [key, value] of Object.entries(countryData)) {
+        countries.value.push(value);
+    }
+}
+
+fetchCountryJSON()
 
 </script>
 
@@ -63,7 +62,7 @@ onMounted(fetchCountryData);
         </div>
         <div class="editElement flex flex-row align-items-center justify-content-space-between">
             Change username
-            <InputText v-model="loggedInUserName" id="new-username" placeholder=username class="inputBox">
+            <InputText v-model="loggedInUserName" id="new-username" placeholder="new username" class="inputBox">
             </InputText>
         </div>
         <div class=" editElement flex flex-row align-items-center justify-content-space-between">
