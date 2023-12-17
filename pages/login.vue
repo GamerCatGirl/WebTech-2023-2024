@@ -1,11 +1,11 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: "auth",
-  auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/home" },
+  auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
 });
 const { signIn } = useAuth();
 const route = useRoute();
-const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
+const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/";
 </script>
 
 <template>

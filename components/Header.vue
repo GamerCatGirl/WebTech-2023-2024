@@ -75,7 +75,7 @@ const items = ref([
     {
         label: "Home",
         icon: "pi pi-home",
-        route: "/home",
+        route: "/",
     },
     {
         label: "Recipes",
