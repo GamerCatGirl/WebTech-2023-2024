@@ -48,6 +48,7 @@
   <TabView
     :active-index="tabIndex"
     @update:active-index="(index: number) => (tabIndex = index)"
+	@tab-change="invalidateMap"
   >
     <TabPanel header="Recipe">
       <div style="--tab-index: 0">
@@ -274,7 +275,6 @@
     <TabPanel header="Location">
       <!-- <div style="--tab-index: 3"></div> -->
       <div style="height: 80vh; width: 90vw">
-        <ClientOnly>
           <LMap ref="map" :zoom="zoom" :center="marker" @ready="setupMap">
             <LTileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -312,7 +312,6 @@
               <Button label="Delete marker" icon="pi pi-eraser"  @click="deleteFoodMarker()"/>
             </LControl>
           </LMap>
-        </ClientOnly>
       </div>
     </TabPanel>
   </TabView>
@@ -324,18 +323,7 @@ import { configure, useForm } from "vee-validate";
 import { useToast } from "primevue/usetoast";
 import { Recipe, insertRecipeSchema } from "~/database/recipe";
 import { insertIngredientSchema, ingredientsDB } from "~/database/ingredients";
-import {
-  LMap,
-  LIcon,
-  LTileLayer,
-  LMarker,
-  LControlLayers,
-  LTooltip,
-  LPopup,
-  LPolyline,
-  LPolygon,
-  LRectangle,
-} from "@vue-leaflet/vue-leaflet";
+import { LMap, LIcon, LTileLayer, LMarker, LPolyline, } from "@vue-leaflet/vue-leaflet";
 
 const zoom = ref(4);
 const marker = ref([0, 0]); //stadaard locatie voor als locatie API niet wordt goedgekeurd door user 
@@ -356,7 +344,7 @@ const locationToPost = computed(()=> {
 
 
 
-//const map = ref();
+const map = ref();
 const meals = Object.values(Meal);
 const difficulties = Object.values(Difficulty);
 const units = [
@@ -388,6 +376,11 @@ function setupMap(map) {
       moveMarker = false;
     }
   });
+}
+function invalidateMap() {
+	// This is done because, if you change the size of your window when the map is not displayed, it doesn't update
+	// This solves this by invalidating the size as soon as you change tabs, because when you change tabs, the map is no longer displayed
+	if (map) setTimeout(() => map.value.leafletObject.invalidateSize(), 1)
 }
 
 function deleteFoodMarker(){
@@ -479,7 +472,7 @@ function getLocation() {
   }
 }
 
-getLocation();
+// getLocation();
 
 // TODO: edit recipe update markers 
 
