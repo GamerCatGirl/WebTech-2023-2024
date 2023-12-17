@@ -125,8 +125,6 @@ function updateURL() {
     queryParams.sortOrder = sortKey.value.order;
   }
   emits("queryParametersChanged", queryParams);
-
-  setupMarkers();
 }
 
 /** A timer to ensure that, when the user is searching, there is not a request send on every key press, but only if the user stops typing for a small amount of time */
@@ -152,7 +150,17 @@ const data = await props.getRecipes(
   sortOrder,
 );
 /** The recipes that mach the current search and sort parameters */
-const recipes = computed(() => data.value.recipes);
+const recipes: Ref<(Recipe & { userName: string | undefined; locationArr: [number, number] })[]> = computed(() =>
+    data.value.recipes.map((recipe) => {
+		let location = recipe.location.split("/");
+		recipe.locationArr = [parseInt(location[0]), parseInt(location[1])];
+
+		return recipe;
+    })
+);
+// function setupMarkers() {
+//   recipes.value.;
+// }
 const totalAmount = computed(() => data.value.totalAmount);
 const meals = Object.values(Meal);
 const difficulty = Object.values(Difficulty);
@@ -198,20 +206,6 @@ let showMap = ref(false);
 
 const zoom = ref(3);
 const center = [50, 50]; // op current location
-
-function setupMarkers() {
-  recipes.value.map((recipe) => {
-    if (typeof recipe.location === "string") {
-      let location = recipe.location.split("/");
-      location.map((str, index) => {
-        location[index] = parseInt(str);
-      });
-      recipe.location = location;
-    }
-  });
-}
-
-setupMarkers();
 
 function changeView() {
   if (iconView.value == labelMap) {
@@ -288,7 +282,7 @@ function changeView() {
                 />
 
                 <div v-for="recipe in recipes">
-                  <LMarker :lat-lng="recipe.location">
+                  <LMarker :lat-lng="recipe.locationArr">
                     <LPopup>
                       <recipe-card
                         class="popupCard"

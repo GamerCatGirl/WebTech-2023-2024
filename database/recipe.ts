@@ -46,7 +46,7 @@ export const recipes = sqliteTable("recipe", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    location: text("location"),
+    location: text("location").notNull(),
     description: text("description").notNull(),
     // The actual recipe explanation
     recipe: text("recipe").notNull(),
