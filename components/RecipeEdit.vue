@@ -525,6 +525,15 @@ async function save() {
     });
     tabIndex.value = 2;
     return;
+	} else if (!lattitude.value || !longitude.value) {
+    toast.add({
+      severity: "error",
+      detail: "Please set the location of your recipe.",
+      life: 3000,
+    });
+    tabIndex.value = 3;
+	if (map) invalidateMap();
+    return;
 	}
   for (const ingredient of ingredients.value) {
     const unit = getUnit(ingredient.unit.value);
