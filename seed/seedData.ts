@@ -9,6 +9,7 @@ const users = [
         email: "user1@email.com",
         emailVerified: new Date(),
         image: "",
+        country: "fr"
     },
     {
         id: crypto.randomUUID(),
@@ -16,6 +17,7 @@ const users = [
         email: "user2@email.com",
         emailVerified: new Date(),
         image: "",
+        country:"be"
     },
     {
         id: crypto.randomUUID(),
@@ -23,6 +25,7 @@ const users = [
         email: "user3@email.com",
         emailVerified: new Date(),
         image: "",
+        country: "be"
     },
 ];
 const recipes = [

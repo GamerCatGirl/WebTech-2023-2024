@@ -11,26 +11,26 @@ export const users = sqliteTable("user", {
   email: text("email").notNull(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
-  country: text("country")
+  country: text("country"),
 })
 
 export const apiKey = sqliteTable("apiKey", {
-	key: text("id").notNull().primaryKey(),
-	user: text("user").references(() => users.id).notNull(),
+  key: text("id").notNull().primaryKey(),
+  user: text("user").references(() => users.id).notNull(),
 })
 
 ///// LIKED comments ///// 
 export const likedComments = sqliteTable("liked comments", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	dislike: integer("dislike"),
-	user: text("user_id")
-		.references(() => users.id)
-		.notNull(),
-	comment: text("comment_id")
-		.references(() => comments.id)
-		.notNull(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  dislike: integer("dislike"),
+  user: text("user_id")
+    .references(() => users.id)
+    .notNull(),
+  comment: text("comment_id")
+    .references(() => comments.id)
+    .notNull(),
 })
 
 export type LikedComments = InferSelectModel<typeof likedComments>;

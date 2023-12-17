@@ -13,34 +13,45 @@ import { any } from 'valibot';
 */
 
 definePageMeta({
-    // middleware:"auth",//redirects to /login when loggedIn is false
+    middleware: "auth",//redirects to /login when loggedIn is false
 });
 const { data } = useAuth();
 const user = data.value?.user?.id;
 const loggedInUserName = data.value?.user?.name;
-console.log(loggedInUserName);
+const userIcon: string = data.value?.user?.image ?? "";
 
 //TODO: fetch currentSelectedCountry from database
-let currentSelectedCountry = "Belgium"
-const countryTypes = "";
-const countries:Ref<Array<any>> = ref([]);
+const currentSelectedCountry = "be";//data.value?.user?.country ?? ""; //only save country key in db
+const countries: Ref<Array<any>> = ref([]);
 const countryFlag: Ref<string> = ref("");
-
-function checkIfCountrySelected(): Boolean {
-    return currentSelectedCountry.length != 0
-};
 
 //countries are sorted by countryCode and not name
 async function fetchCountryJSON() {
     const target = 'https://flagcdn.com/en/codes.json';
     const response = await fetch(target);
     const countryData = await response.json();
-    for(const [key, value] of Object.entries(countryData)) {
+    for (const [key, value] of Object.entries(countryData)) {
         countries.value.push(value);
     }
 }
 
-fetchCountryJSON()
+async function fetchCountryFlag() {
+    if (checkIfCountrySelected()) {
+        const flagSize = "w80";
+        countryFlag.value = 'https://flagcdn.com/' + flagSize + '/' + currentSelectedCountry + '.png';
+    }
+}
+
+function checkIfCountrySelected(): Boolean {
+    return currentSelectedCountry.length != 0;
+};
+
+function checkForUserIcon(): Boolean {
+    return user != "";
+}
+
+fetchCountryJSON();
+fetchCountryFlag();
 
 </script>
 
@@ -51,8 +62,9 @@ fetchCountryJSON()
         </div>
         <div class="editElement flex flex-row align-items-center justify-content-center">
             <div class="flex flex-column">
-                <!--TODO: if the user has a picture, display that, else, display the user-icon -->
-                <Avatar icon="pi pi-user" size="xlarge">
+                <Avatar v-if="checkForUserIcon()" :image="userIcon" size="xlarge">
+                </Avatar>
+                <Avatar v-else icon="pi pi-user" size="xlarge">
                 </Avatar>
             </div>
             <div class="flex flex-column" style="margin-left: 20px;">
