@@ -69,7 +69,19 @@ const visualRecipe = computed(() => {
             <p v-else>{{ visualRecipe.description }}</p>
         </template>
         <template #footer>
-            <Rating :model-value="visualRecipe.score ?? 0" readonly :cancel="false" class="flex gap-2" />
+            <div
+                v-tooltip.top="
+                    (visualRecipe.score ?? 0).toString() +
+                    '/5 with ' +
+                    visualRecipe.ratings +
+                    ' rating' +
+                    (visualRecipe.ratings === 1 ? '' : 's')
+                "
+                class="w-fit mt-auto"
+            >
+                <Rating :model-value="visualRecipe.score ?? 0" readonly :cancel="false" class="flex gap-2 w-fit" />
+                {{ visualRecipe.ratings }} rating{{ visualRecipe.ratings === 1 ? "" : "s" }}
+            </div>
         </template>
     </Card>
 </template>

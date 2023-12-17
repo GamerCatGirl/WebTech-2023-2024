@@ -39,6 +39,7 @@ const recipes = [
         type: Meal.Diner.toString(),
         difficulty: Difficulty.Hard,
         score: 1,
+        ratings: 1,
     },
     {
         id: crypto.randomUUID(),
@@ -52,6 +53,7 @@ const recipes = [
         type: Meal.Lunch.toString(),
         difficulty: Difficulty.Easy,
         score: 2.5,
+        ratings: 2,
     },
     {
         id: crypto.randomUUID(),
@@ -64,9 +66,28 @@ const recipes = [
         time: 30,
         type: Meal.Dessert.toString(),
         difficulty: Difficulty.Medium,
-        score: 3,
+        score: 0,
     },
 ];
+
+const ratings = [
+    {
+        recipe: recipes[0].id,
+        user: users[0].id,
+        rating: 1,
+    },
+    {
+        recipe: recipes[1].id,
+        user: users[0].id,
+        rating: 1,
+    },
+    {
+        recipe: recipes[1].id,
+        user: users[1].id,
+        rating: 5,
+    },
+];
+
 const ingredients = [
     {
         id: crypto.randomUUID(),
@@ -141,4 +162,5 @@ const ingredients = [
         index: 6,
     },
 ];
-export const seedData = { users, recipes, ingredients };
+
+export const seedData = { users, recipes, ratings, ingredients };
