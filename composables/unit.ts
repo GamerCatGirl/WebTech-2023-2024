@@ -66,8 +66,8 @@ const units: { [key: string]: Unit } = {
     }, {}),
 };
 
-export function getUnit(name: string): Unit | undefined {
-    return units[name.toLowerCase()];
+export function getUnit(name: string | undefined): Unit | undefined {
+    return units[name?.toLowerCase() ?? ""];
 }
 
 const massUnits = Object.values(MassUnit).map((value) => value.toLowerCase());

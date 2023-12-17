@@ -1,17 +1,6 @@
 <script setup lang="ts">
 import { LocationQuery, LocationQueryValue, useRoute } from "vue-router";
 import { Meal, Difficulty } from "~/composables/recipes";
-import {
-  LMap,LIcon,
-  LTileLayer,
-  LMarker,
-  LControlLayers,
-  LTooltip,
-  LPopup,
-  LPolyline,
-  LPolygon,
-  LRectangle,
-} from "@vue-leaflet/vue-leaflet";
 import { Recipe } from "~/database/recipe";
 
 /**
@@ -75,54 +64,18 @@ async function getRecipes(
         );
     });
 }
-
-function sort(event: { originalEvent: Event; value: any }) {
-  const sortValue = event.value;
-  if (sortValue == null) {
-    sortOrder.value = 0;
-    sortField.value = "";
-    sortKey.value = undefined;
-  } else {
-    sortOrder.value = sortValue.order;
-    sortField.value = sortValue.field;
-    sortKey.value = sortValue;
-  }
-}
-
-
-//Leaflet map components 
-const zoom = ref(6);
-const labelButton = ref("View on map")
-//const marker = ref(latLng(51,-0.99));
 </script>
+
 <template>
-	<div>
-		<div class="card flex justify-content-left">
-			<!-- TODO: edit ViewOnMap so we can also go back to the original view -->
-			<Button v-show="viewButton" :label="labelButton" icon="pi pi-compass" @click="viewOnMap()" />
-		</div>
-
-		<div v-if="map" style="height: 80vh; width: 50vw">
-
-			<LMap ref="map" :zoom="zoom" :center="[47.21322, -1.559482]" >
-				<LTileLayer
-					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-					attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-					layer-type="base"
-					name="OpenStreetMap"
-				/>
-				<LMarker :lat-lng="[50, 50]"></LMarker>
-			</LMap>
-		</div>
-
-		<recipes-list
-			highlight-matches
-			:get-recipes="getRecipes"
-			:initial-query="query"
-			:initial-page="page"
-			:initial-meal-types="mealTypes"
-			:initial-meal-difficulties="mealDifficulties"
-			@query-parameters-changed="updateQueryParams"
-		/>
-	</div>
+    <div>
+        <recipes-list
+            highlight-matches
+            :get-recipes="getRecipes"
+            :initial-query="query"
+            :initial-page="page"
+            :initial-meal-types="mealTypes"
+            :initial-meal-difficulties="mealDifficulties"
+            @query-parameters-changed="updateQueryParams"
+        />
+    </div>
 </template>

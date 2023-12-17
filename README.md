@@ -15,7 +15,7 @@ npm install
 ## Development Server
 
 Start the development server on `http://localhost:3000`:
-The first page is on `http://localhost:3000/home`
+The first page is on `http://localhost:3000/`
 Press `Shift+Alt+D` to get Vue dev tools.
 
 ```bash

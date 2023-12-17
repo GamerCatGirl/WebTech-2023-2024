@@ -30,7 +30,8 @@ const recipes = [
         id: crypto.randomUUID(),
         description:
             "This is the most amazing recipe I have ever tasted, it is a recipe that tastes amazing and this is a short description of that recipe. I think you would love this recipe. (recipe not yet made, please be pacient)",
-        location: "51/4",
+        longitude: 51,
+        lattitude: 4,
         name: "Frieten met Stoofvlees (BE) - Fries with stewed meat (ENG)",
         recipe: "1. ...\n2. ...\n3. ...",
         thumbnail: "/FrietenMetStoofvlees.webp",
@@ -39,11 +40,13 @@ const recipes = [
         type: Meal.Diner.toString(),
         difficulty: Difficulty.Hard,
         score: 1,
+        ratings: 1,
     },
     {
         id: crypto.randomUUID(),
         description: "desc2",
-        location: "50/50",
+        longitude: 50,
+        lattitude: 50,
         name: "name2",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",
@@ -52,11 +55,13 @@ const recipes = [
         type: Meal.Lunch.toString(),
         difficulty: Difficulty.Easy,
         score: 2.5,
+        ratings: 2,
     },
     {
         id: crypto.randomUUID(),
         description: "description to make the Tiramisu coming soon...",
-        location: "43/12",
+        longitude: 43,
+        lattitude: 12,
         name: "Tiramisu",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",
@@ -64,9 +69,28 @@ const recipes = [
         time: 30,
         type: Meal.Dessert.toString(),
         difficulty: Difficulty.Medium,
-        score: 3,
+        score: 0,
     },
 ];
+
+const ratings = [
+    {
+        recipe: recipes[0].id,
+        user: users[0].id,
+        rating: 1,
+    },
+    {
+        recipe: recipes[1].id,
+        user: users[0].id,
+        rating: 1,
+    },
+    {
+        recipe: recipes[1].id,
+        user: users[1].id,
+        rating: 5,
+    },
+];
+
 const ingredients = [
     {
         id: crypto.randomUUID(),
@@ -141,4 +165,5 @@ const ingredients = [
         index: 6,
     },
 ];
-export const seedData = { users, recipes, ingredients };
+
+export const seedData = { users, recipes, ratings, ingredients };

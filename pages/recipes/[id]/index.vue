@@ -7,7 +7,7 @@
     @click="() => navigateTo(`/recipes/${id}/edit`)"
   ></Button>
 
-  <TabView>
+	<TabView @tab-change="invalidateMap">
     <TabPanel header="Info">
       <Card class="InfoCard">
         <template #title>
@@ -26,23 +26,6 @@
             <img :src="recipy.thumbnail" class="image" alt="Image" />
 
             <div class="align-content-end align-items-end"></div>
-          </div>
-
-
-          <div class="chunk">
-            <div class="map">
-              <div style="height: 80vh; width: 80vw">
-                <LMap ref="map" :zoom="zoom" :center="location">
-                  <LTileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-                    layer-type="base"
-                    name="OpenStreetMap"
-                  />
-                  <LMarker :lat-lng="location"></LMarker>
-                </LMap>
-              </div>
-            </div>
           </div>
 
           <!-- Made by & Share -->
@@ -116,8 +99,24 @@
           </div>
         </template>
 
-        <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
       </Card>
+    </TabPanel>
+    <TabPanel header="Location">
+      <div class="chunk">
+        <div class="map">
+          <div style="height: 80vh; width: 80vw">
+            <LMap ref="map" :zoom="zoom" :center="location">
+              <LTileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&amp;copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                layer-type="base"
+                name="OpenStreetMap"
+              />
+              <LMarker :lat-lng="location"></LMarker>
+            </LMap>
+          </div>
+        </div>
+      </div>
     </TabPanel>
 
     <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
@@ -292,12 +291,7 @@
 <script setup>
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import {
-  LMap,
-  LTileLayer,
-  LMarker,
-} from "@vue-leaflet/vue-leaflet";
-//import { useRoute } from "vue-router";
+import { LMap, LTileLayer, LMarker, } from "@vue-leaflet/vue-leaflet";
 const { data } = useAuth();
 const user = data.value?.user?.id ?? "";
 const route = useRoute();
@@ -316,12 +310,14 @@ if (!recipy)
 	})
 const zoom = ref(6);
 
+const location = [recipy.longitude, recipy.lattitude]
 
-let location = recipy.location.split("/");
-location = location.map((str) => {
-  return parseInt(str);
-});
-console.log(location);
+const map = ref();
+function invalidateMap() {
+	// This is done because, if you change the size of your window when the map is not displayed, it doesn't update
+	// This solves this by invalidating the size as soon as you change tabs, because when you change tabs, the map is no longer displayed
+	if (map) setTimeout(() => map.value.leafletObject.invalidateSize(), 1)
+}
 
 // TODO: when putting comments use number for likes instead of strings -> for sorting
 
