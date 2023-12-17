@@ -14,6 +14,19 @@ export const users = sqliteTable("user", {
   country: text("country"),
 })
 
+export const follower = sqliteTable("follower", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => crypto.randomUUID()),
+	idFollower: text("id follower")
+		.notNull(),
+	idFollowing: text("id following")
+		.notNull(),
+})
+
+export type Followers = InferSelectModel<typeof follower>;
+export type InsertFollowers = InferInsertModel<typeof follower>;
+
 export const apiKey = sqliteTable("apiKey", {
   key: text("id").notNull().primaryKey(),
   user: text("user").references(() => users.id).notNull(),
