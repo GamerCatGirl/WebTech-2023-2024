@@ -152,9 +152,7 @@ const data = await props.getRecipes(
 /** The recipes that mach the current search and sort parameters */
 const recipes: Ref<(Recipe & { userName: string | undefined; locationArr: [number, number] })[]> = computed(() =>
     data.value.recipes.map((recipe) => {
-		let location = recipe.location.split("/");
-		recipe.locationArr = [parseInt(location[0]), parseInt(location[1])];
-
+		recipe.location = [recipe.longitude, recipe.lattitude];
 		return recipe;
     })
 );
@@ -272,7 +270,7 @@ function changeView() {
                 />
 
                 <div v-for="recipe in recipes">
-                  <LMarker :lat-lng="recipe.locationArr">
+                  <LMarker :lat-lng="recipe.location">
                     <LPopup>
                       <recipe-card
                         class="popupCard"

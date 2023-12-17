@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { InferInsertModel, InferSelectModel, relations } from "drizzle-orm";
 import { sqliteTable, text, sqliteView, real, integer, primaryKey } from "drizzle-orm/sqlite-core";
 import { createInsertSchema } from "drizzle-valibot";
-import { minLength, number, string, toTrimmed, undefined_, minValue, enum_, maxValue } from "valibot";
+import { minLength, number, string, toTrimmed, undefined_, minValue, enum_, maxValue, optional } from "valibot";
 import { Meal, Difficulty } from "../composables/recipes";
 import { users } from "./auth";
 import { ingredients } from "./ingredients";
@@ -46,7 +46,8 @@ export const recipes = sqliteTable("recipe", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    location: text("location").notNull(),
+	lattitude: real("lattitude").notNull(),
+	longitude: real("longitude").notNull(),
     description: text("description").notNull(),
     // The actual recipe explanation
     recipe: text("recipe").notNull(),
@@ -98,7 +99,8 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
         toTrimmed(),
         minLength(5, "The name of your recipe should be longer than 5 characters"),
     ]),
-    location: string("Please specify a location."),
+	lattitude: number("Please specify the lattitude."),
+	longitude: number("Please specify the longitude."),
     description: string("Please add a description.", [
         toTrimmed(),
         minLength(10, "Your description should be at least 10 characters long."),

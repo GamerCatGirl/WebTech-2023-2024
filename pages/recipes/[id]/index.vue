@@ -310,10 +310,7 @@ if (!recipy)
 	})
 const zoom = ref(6);
 
-let location = recipy.location.split("/");
-location = location.map((str) => {
-  return parseInt(str);
-});
+const location = [recipy.longitude, recipy.lattitude]
 
 const map = ref();
 function invalidateMap() {

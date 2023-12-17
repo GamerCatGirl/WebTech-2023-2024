@@ -284,23 +284,24 @@
             />
 
             <LPolyline
-              :lat-lngs="[
-	      	marker, positionFoodMarker
+              :lat-lngs="[ marker, positionFoodMarker
                 //[19, 49],
                 //[49, 4],
               ]"
-	      v-if="foodMarkerShow"
+	      v-if="foodMarkerShow && showMarker"
               dashArray="20"
             >
             </LPolyline>
 
-            <LMarker :lat-lng="marker">
-              <LIcon icon-url="/home-marker.png" :icon-size="50"></LIcon>
+            <LMarker :lat-lng="marker" v-if="showMarker">
+              <LIcon icon-url="/home-marker.png" :icon-size="[50]" :icon-anchor="[25, 41]"></LIcon>
             </LMarker>
 
-            <LMarker :lat-lng="positionFoodMarker" v-if="foodMarkerShow">
-              <LIcon icon-url="/food-marker.png" :icon-size="50"> </LIcon>
-            </LMarker>
+			<div>
+              <LMarker :lat-lng="positionFoodMarker" v-if="foodMarkerShow">
+                <LIcon icon-url="/food-marker.png" :icon-size="[50, 50]" :icon-anchor="[25, 41]"> </LIcon>
+              </LMarker>
+			</div>
 
             <LControl position="bottomleft">
               <Button
@@ -309,7 +310,7 @@
                 style="margin-right: 1rem"
                 @click="moveMarker = true"
               />
-              <Button label="Delete marker" icon="pi pi-eraser"  @click="deleteFoodMarker()"/>
+              <Button label="Delete marker" icon="pi pi-eraser"  @click="deleteFoodMarker"/>
             </LControl>
           </LMap>
       </div>
@@ -327,22 +328,10 @@ import { LMap, LIcon, LTileLayer, LMarker, LPolyline, } from "@vue-leaflet/vue-l
 
 const zoom = ref(4);
 const marker = ref([0, 0]); //stadaard locatie voor als locatie API niet wordt goedgekeurd door user 
+const showMarker = ref(false)
 const positionFoodMarker = ref([20, 50]);
 let moveMarker = false;
 const foodMarkerShow = ref(false);
-
-const locationToPost = computed(()=> {
-	if (foodMarkerShow.value) {
-		console.log(positionFoodMarker)
-		let pos = positionFoodMarker.value;
-		return pos.lat + "/" + pos.lng;
-	} else {
-		let pos = marker.value;
-		return pos.lat + "/" + pos.lng;
-	}
-})
-
-
 
 const map = ref();
 const meals = Object.values(Meal);
@@ -371,7 +360,9 @@ const props = defineProps<{
 function setupMap(map) {
   map.on("click", (mouseEvent) => {
     if (moveMarker) {
-      positionFoodMarker.value = mouseEvent.latlng;
+			console.log(mouseEvent.latlng)
+			const pos = mouseEvent.latlng
+      positionFoodMarker.value = [pos.lat, pos.lng];
       foodMarkerShow.value = true;
       moveMarker = false;
     }
@@ -427,11 +418,25 @@ const [description, descriptionAttrs] = defineField("description");
 const [time, timeAttrs] = defineField("time");
 const [mealType, mealTypeAttrs] = defineField("type");
 const [difficulty, difficultyAttrs] = defineField("difficulty");
+const [longitude] = defineField("longitude");
+const [lattitude] = defineField("lattitude");
 watch(
   [hours, minutes],
   () => (time.value = (hours.value ?? 0) * 60 + (minutes.value ?? 0)),
   { deep: true },
 );
+watch([foodMarkerShow, showMarker, positionFoodMarker, marker], ()=> {
+	if (foodMarkerShow.value) {
+	  longitude.value = positionFoodMarker.value[0]
+	  lattitude.value = positionFoodMarker.value[1]
+	} else if(showMarker.value) {
+	  longitude.value = marker.value[0]
+	  lattitude.value = marker.value[1]
+	} else {
+	  longitude.value = undefined
+	  lattitude.value = undefined
+	}
+}, {deep: true})
 
 /** Temporary ID used as a data key in the orderlist */
 let id = 0;
@@ -447,6 +452,8 @@ if (props.editRecipe) {
   time.value = editRecipe.time;
   mealType.value = editRecipe.type;
   difficulty.value = editRecipe.difficulty;
+  positionFoodMarker.value = [editRecipe.longitude, editRecipe.lattitude]
+  foodMarkerShow.value = true;
   ingredients.value = [];
   for (const ingredient of editRecipe.ingredients as ingredientsDB[]) {
     const newIngredient = getEmptyIngredient();
@@ -464,21 +471,22 @@ if (props.editRecipe) {
 }
 
 function getLocation() {
+  if (!process.client) return;
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition);
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+				marker.value = [position.coords.latitude, position.coords.longitude];
+				showMarker.value = true
+			},
+        );
   } else {
-    // TODO: add toast
-    // "Geolocation is not supported by this browser.";
+	showMarker.value = false
   }
 }
 
-// getLocation();
+getLocation();
 
 // TODO: edit recipe update markers 
-
-function showPosition(position) {
-  marker.value = [position.coords.latitude, position.coords.longitude];
-}
 
 function getEmptyIngredient() {
   const { errors, defineField, validate } = useForm({
@@ -508,6 +516,7 @@ function getEmptyIngredient() {
 async function save() {
 
   let validated = await validate();
+	console.log("1")
   if (validated.valid && ingredients.value.length === 0) {
     toast.add({
       severity: "error",
@@ -516,7 +525,7 @@ async function save() {
     });
     tabIndex.value = 2;
     return;
-  }
+	}
   for (const ingredient of ingredients.value) {
     const unit = getUnit(ingredient.unit.value);
     if (unit) ingredient.unit.value = unitNames[unit];
@@ -525,6 +534,7 @@ async function save() {
     const val = await ingredient.validate();
     if (validated.valid) validated = val;
   }
+	console.log("4")
 
   if (validated.valid) {
     const sendIngredients = ingredients.value.map((ingredient, index) => {
@@ -539,7 +549,8 @@ async function save() {
     });
     const sendRecipe = {
       name: name.value,
-      location: locationToPost.value,
+	  longitude,
+	  lattitude,
       ingredients: sendIngredients,
       description: description.value,
       recipe: recipe.value,
