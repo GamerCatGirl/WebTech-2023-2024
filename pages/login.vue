@@ -10,6 +10,7 @@ const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
 
 <template>
   <div>
+  <div>
     <title>Good Food</title>
   </div>
 
@@ -84,6 +85,7 @@ const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/home";
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
