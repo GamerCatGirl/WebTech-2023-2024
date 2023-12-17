@@ -112,7 +112,14 @@ const accountItems = ref([
         icon: "pi pi-user",
         route: `/profile/${data.value?.user?.id}`,
     },
-    { label: "Logout", icon: "pi pi-sign-out", command: () => signOut() },
+    {
+        label: "Edit profile",
+        icon: "pi pi-cog",
+        route: `/profile/edit`
+    },
+    { label: "Logout", 
+    icon: "pi pi-sign-out", 
+    command: () => signOut() },
 ]);
 </script>
 
