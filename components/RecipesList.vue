@@ -158,9 +158,6 @@ const recipes: Ref<(Recipe & { userName: string | undefined; locationArr: [numbe
 		return recipe;
     })
 );
-// function setupMarkers() {
-//   recipes.value.;
-// }
 const totalAmount = computed(() => data.value.totalAmount);
 const meals = Object.values(Meal);
 const difficulty = Object.values(Difficulty);
@@ -176,12 +173,6 @@ watch(
 
 const dataView = ref(true);
 const map = ref(false);
-const viewButton = ref(true);
-
-function viewOnMap() {
-  dataView.value = false;
-  map.value = true;
-}
 
 /** Sort the recipes that are returned */
 function sort(event: { originalEvent: Event; value: any }) {
@@ -205,7 +196,6 @@ let showList = ref(true);
 let showMap = ref(false);
 
 const zoom = ref(3);
-const center = [50, 50]; // op current location
 
 function changeView() {
   if (iconView.value == labelMap) {
