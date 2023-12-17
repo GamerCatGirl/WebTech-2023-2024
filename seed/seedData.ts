@@ -30,7 +30,8 @@ const recipes = [
         id: crypto.randomUUID(),
         description:
             "This is the most amazing recipe I have ever tasted, it is a recipe that tastes amazing and this is a short description of that recipe. I think you would love this recipe. (recipe not yet made, please be pacient)",
-        location: "51/4",
+        longitude: 51,
+        lattitude: 4,
         name: "Frieten met Stoofvlees (BE) - Fries with stewed meat (ENG)",
         recipe: "1. ...\n2. ...\n3. ...",
         thumbnail: "/FrietenMetStoofvlees.webp",
@@ -44,7 +45,8 @@ const recipes = [
     {
         id: crypto.randomUUID(),
         description: "desc2",
-        location: "50/50",
+        longitude: 50,
+        lattitude: 50,
         name: "name2",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",
@@ -58,7 +60,8 @@ const recipes = [
     {
         id: crypto.randomUUID(),
         description: "description to make the Tiramisu coming soon...",
-        location: "43/12",
+        longitude: 43,
+        lattitude: 12,
         name: "Tiramisu",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",
