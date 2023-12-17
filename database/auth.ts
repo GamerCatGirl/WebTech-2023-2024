@@ -10,7 +10,8 @@ export const users = sqliteTable("user", {
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
-  image: text("image")
+  image: text("image"),
+  country: text("country")
 })
 
 export const apiKey = sqliteTable("apiKey", {

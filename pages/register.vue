@@ -8,7 +8,8 @@ function newDummy() {
         Name: "",
         Email: "",
         EmailVerified: "",
-        image: " "
+        image: " ",
+        country: " "
     };
 }
 //post request
