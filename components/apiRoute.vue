@@ -210,7 +210,7 @@ function selectBlock(event: MouseEvent) {
                                         route.example.run.res.value = await useFetch(getURL(route.example.url), {
                                             query: { apiKey: route.example.run.apiKey },
                                             method: route.method,
-                                            body: route.example.body,
+                                            body: route.example.body?.body,
                                         });
                                     }
                                 "

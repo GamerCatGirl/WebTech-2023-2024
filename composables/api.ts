@@ -28,8 +28,8 @@ export type ApiRoute = {
     title: string;
     description?: string;
     routes: Route[];
-    subRoutes?: ApiRoute;
-}[];
+    subRoutes?: ApiRoute[];
+};
 
 function getValues(object: string[]) {
     return "'" + object.slice(0, -1).join("', '") + "' or '" + object.slice(-1) + "'";
@@ -399,7 +399,7 @@ const recipeRoutes: Route[] = [
     },
 ];
 
-const ratingRoutes: ApiRoute = [
+const ratingRoutes: ApiRoute[] = [
     {
         title: "Rating",
         routes: [
@@ -545,7 +545,7 @@ const unitRoutes: Route[] = [
     },
 ];
 
-export const apiRoutes: ApiRoute = [
+export const apiRoutes: ApiRoute[] = [
     {
         title: "Status",
         routes: statusRoute,
