@@ -254,6 +254,8 @@ function changeView() {
               @click="changeView()"
               class="navigatorButton"
             />
+			<br />
+			{{totalAmount}} recipe{{totalAmount === 1 ? "" : "s"}} found.
           </div>
           <div
             class="MapView"
