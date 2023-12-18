@@ -121,7 +121,7 @@
                     <div class="flex">
                         <Textarea v-model="addComment" cols="90" auto-resize class="ml-3" />
                         <!--  cancel button -->
-                        <Button label="Cancel" severity="warning" class="commentButton" />
+                        <Button label="Cancel" severity="warning" class="commentButton" @click="() => (addComment = '')" />
                         <!--  comment button -->
                         <Button label="Comment" severity="success" class="commentButton" @click="comment()" />
                     </div>
@@ -561,10 +561,14 @@ function getColorDifficulty(difficulty) {
 const addComment = ref();
 
 async function comment() {
-    let comment = addComment.value;
+    const comment = addComment.value;
+    if (!comment || comment.length < 10) {
+        toast.add({ severity: "error", life: 3000, detail: "Please add some content to your comment." });
+        return;
+    }
 
     let commentData = {
-        comment: comment,
+        comment,
         commentAnswer: "",
         user: loggedInUser,
         likes: "0",
