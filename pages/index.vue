@@ -1,28 +1,14 @@
-<script setup lang="ts">
-//import { SidebarMenu } from "#build/components";
-//import Menu from "primevue/menu";
-import "primeicons/primeicons.css";
-
-const { data, status } = useAuth();
-const user = data.value?.user?.name;
-
-const items = ref([
-  {
-    label: "Profile",
-    items: [
-      { label: "Settings", icon: "pi pi-cog" },
-      { label: "Logout", icon: "pi pi-sign-out" },
-    ],
-  },
-]);
-</script>
-
 <template>
+  <div>
   <div class="titlepage">Exploring food throughout the world</div>
   <div class="subtitle">Discover local recipes from around the world</div>
 
   <!-- TODO: put button in center -->
-  <Button label="Discover Recipes" />
+  <div class="w-full">
+	<div class="mx-auto w-fit">
+	  <Button><NuxtLink to="/recipes">Discover recipes</NuxtLink></Button> 
+	</div>
+  </div>
 
   <div class="chunk">
     <div class="text-chunk">
@@ -40,21 +26,21 @@ const items = ref([
     <Image
       src="/Pic1.png"
       alt="Image"
-      width="400px"
-      height="400px"
+      width="300px"
+      height="300px"
       class="imageRigth"
     />
   </div>
 
-  <div class="chunk">
+  <div class="chunk flex-wrap">
     <Image
       src="/Pic2.png"
       alt="Image"
-      width="400px"
-      height="400px"
+      width="300px"
+      height="300px"
       class="imageLeft"
     />
-    <div class="text-chunk-rigth">
+    <div class="text-chunk-right">
       <div class="title-paragraph">
         Join a community of passionate foodies, united by their love for
         gastronomy
@@ -83,23 +69,28 @@ const items = ref([
     <Image
       src="/Pic3.png"
       alt="Image"
-      width="400px"
-      height="400px"
+      width="300px"
+      height="300px"
       class="imageRigth"
     />
   </div>
 
-  <Button label="Discover Recipes" />
+  <div class="w-full">
+	<div class="mx-auto w-fit">
+	  <Button><NuxtLink to="/recipes">Discover recipes</NuxtLink></Button> 
+	</div>
+  </div>
 
-  <div class="chunk">
+  <div class="chunk interviews">
     <div class="text-chunk">
-      <Image
-        src="/p1.png"
-        alt="Image"
-        width="200px"
-        height="200px"
-        class="imageCenter"
-      />
+	  <div class="imageCenter" >
+		  <Image
+			src="/p1.png"
+			alt="Image"
+			width="200px"
+			height="200px"
+		  />
+	  </div>
 
       <div class="title-paragraph title-paragraph-center">
         Michael, Switzerland
@@ -112,13 +103,14 @@ const items = ref([
       </div>
     </div>
     <div class="text-chunk">
-      <Image
-        src="/p2.png"
-        alt="Image"
-        width="200px"
-        height="200px"
-        class="imageCenter"
-      />
+	  <div class="imageCenter" >
+		  <Image
+			src="/p2.png"
+			alt="Image"
+			width="200px"
+			height="200px"
+		  />
+	  </div>
 
       <div class="title-paragraph title-paragraph-center">Zui, South korea</div>
 
@@ -130,13 +122,14 @@ const items = ref([
     </div>
 
     <div class="text-chunk">
-      <Image
-        src="/p3.png"
-        alt="Image"
-        width="200px"
-        height="200px"
-        class="imageCenter"
-      />
+	  <div class="imageCenter" >
+		  <Image
+			src="/p3.png"
+			alt="Image"
+			width="200px"
+			height="200px"
+		  />
+	  </div>
 
       <div class="title-paragraph title-paragraph-center">vanja, sweden</div>
 
@@ -145,6 +138,7 @@ const items = ref([
         recipes, tips, and tricks, and we've made some great friends."
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -157,6 +151,7 @@ const items = ref([
   font-style: italic;
   padding: 2rem;
   text-align: center;
+  word-break: break-word;
 }
 
 .subtitle {
@@ -190,7 +185,8 @@ const items = ref([
 .chunk {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap-reverse;
 }
 
 .text-chunk {
@@ -198,7 +194,7 @@ const items = ref([
   padding: 1rem;
 }
 
-.text-chunk-rigth {
+.text-chunk-right {
   align-items: end;
   padding: 1rem;
 }
@@ -209,12 +205,47 @@ const items = ref([
 }
 
 .imageCenter {
-  align-items: center;
-  padding: 1rem;
+  margin:  0.8em auto;
+  width: fit-content;
 }
 
 .imageLeft {
   align-items: start;
   padding: 1rem;
+}
+
+.text-chunk, .text-chunk-right {
+	max-width: calc(100% - 400px);
+	min-width: 20rem;
+}
+
+.interviews .text-chunk {
+	max-width: 32%;
+	min-width: 20rem;
+}
+
+.p-button a {
+	color: var(--primary-color-text);
+	text-decoration: none;
+	font-weight: 700;
+}
+
+.p-img {
+	max-width: 95%;
+}
+
+@media screen and (max-width: 780px) {
+	.text-chunk,
+	.text-chunk-right {
+		max-width: 95%;
+		min-width: 0px;
+	}
+}
+
+@media screen and (max-width: 987px) {
+	.interviews .text-chunk {
+		max-width: 95%;
+		min-width: 0px;
+	}
 }
 </style>

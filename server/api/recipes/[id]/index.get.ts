@@ -10,15 +10,18 @@ export default defineEventHandler((event) => {
     }
     const id = event.context.params.id as string;
 
-    return database.query.recipes.findFirst({
-        where: (recipe, { eq }) => eq(recipe.id, id),
-        with: {
-            ingredients: { orderBy: ({ index }, { asc }) => [asc(index)] },
-            comments: {
-                where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
-                with: { user: { columns: { id: true, name: true } } },
-                orderBy: [desc(comments.likes)]}
-            }
+    return database.query.recipes
+        .findFirst({
+            where: (recipe, { eq }) => eq(recipe.id, id),
+            with: {
+                ingredients: { orderBy: ({ index }, { asc }) => [asc(index)] },
+                user: { columns: { id: true, name: true } },
+                comments: {
+                    where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
+                    with: { user: { columns: { id: true, name: true } } },
+                    orderBy: [desc(comments.likes)],
+                },
+            },
         })
 
         .execute();

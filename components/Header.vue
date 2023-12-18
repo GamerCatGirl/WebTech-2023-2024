@@ -91,18 +91,6 @@ const items = ref([
                 icon: "pi pi-plus",
                 route: "/recipes/add",
             },
-            { label: "Edit", icon: "pi pi-pencil", route: "/recipes/edit" },
-            { label: "Saved", icon: "pi pi-bookmark", route: "/recipes/saved" },
-        ],
-    },
-
-    {
-        label: "Inbox",
-        icon: "pi pi-envelope",
-        items: [
-            { label: "Notifications", icon: "pi pi-inbox", badge: 3 },
-
-            { label: "Comments", icon: "pi pi-comments", badge: 2 },
         ],
     },
 ]);
@@ -115,11 +103,9 @@ const accountItems = ref([
     {
         label: "Edit profile",
         icon: "pi pi-cog",
-        route: `/profile/edit`
+        route: `/profile/edit`,
     },
-    { label: "Logout", 
-    icon: "pi pi-sign-out", 
-    command: () => signOut() },
+    { label: "Logout", icon: "pi pi-sign-out", command: () => signOut() },
 ]);
 </script>
 

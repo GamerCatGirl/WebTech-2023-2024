@@ -2,7 +2,7 @@
   <div class="card">
     <Toolbar>
       <template #start>
-        <div>
+        <div class="mt-4">
           <span class="p-float-label">
             <InputText
               id="name"

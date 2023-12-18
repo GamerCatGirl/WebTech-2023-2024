@@ -16,7 +16,7 @@ if (!recipe.value)
         statusCode: 404,
         message: "This recipe does not exist.",
     });
-else if (recipe.value && data.value?.user?.id !== recipe.value.user)
+else if (recipe.value && data.value?.user?.id !== recipe.value.user.id)
     showError({
         statusCode: 401,
         message: "You are not allowed to edit this recipe.",
