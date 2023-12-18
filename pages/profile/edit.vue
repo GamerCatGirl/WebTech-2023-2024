@@ -4,6 +4,7 @@ import { check } from 'drizzle-orm/sqlite-core';
 import { any } from 'valibot';
 
 /*TODO:
+- neem country dropdown menu van components!
 - fix error with countryFlag
 - chose a country from the list
 - submit changes
@@ -79,7 +80,7 @@ fetchCountryFlag();
         </div>
         <div class=" editElement flex flex-row align-items-center justify-content-space-between">
             Change country
-            <Dropdown :options="countries" editable placeholder="Select a Country">
+            <Dropdown :options="countries" placeholder="Select a Country">
             </Dropdown>
         </div>
         <div class="editElement flex flex-row align-items-center justify-content-center">
