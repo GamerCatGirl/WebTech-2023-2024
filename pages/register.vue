@@ -11,39 +11,36 @@ definePageMeta({
     middleware: "auth",
     auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
 });
-const { signIn } = useAuth();
-var input = ref(
-    {
+//TODO: make generic for both 
+const passwordConfirmation: Ref<string> = ref("");
+function emptyInput() {
+    return {
         name: "",
-        id: "",
         email: "",
         password: "",
         image: "",
         country: ""
 
-    })
+    }
+}
+var input = ref(emptyInput())
 
 //post request
 async function register() {
-    let currentValue = {
-        name: input.value.name,
-        id: "3",
-        email: input.value.email,
-        password: input.value.password,
-        image: input.value.image,
-        country: input.value.country
+    if (input.value.password == passwordConfirmation.value) {
+        console.log(input.value.password + "" + passwordConfirmation);
+        const body = await $fetch("/api/users/registration", {
+            method: "post",
+            body: input.value,
+        });
+        console.log("finsihed!");
     }
-
-    const body = await $fetch("/api/users/registration", {
-        method: "post",
-        body: currentValue,
-    });
-    console.log(currentValue)
-
+    //TODO: when request fails: let user try again
 }
 
 const countries: Ref<Array<any>> = ref([]);
 
+//TODO: make dictionary that stores country keys
 //countries are sorted by countryCode and not name
 async function fetchCountryJSON() {
     const target = 'https://flagcdn.com/en/codes.json';
@@ -64,27 +61,30 @@ fetchCountryJSON();
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <div v-if="true" class="errorMessage"></div>
                 <label for="new-name" class="w-6rem">Name</label>
-                <InputText v-if="true" id="new-name" v-model="input.name" type="text" required class="p-invalid" />
-                <InputText v-else id="new-name" v-model="input.name" type="text" required />
+                <InputText v-if="true" v-model="input.name" type="text" required class="p-invalid" />
+                <InputText v-else v-model="input.name" type="text" required />
                 <InlineMessage class="errorMessage">Name is Required!</InlineMessage>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <div v-if="false" class="errorMessage"></div>
                 <label class="w-6rem">Username</label>
-                <InputText id="new-username" type="text" required />
+                <InputText type="text" required />
                 <InlineMessage v-if="false" class="errorMessage">Username is Required!</InlineMessage>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">E-mail address</label>
-                <InputText id="new-email" v-model="input.email" type="email" required />
+                <!--TODO: email form validation-->
+                <InputText v-model="input.email" type="email" required />
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Password</label>
-                <Password v-model="input.password"> </Password>
+                <Password v-model="input.password" type="text" toggleMask required>
+                </Password>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Confirm password</label>
-                <InputText id="new-confirm-password" type="password" class="w-12rem" required />
+                <Password v-model="passwordConfirmation" type="text" :feedback="false" toggleMask required>
+                </Password>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Choose your country</label>

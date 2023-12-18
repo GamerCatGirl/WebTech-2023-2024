@@ -2,6 +2,11 @@ import crypto from "crypto";
 import { MassUnit, VolumeUnit } from "~/composables/unit";
 import { Meal, Difficulty, Ingredient } from "~/composables/recipes";
 
+const randomPasswordSize = 20;
+function createRandomPassword(size: number): string {
+    return crypto.randomBytes(size).toString('ascii')
+}
+
 const users = [
     {
         id: crypto.randomUUID(),
@@ -17,7 +22,7 @@ const users = [
         email: "user2@email.com",
         emailVerified: new Date(),
         image: "",
-        country:"be"
+        country: "be"
     },
     {
         id: crypto.randomUUID(),
@@ -28,6 +33,38 @@ const users = [
         country: "be"
     },
 ];
+
+const usersWithCredentials = [
+    {
+        //TODO: make special admin rights in app
+        id: 1,
+        name: "admin",
+        password: createRandomPassword(randomPasswordSize), //generates random password
+        email: "randomUser2@email.com",
+        emailVerified: new Date(),
+        image: "",
+        country: "nl",
+    },
+    {
+        id: crypto.randomUUID(),
+        name: "randomUser2",
+        password: createRandomPassword(randomPasswordSize),
+        email: "randomUser2@email.com",
+        emailVerified: new Date(),
+        image: "",
+        country: "nl",
+    },
+    {
+        id: crypto.randomUUID(),
+        name: "elyTesting",
+        password: createRandomPassword(randomPasswordSize),
+        email: "randomUser3@email.com",
+        emailVerified: new Date(),
+        image: "",
+        country: "be",
+    }
+];
+
 const recipes = [
     {
         id: crypto.randomUUID(),
@@ -169,4 +206,4 @@ const ingredients = [
     },
 ];
 
-export const seedData = { users, recipes, ratings, ingredients };
+export const seedData = { users, recipes, ratings, ingredients, usersWithCredentials };
