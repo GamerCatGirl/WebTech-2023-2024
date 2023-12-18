@@ -26,7 +26,7 @@
             <template #center>
                 <div style="text-align: center">
                     <div style="font-size: 2em">{{ recipy.name }}</div>
-                    <p class="m-0" style="color: var(--text-color-secondary)">
+                    <p class="m-0 madeInfo">
                         Made by
                         <NuxtLink :to="'/profile/' + recipy.user.id">{{ recipy.user.name }}</NuxtLink>
                     </p>
@@ -114,104 +114,128 @@
             <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
             <!-- TODO: fix the layout of this horizontal bar -->
             <TabPanel header="Comments">
-                <!-- input text -->
-                <Rating v-if="user" v-model="rating" @click="rate" />
-                <Textarea v-model="addComment" rows="1" cols="90" />
-                <!-- TODO: make this dynamic!!!! -->
-                <!--  cancel button -->
-                <Button label="Cancel" severity="warning" rounded />
-                <!--  comment button -->
-                <Button label="Comment" severity="success" @click="comment()" rounded> </Button>
+                <div v-if="user">
+                    <p class="fts-3 mb-2 text-xl">Rate this recipe:</p>
+                    <Rating v-model="rating" class="ml-3" @click="rate" />
+                    <p class="mt-5 mb-2 text-xl">Leave a comment on this recipe:</p>
+                    <div class="flex">
+                        <Textarea v-model="addComment" cols="90" auto-resize class="ml-3" />
+                        <!--  cancel button -->
+                        <Button label="Cancel" severity="warning" class="commentButton" />
+                        <!--  comment button -->
+                        <Button label="Comment" severity="success" class="commentButton" @click="comment()" />
+                    </div>
+                </div>
 
-                <div v-for="comment in comments">
-                    <Divider align="right" type="solid">
-                        <Button :label="comment.user.name" @click="goToProfile(comment.user.id)" severity="info" text />
-                    </Divider>
+                <p class="mt-5 mb-2 text-xl">Other comments:</p>
+                <p v-if="comments.length === 0" class="mx-auto text-center text-xl">
+                    There are no comments for this recipe yet.
+                </p>
+                <div v-for="comment in comments" :key="comment.id" class="comment p-3">
+                    <!-- answer button -->
+                    <Button :label="comment.user.name" severity="info" class="px-0" text>
+                        <NuxtLink :to="'/profile/' + comment.user.id" class="commentUserLink">{{
+                            comment.user.name
+                        }}</NuxtLink>
+                    </Button>
 
-                    <p class="m-0">
+                    <p class="m-2 ml-0 text-xl">
                         {{ comment.comment }}
                     </p>
 
-                    <div class="flex gap-5">
-                        <div class="flex justify-content-left">
-                            <!-- like button -->
-                            <Button
-                                icon="pi pi-caret-up"
-                                :severity="comment.severityLike"
-                                @click="like(comment)"
-                                rounded
-                            />
-                            <!-- amount of likes -->
+                    <div class="flex gap-1 reactionButtons">
+                        <!-- like button -->
+                        <Button
+                            :disabled="!user"
+                            icon="pi pi-caret-up"
+                            class="voteButton"
+                            :severity="comment.severityLike"
+                            @click="like(comment)"
+                        />
+                        <!-- amount of likes -->
 
-                            <span class="amountStyle">{{ comment.likes }}</span>
-                            <!-- dislike button -->
+                        <span class="amountStyle text-2xl">{{ comment.likes }}</span>
+                        <!-- dislike button -->
 
-                            <Button
-                                icon="pi pi-caret-down"
-                                :severity="comment.severityDislike"
-                                @click="dislike(comment)"
-                                rounded
-                            />
-                            <!-- answer button -->
-                        </div>
-                        <div class="flex justify-content-left gap-3">
-                            <!--TODO: flex right doesn't work here-->
+                        <Button
+                            :disabled="!user"
+                            icon="pi pi-caret-down"
+                            class="voteButton mr-2 mb-auto"
+                            :severity="comment.severityDislike"
+                            @click="dislike(comment)"
+                        />
 
-                            <Textarea v-show="comment.addReaction" v-model="comment.addReactionInput" rows="1" cols="90" />
-                            <Button
-                                label="Cancel"
-                                rounded
-                                severity="warning"
-                                v-show="comment.addReaction"
-                                @click="comment.addReaction = false"
-                            />
-                            <Button label="Answer" rounded @click="clickOnCommandButton(comment)" />
+                        <!--TODO: flex right doesn't work here-->
 
-                            <Button
-                                v-if="comment.reactions?.length > 0"
-                                label="... reactions"
-                                icon="pi pi-angle-down"
-                                @click="switchAddReaction(comment)"
-                                text
-                            />
+                        <Textarea
+                            v-show="comment.addReaction"
+                            v-model="comment.addReactionInput"
+                            rows="1"
+                            cols="90"
+                            auto-resize
+                        />
+                        <Button
+                            v-if="comment.reactions?.length > 0 && !comment.addReaction"
+                            label="reactions"
+                            icon="pi pi-angle-down"
+                            class="reactionButton"
+                            outlined
+                            @click="switchAddReaction(comment)"
+                        />
 
-                            <Button
-                                v-if="comment.deleteButton"
-                                label="Delete"
-                                rounded
-                                severity="danger"
-                                @click="deleteComment(comment.id, comments, comment.idx)"
-                            />
-                        </div>
+                        <Button
+                            v-show="comment.addReaction"
+                            label="Cancel"
+                            severity="warning"
+                            class="reactionButton"
+                            @click="comment.addReaction = false"
+                        />
+                        <Button
+                            :disabled="!user"
+                            class="reactionButton"
+                            label="Answer"
+                            @click="clickOnCommandButton(comment)"
+                        />
+
+                        <Button
+                            v-if="user === comment.user.id"
+                            label="Delete"
+                            class="reactionButton"
+                            severity="danger"
+                            @click="deleteComment(comment.id, comments, comment.idx)"
+                        />
                     </div>
 
                     <div v-for="reaction in comment.reactions" v-show="comment.showReaction">
                         <Divider align="left gap-3" type="solid">
-                            <b>{{ reaction.user.name }}</b
-                            >: {{ reaction.comment }}
                             <!-- like button -->
                             <Button
+                                :disabled="!user"
                                 icon="pi pi-caret-up"
                                 :severity="reaction.severityLike"
+                                class="voteButton mr-1"
                                 @click="like(reaction)"
-                                rounded
                             />
                             <!-- amount of likes -->
 
-                            <span class="amountStyle">{{ reaction.likes }}</span>
+                            <span class="amountStyle text-2xl">{{ reaction.likes }}</span>
                             <!-- dislike button -->
                             <Button
+                                :disabled="!user"
                                 icon="pi pi-caret-down"
                                 :severity="reaction.severityDislike"
+                                class="voteButton ml-1"
                                 @click="dislike(reaction)"
-                                rounded
                             />
+
+                            <b class="ml-2">{{ reaction.user.name }}</b
+                            >: {{ reaction.comment }}
 
                             <Button
                                 v-if="reaction.deleteButton"
                                 label="Delete"
-                                rounded
                                 severity="danger"
+                                class="mb-auto reactionButton"
                                 @click="deleteComment(reaction.id, comment.reactions, reaction.idx)"
                             />
                         </Divider>
@@ -279,10 +303,6 @@ async function rate() {
 }
 
 const comments = ref(recipy.comments);
-
-function goToProfile(userID) {
-    navigateTo(`/profile/${userID}`);
-}
 
 async function like(comment) {
     let amount = 1;
@@ -615,6 +635,34 @@ a {
 }
 :deep(.p-toolbar-group-center > div) {
     margin: 0px auto;
+}
+
+.commentButton {
+    margin-bottom: auto;
+    margin-left: 0.5em;
+    flex-shrink: 0;
+}
+
+:deep(.reactionButton),
+:deep(.voteButton) {
+    font-size: 0.7rem;
+    padding: 0.5rem;
+    margin-bottom: auto;
+}
+
+.voteButton.p-button {
+    width: 1.5rem;
+    font-size: 0.5rem;
+    padding: 0.3rem;
+    margin-bottom: auto;
+}
+
+.madeInfo {
+    color: var(--text-color-secondary);
+}
+
+.commentUserLink {
+    color: var(--text-color-primary);
 }
 
 @media screen and (max-width: 888px) {
