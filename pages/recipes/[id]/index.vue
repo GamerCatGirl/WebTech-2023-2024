@@ -679,10 +679,12 @@ async function comment() {
   });
 
   const user = await $fetch(`/api/users/${commentData.user}`);
-  commentData.user = user.name;
+  console.log(user);
+  commentData.user = user;
   comments.value.unshift(commentData);
 
   //TODO: clear the input bar
+  addComment.value = "";
 }
 
 //const recipyName
