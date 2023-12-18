@@ -7,7 +7,7 @@
                     <div class="flex flex-wrap justify-content-center align-items-center gap-2 mb-2">
                         <Tag :value="recipy.type"></Tag>
                         <Tag icon="" :value="recipy.difficulty" :severity="getColorDifficulty(recipy.difficulty)"></Tag>
-                        <Tag icon="pi pi-clock" :value="recipy.time" :severity="getSeverity(recipy.time)" rounded></Tag>
+                        <Tag icon="pi pi-clock" :value="cookTime" :severity="getSeverity(recipy.time)" rounded></Tag>
                     </div>
                     <div
                         v-tooltip.top="
@@ -244,6 +244,9 @@ if (!recipy)
     });
 const zoom = ref(6);
 const menu = ref();
+const hours = Math.floor((recipy.time ?? 0) / 60);
+const minutes = (recipy.time ?? 0) % 60;
+const cookTime = (hours ? hours + "h" : "") + (minutes ? minutes + "m" : "");
 
 const location = [recipy.longitude, recipy.lattitude];
 
