@@ -308,6 +308,18 @@ const recipeRoutes: Route[] = [
                 },
                 "...",
             ],
+            comments: [
+                {
+                    id: "string",
+                    deleteKey1: "==COMMENT==// The content of the comment",
+                    comment: "string",
+                    likes: "integer",
+                    replied: "null",
+                    userId: "string",
+                    recipe: "string",
+                    user: { id: "string", name: "string" },
+                },
+            ],
         },
     },
     {
@@ -545,22 +557,99 @@ const unitRoutes: Route[] = [
     },
 ];
 
+const commentRoutes: Route[] = [
+    {
+        method: "POST",
+        title: "New comment",
+        explanation: "",
+        route: "/api/comments",
+        returnType: "boolean",
+        authRequired: true,
+        example: {
+            url: "/api/comments",
+        },
+    },
+    {
+        method: "GET",
+        title: "Get comment",
+        explanation: "",
+        route: "/api/comments/[ID]",
+        returnType: {},
+        example: {
+            url: "/api/comments/[ID]",
+            run: { res: ref() },
+        },
+    },
+    {
+        method: "PUT",
+        title: "Change comment",
+        explanation: "",
+        route: "/api/comments/[ID]",
+        returnType: "void",
+        example: {
+            url: "/api/comments/[ID]",
+        },
+    },
+    {
+        method: "DELETE",
+        title: "Delete comment",
+        explanation: "",
+        route: "/api/comments/[ID]",
+        returnType: {},
+        example: {
+            url: "/api/comments/[ID]",
+        },
+    },
+];
+
+const likeRoutes: ApiRoute[] = [
+    {
+        title: "Likes",
+        routes: [
+            {
+                method: "POST",
+                title: "Add like",
+                explanation: "",
+                route: "/api/comments/[ID]/likes",
+                returnType: "boolean",
+                example: { url: "/api/comments/[ID]/likes" },
+            },
+        ],
+    },
+];
+
+const followerRoutes: Route[] = [
+    {
+        method: "POST",
+        title: "Add follower",
+        explanation: "",
+        route: "/api/followers",
+        returnType: "boolean",
+        example: { url: "/api/followers" },
+    },
+    {
+        method: "DELETE",
+        title: "Delete follower",
+        explanation: "",
+        route: "/api/followers",
+        returnType: "void",
+        example: { url: "/api/followers" },
+    },
+    {
+        method: "GET",
+        title: "Get follower",
+        explanation: "",
+        route: "/api/followers/[ID]",
+        returnType: {},
+        example: { url: "/api/followers/[ID]" },
+    },
+];
+
 export const apiRoutes: ApiRoute[] = [
-    {
-        title: "Status",
-        routes: statusRoute,
-    },
-    {
-        title: "Recipes",
-        routes: recipeRoutes,
-        subRoutes: ratingRoutes,
-    },
-    {
-        title: "Users",
-        routes: userRoutes,
-    },
-    {
-        title: "units",
-        routes: unitRoutes,
-    },
+    { title: "Status", routes: statusRoute },
+    { title: "Recipes", routes: recipeRoutes, subRoutes: ratingRoutes },
+    { title: "Users", routes: userRoutes },
+    { title: "Comments", routes: commentRoutes, subRoutes: likeRoutes },
+    { title: "Followers", routes: followerRoutes },
+    { title: "Units", routes: unitRoutes },
 ];

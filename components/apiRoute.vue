@@ -27,7 +27,7 @@ function syntaxHighlight(json: string, removeQoutes: boolean = false) {
             if (/^"/.test(match)) {
                 if (/:$/.test(match)) {
                     cls = "key";
-                    if (/^"deleteKey.*":/.test(match)) return "";
+                    if (/^"deleteKey.*":/.test(match)) return "<span style='margin-left: -0.7em'/>";
                 } else if (/^("==COMMENT==)/.test(match)) {
                     match = match.slice(12);
                     cls = "comment";
@@ -321,7 +321,8 @@ function selectBlock(event: MouseEvent) {
     background-color: var(--green-300);
 }
 
-:deep(.p-accordion-header .p-card.POST) {
+:deep(.p-accordion-header .p-card.POST),
+:deep(.p-accordion-header .p-card.PUT) {
     background-color: var(--blue-300);
 }
 
