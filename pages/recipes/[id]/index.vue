@@ -605,4 +605,16 @@ a {
     color: inherit;
     text-decoration: inherit;
 }
+
+@media screen and (max-width: 500px) {
+    :deep(.p-toolbar-group-center) {
+		order: -1;
+		width: 100%;
+		flex-grow: 1;
+    }
+
+    :deep(.p-toolbar-group-center > div) {
+		margin: 0px auto;
+	}
+}
 </style>
