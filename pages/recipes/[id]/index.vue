@@ -606,15 +606,24 @@ a {
     text-decoration: inherit;
 }
 
-@media screen and (max-width: 500px) {
+:deep(.p-toolbar-group-center) {
+    flex: 1 1;
+    min-width: 25em;
+}
+:deep(.p-toolbar-group-center > div) {
+    margin: 0px auto;
+}
+
+@media screen and (max-width: 785px) {
     :deep(.p-toolbar-group-center) {
-		order: -1;
-		width: 100%;
-		flex-grow: 1;
+        flex: 0 0 100%;
+        order: -1;
+        width: 100%;
+        min-width: 0px;
     }
 
     :deep(.p-toolbar-group-center > div) {
-		margin: 0px auto;
-	}
+        margin: 0px auto;
+    }
 }
 </style>
