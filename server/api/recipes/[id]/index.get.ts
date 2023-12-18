@@ -16,7 +16,7 @@ export default defineEventHandler((event) => {
             ingredients: { orderBy: ({ index }, { asc }) => [asc(index)] },
             comments: {
                 where: (comment, { eq, and, isNull }) => and(eq(comment.recipe, id), isNull(comment.replied)),
-                with: { user: { columns: { id: true, name: true } } },
+                with: { user: { columns: { id: true, name: true, image: true } } },
                 orderBy: [desc(comments.likes)]}
             }
         })

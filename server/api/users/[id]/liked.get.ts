@@ -20,8 +20,10 @@ export default defineEventHandler(async (event) => {
         return [comment];
     }
 
-    return database.query.likedComments.findMany({
+    const result = await database.query.likedComments.findMany({
         where: (comment, { eq }) => eq(comment.user, id),
-        columns: { comment: true, dislike: true },
+        columns: { comment: true, dislike: true, user: true },
     });
+
+    return result;
 });

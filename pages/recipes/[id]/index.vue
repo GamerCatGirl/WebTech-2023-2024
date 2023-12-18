@@ -7,7 +7,7 @@
     @click="() => navigateTo(`/recipes/${id}/edit`)"
   ></Button>
 
-	<TabView @tab-change="invalidateMap">
+  <TabView @tab-change="invalidateMap">
     <TabPanel header="Info">
       <Card class="InfoCard">
         <template #title>
@@ -98,7 +98,6 @@
             </div>
           </div>
         </template>
-
       </Card>
     </TabPanel>
     <TabPanel header="Location">
@@ -163,7 +162,7 @@
     <!-- TODO: fix the layout of this horizontal bar -->
     <TabPanel header="Comments">
       <!-- input text -->
-      <Textarea v-model="addComment" rows="1" cols="90" />
+      <Textarea v-model="addComment" rows="1" style="width: 60vw" />
       <!-- TODO: make this dynamic!!!! -->
       <!--  cancel button -->
       <Button label="Cancel" severity="warning" rounded />
@@ -171,118 +170,166 @@
       <Button label="Comment" severity="success" @click="comment()" rounded>
       </Button>
 
-      <div v-for="comment in comments">
-        <Divider align="right" type="solid">
-          <Button
-            :label="comment.user.name"
-            @click="goToProfile(comment.user.id)"
-            severity="info"
-            text
-          />
-        </Divider>
+      <div
+        v-for="comment in comments"
+        style="padding-bottom: 1rem; padding-top: 1rem"
+      >
+        <Card style="background-color: #67527c; padding: 0rem">
+          <template #title>
+            <Avatar
+              v-if="comment.user?.image"
+              :image="comment.user?.image ?? ''"
+              shape="circle"
+              preview
+            />
+            <Avatar v-else icon="pi pi-user" class="mt-2" shape="circle" />
 
-        <p class="m-0">
-          {{ comment.comment }}
-        </p>
-
-        <div class="flex gap-5">
-          <div class="flex justify-content-left">
-            <!-- like button -->
             <Button
+              :label="comment.user.name"
+              @click="goToProfile(comment.user.id)"
+              style="opacity: 1"
+              severity="info"
+              text
+            />
+          </template>
+
+          <template #subtitle>
+            <Button
+              class="sizeButton"
               icon="pi pi-caret-up"
               :severity="comment.severityLike"
               @click="like(comment)"
+              text
               rounded
             />
-            <!-- amount of likes -->
+          </template>
 
-            <span class="amountStyle">{{ comment.likes }}</span>
-            <!-- dislike button -->
+          <template #content>
+            <span class="amountStyle" style="color: white">{{
+              comment.likes
+            }}</span>
+            <span style="color: white; margin-left: 4rem">
+              {{ comment.comment }}
+            </span>
+          </template>
 
-            <Button
-              icon="pi pi-caret-down"
-              :severity="comment.severityDislike"
-              @click="dislike(comment)"
-              rounded
-            />
-            <!-- answer button -->
-          </div>
-          <div class="flex justify-content-left gap-3">
-            <!--TODO: flex right doesn't work here-->
+          <template #footer>
+            <div class="flex gap-5" style="margin-bottom: 3rem">
+              <div class="flex justify-content-left">
+                <!-- like button -->
 
-            <Textarea
-              v-show="comment.addReaction"
-              v-model="comment.addReactionInput"
-              rows="1"
-              cols="90"
-            />
-            <Button
-              label="Cancel"
-              rounded
-              severity="warning"
-              v-show="comment.addReaction"
-              @click="comment.addReaction = false"
-            />
-            <Button
-              label="Answer"
-              rounded
-              @click="clickOnCommandButton(comment)"
-            />
+                <Button
+                  icon="pi pi-caret-down"
+                  :severity="comment.severityDislike"
+                  @click="dislike(comment)"
+                  text
+                  rounded
+                />
 
+                <!-- amount of likes -->
+
+                <!-- dislike button -->
+
+                <!-- answer button -->
+              </div>
+
+              <div >
+                <!--TODO: flex right doesn't work here-->
+                <div class="gap-3">
+                  <Textarea
+                    v-show="comment.addReaction"
+                    v-model="comment.addReactionInput"
+                    rows="1"
+                    style="width: 60vw; margin-bottom: 1rem;"
+                  />
+                  <Button
+                    label="Cancel"
+                    rounded
+                    severity="warning"
+                    v-show="comment.addReaction"
+		    style="margin-bottom: 1rem;"
+                    @click="comment.addReaction = false"
+                  />
+                </div>
+                <div class="flex gap-3">
+                  <Button
+                    label="Answer"
+                    rounded
+                    @click="clickOnCommandButton(comment)"
+                  />
+
+                  <Button
+                    v-if="comment.deleteButton"
+                    label="Delete"
+                    rounded
+                    severity="danger"
+                    @click="deleteComment(comment.id, comments, comment.idx)"
+                  />
+                </div>
+              </div>
+            </div>
             <Button
+              style="margin-left: 3rem; margin-bottom: 1rem"
               v-if="comment.reactions?.length > 0"
-              label="... reactions"
+              label="Reactions"
               icon="pi pi-angle-down"
               @click="switchAddReaction(comment)"
               text
-            />
-
-            <Button
-              v-if="comment.deleteButton"
-              label="Delete"
               rounded
-              severity="danger"
-              @click="deleteComment(comment.id, comments, comment.idx)"
+              outlined
             />
-          </div>
-        </div>
+            <div
+              v-for="reaction in comment.reactions"
+              v-show="comment.showReaction"
+              style="margin-bottom: 1rem"
+            >
+              <Card>
+                <template #content>
+                  <Button text style="top: 11px"
+                    >{{ reaction.user.name }} :</Button
+                  >
+                  {{ reaction.comment }}
+                  <!-- like button -->
+                  <Button
+                    style="top: 10px; margin-left: 2rem"
+                    icon="pi pi-caret-up"
+                    :severity="reaction.severityLike"
+                    @click="like(reaction)"
+                    rounded
+                    text
+                  />
+                  <!-- amount of likes -->
 
-        <div
-          v-for="reaction in comment.reactions"
-          v-show="comment.showReaction"
-        >
-          <Divider align="left gap-3" type="solid">
-            <b>{{ reaction.user.name }}</b
-            >: {{ reaction.comment }}
-            <!-- like button -->
-            <Button
-              icon="pi pi-caret-up"
-              :severity="reaction.severityLike"
-              @click="like(reaction)"
-              rounded
-            />
-            <!-- amount of likes -->
+                  <span style="font-size: 20px">{{ reaction.likes }}</span>
+                  <!-- dislike button -->
+                  <Button
+                    style="top: 10px"
+                    icon="pi pi-caret-down"
+                    :severity="reaction.severityDislike"
+                    @click="dislike(reaction)"
+                    text
+                    rounded
+                  />
 
-            <span class="amountStyle">{{ reaction.likes }}</span>
-            <!-- dislike button -->
-            <Button
-              icon="pi pi-caret-down"
-              :severity="reaction.severityDislike"
-              @click="dislike(reaction)"
-              rounded
-            />
-
-            <Button
-              v-if="reaction.deleteButton"
-              label="Delete"
-              rounded
-              severity="danger"
-              @click="
-                deleteComment(reaction.id, comment.reactions, reaction.idx)
-              "
-            />
-          </Divider>
-        </div>
+                  <Button
+                    style="margin-left: 2rem"
+                    v-if="reaction.deleteButton"
+                    label="Delete"
+                    rounded
+                    severity="danger"
+                    @click="
+                      deleteComment(
+                        reaction.id,
+                        comment.reactions,
+                        reaction.idx,
+                      )
+                    "
+                  />
+                </template>
+              </Card>
+            </div>
+          </template>
+        </Card>
       </div>
     </TabPanel>
   </TabView>
@@ -291,12 +338,14 @@
 <script setup>
 import { ref } from "vue";
 import { useToast } from "primevue/usetoast";
-import { LMap, LTileLayer, LMarker, } from "@vue-leaflet/vue-leaflet";
+import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet";
 const { data } = useAuth();
 const user = data.value?.user?.id ?? "";
 const route = useRoute();
 const id = route.params.id;
-const rating = user ? ref((await useFetch(`/api/recipes/${id}/rating`, { query: { user } })).data) : ref();
+const rating = user
+  ? ref((await useFetch(`/api/recipes/${id}/rating`, { query: { user } })).data)
+  : ref();
 if (!rating.value) rating.value = 0;
 const loggedInUser = data.value?.user?.id;
 const loggedInUserName = data.value?.user?.name;
@@ -304,238 +353,245 @@ const toast = useToast();
 
 const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
 if (!recipy)
-	showError({
-		statusCode: 404,
-		message: "This recipe does not exist."
-	})
+  showError({
+    statusCode: 404,
+    message: "This recipe does not exist.",
+  });
 const zoom = ref(6);
 
-const location = [recipy.longitude, recipy.lattitude]
+const location = [recipy.longitude, recipy.lattitude];
 
 const map = ref();
 function invalidateMap() {
-	// This is done because, if you change the size of your window when the map is not displayed, it doesn't update
-	// This solves this by invalidating the size as soon as you change tabs, because when you change tabs, the map is no longer displayed
-	if (map) setTimeout(() => map.value.leafletObject.invalidateSize(), 1)
+  // This is done because, if you change the size of your window when the map is not displayed, it doesn't update
+  // This solves this by invalidating the size as soon as you change tabs, because when you change tabs, the map is no longer displayed
+  if (map) setTimeout(() => map.value.leafletObject.invalidateSize(), 1);
 }
-
-// TODO: when putting comments use number for likes instead of strings -> for sorting
-
 
 const recipyScore = ref(Number(recipy.score));
 
 async function rate() {
-	const { status, error } = rating.value
-		? await useFetch(`/api/recipes/${id}/rate`, { method: "POST", body: rating.value })
-		: await useFetch(`/api/recipes/${id}/rate`, { method: "DELETE" });
-	if (status.value === "success") {
-		toast.add({ severity: "success", detail: "Successfully rated", life: 3000 });
-		const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
-		recipyScore.value = Number(recipy.score);
-	}
-	else
-		toast.add({
-			severity: "error",
-			summary: error.value?.statusCode?.toString() ?? "",
-			detail: error.value?.message ?? "",
-			life: 3000,
-		});
+  const { status, error } = rating.value
+    ? await useFetch(`/api/recipes/${id}/rate`, {
+        method: "POST",
+        body: rating.value,
+      })
+    : await useFetch(`/api/recipes/${id}/rate`, { method: "DELETE" });
+  if (status.value === "success") {
+    toast.add({
+      severity: "success",
+      detail: "Successfully rated",
+      life: 3000,
+    });
+    const recipy = (await useFetch(`/api/recipes/${id}`)).data.value;
+    recipyScore.value = Number(recipy.score);
+  } else
+    toast.add({
+      severity: "error",
+      summary: error.value?.statusCode?.toString() ?? "",
+      detail: error.value?.message ?? "",
+      life: 3000,
+    });
 }
 
 const comments = ref(recipy.comments);
 
 function goToProfile(userID) {
-	navigateTo(`/profile/${userID}`);
+  navigateTo(`/profile/${userID}`);
 }
 
 async function like(comment) {
-	let amount = 1;
-	let commentPost = {
-		LikeAmount: 0,
-		userThatLiked: loggedInUser,
-		dislike: false,
-		changeLike: false,
-		cancel: false,
-	};
+  let amount = 1;
+  let commentPost = {
+    LikeAmount: 0,
+    userThatLiked: loggedInUser,
+    dislike: false,
+    changeLike: false,
+    cancel: false,
+  };
 
-	if (comment.severityLike == "success") {
-		//cancel the like
-		amount = -1;
-		commentPost.cancel = true;
-	}
-	if (comment.severityDislike == "danger") {
-		//change from dislike to like
-		amount = 2;
-		comment.severityDislike = "";
-		commentPost.changeLike = true;
-	}
-	let idOfComment = comment.id;
-	let newLikeAmount = Number(comment.likes) + amount;
-	comment.likes = Number(comment.likes) + amount;
-	comment.severityLike = "success";
+  if (comment.severityLike == "success") {
+    //cancel the like
+    amount = -1;
+    commentPost.cancel = true;
+  }
+  if (comment.severityDislike == "danger") {
+    //change from dislike to like
+    amount = 2;
+    comment.severityDislike = "";
+    commentPost.changeLike = true;
+  }
+  let idOfComment = comment.id;
+  let newLikeAmount = Number(comment.likes) + amount;
+  comment.likes = Number(comment.likes) + amount;
+  comment.severityLike = "success";
 
-	if (amount == -1) {
-		comment.severityLike = "";
-	}
+  if (amount == -1) {
+    comment.severityLike = "";
+  }
 
-	commentPost.LikeAmount = newLikeAmount;
+  commentPost.LikeAmount = newLikeAmount;
 
-
-	await $fetch(`/api/comments/${idOfComment}`, {
-		method: "put",
-		body: commentPost,
-	});
+  await $fetch(`/api/comments/${idOfComment}`, {
+    method: "put",
+    body: commentPost,
+  });
 }
 
 async function clickOnCommandButton(comment) {
-	if (comment.addReaction) {
-		// post a reaction
-		let commentData = {
-			comment: comment.addReactionInput,
-			replied: comment.id,
-			user: loggedInUser,
-			likes: "0",
-			recipe: id,
-		};
+  if (comment.addReaction) {
+    // post a reaction
+    let commentData = {
+      comment: comment.addReactionInput,
+      replied: comment.id,
+      user: loggedInUser,
+      likes: "0",
+      recipe: id,
+    };
 
-		await $fetch("/api/comments", {
-			method: "post",
-			body: commentData,
-		});
+    await $fetch("/api/comments", {
+      method: "post",
+      body: commentData,
+    });
 
-		comment.showReaction = true;
-		let reaction = {
-			comment: commentData.comment,
-			user: { name: loggedInUserName },
-			likes: "0",
-		};
-		comment.reactions.unshift(reaction);
+    comment.showReaction = true;
+    let reaction = {
+      comment: commentData.comment,
+      user: { name: loggedInUserName },
+      likes: "0",
+    };
+    comment.reactions.unshift(reaction);
 
-		// clear input balk
-		comment.addReactionInput = "";
+    // TODO: add a delete button 
 
-		// hide balck
-		comment.addReaction = false;
-	} else {
-		comment.addReaction = true;
-	}
+    // clear input balk
+    comment.addReactionInput = "";
+
+    // hide balck
+    comment.addReaction = false;
+  } else {
+    comment.addReaction = true;
+  }
 }
 
 async function dislike(comment) {
-	let amount = -1;
-	let commentPost = {
-		LikeAmount: 0,
-		userThatLiked: loggedInUser,
-		dislike: true,
-		changeLike: false,
-		cancel: false,
-	};
+  let amount = -1;
+  let commentPost = {
+    LikeAmount: 0,
+    userThatLiked: loggedInUser,
+    dislike: true,
+    changeLike: false,
+    cancel: false,
+  };
 
-	if (comment.severityDislike == "danger") {
-		//cancel the dislike
-		amount = 1;
-		comment.severityDislike = "";
-		commentPost.cancel = true;
-	}
+  if (comment.severityDislike == "danger") {
+    //cancel the dislike
+    amount = 1;
+    comment.severityDislike = "";
+    commentPost.cancel = true;
+  }
 
-	if (comment.severityLike == "success") {
-		//from like to dislike
-		amount = -2;
-		comment.severityLike = "";
-		commentPost.changeLike = true;
-	}
+  if (comment.severityLike == "success") {
+    //from like to dislike
+    amount = -2;
+    comment.severityLike = "";
+    commentPost.changeLike = true;
+  }
 
-	let idOfComment = comment.id;
-	let newLikeAmount = Number(comment.likes) + amount;
-	comment.likes = Number(comment.likes) + amount;
-	comment.severityDislike = "danger";
+  let idOfComment = comment.id;
+  let newLikeAmount = Number(comment.likes) + amount;
+  comment.likes = Number(comment.likes) + amount;
+  comment.severityDislike = "danger";
 
-	if (amount == 1) {
-		comment.severityDislike = "";
-	}
+  if (amount == 1) {
+    comment.severityDislike = "";
+  }
 
-	commentPost.LikeAmount = newLikeAmount;
+  commentPost.LikeAmount = newLikeAmount;
 
-	await $fetch(`/api/comments/${idOfComment}`, {
-		method: "put",
-		body: commentPost,
-	});
+  await $fetch(`/api/comments/${idOfComment}`, {
+    method: "put",
+    body: commentPost,
+  });
 }
 
 async function deleteComment(commentID, vect, idx) {
+  const data = await $fetch(`/api/comments/${commentID}`, {
+    method: "delete",
+  });
 
-	const data = await $fetch(`/api/comments/${commentID}`, {
-		method: "delete",
-	});
-
-	console.log(data);
-
-	vect.splice(idx, 1);
+  vect.splice(idx, 1);
 }
 
 async function setupReaction() {
-	// TODO: get the comments from most to least likes
-	// example on how to do this in recipes.[id].index.get.ts
+  console.log("setup");
 
-	let userLikes = await $fetch(`/api/users/${loggedInUser}/liked`, {
-		method: "get",
-	});
+  let userLikes = await $fetch(`/api/users/${loggedInUser}/liked`);
 
-	comments.value.map(async (comment, index) => {
-		comment.showReaction = false;
-		comment.addReaction = false;
-		comment.idx = index;
-		comment.severityLike = "Primary";
-		comment.logedInUser = loggedInUser;
+  console.log(userLikes[0]);
 
-		if (comment.user.id == comment.logedInUser) {
-			comment.deleteButton = true;
-		}
+  comments.value.map(async (comment, index) => {
+    comment.showReaction = false;
+    comment.addReaction = false;
+    comment.idx = index;
+    comment.severityLike = "Primary";
+    comment.logedInUser = loggedInUser;
 
-		let idexToDelete = undefined;
+    console.log(comment.user);
 
-		userLikes.map((element, index) => {
-			if (element.comment == comment.id) {
-				if (element.dislike == 1) {
-					comment.severityDislike = "danger";
-				} else if (element.dislike == 0) {
-					comment.severityLike = "success";
-				}
-				idexToDelete = index;
-			}
-		});
+    if (comment.user.id == comment.logedInUser) {
+      comment.deleteButton = true;
+    }
 
-		if (idexToDelete != undefined) {
-			delete userLikes[idexToDelete];
-		}
+    let idexToDelete = undefined;
 
-		let reactions = await $fetch(`/api/comments/${comment.id}`);
+    console.log(comment.id);
 
-		reactions.replies.map((comment, index) => {
-			if (comment.userId == loggedInUser) {
-				comment.deleteButton = true;
-			}
-			comment.idx = index;
+    userLikes.map((element, index) => {
+      if (element.comment == comment.id) {
+        console.log("comment is in table");
+        if (element.dislike == 1) {
+          comment.severityDislike = "danger";
+        } else if (element.dislike == 0) {
+          console.log("comment is liked");
+          comment.severityLike = "success";
+        }
+        idexToDelete = index;
+      }
+    });
 
-			userLikes.map((element, index) => {
-				if (element.comment == comment.id) {
-					if (element.dislike == 1) {
-						comment.severityDislike = "danger";
-					} else if (element.dislike == 0) {
-						comment.severityLike = "success";
-					}
-					idexToDelete = index;
-				}
-			});
+    if (idexToDelete != undefined) {
+      delete userLikes[idexToDelete];
+    }
 
-			if (idexToDelete != undefined) {
-				delete userLikes[idexToDelete];
-			}
-		});
+    let reactions = await $fetch(`/api/comments/${comment.id}`);
 
-		//test
-		comment.reactions = reactions.replies;
-	});
+    reactions.replies.map((reaction, index) => {
+      if (reaction.userId == loggedInUser) {
+        reaction.deleteButton = true;
+      }
+      reaction.idx = index;
+
+      userLikes.map((element, index) => {
+        if (element.comment == reaction.id) {
+          if (element.dislike == 1) {
+            reaction.severityDislike = "danger";
+          } else if (element.dislike == 0) {
+            reaction.severityLike = "success";
+          }
+          idexToDelete = index;
+        }
+      });
+
+      if (idexToDelete != undefined) {
+        delete userLikes[idexToDelete];
+      }
+    });
+
+    //test
+    comment.reactions = reactions.replies;
+    console.log(comment.severityLike);
+  });
 }
 
 setupReaction();
@@ -543,91 +599,90 @@ setupReaction();
 const recipyName = recipy.name;
 const recipeSteps = ref(recipy.recipe);
 const ingredients = await Promise.all(
-	recipy.ingredients.map(async (ingredient) => {
-		ingredient.unitType = getUnitType(ingredient.unit);
-		if (ingredient.unitType === UnitType.Custom) {
-			ingredient.requestStatus = "success";
-			return ingredient;
-		}
-		const initialUnit = ingredient.unit;
-		const initialAmount = ingredient.amount;
-		// This ref is used here to avoid unwrapping of references
-		const unit = ref(ingredient.unit);
-		ingredient.unit = unit;
+  recipy.ingredients.map(async (ingredient) => {
+    ingredient.unitType = getUnitType(ingredient.unit);
+    if (ingredient.unitType === UnitType.Custom) {
+      ingredient.requestStatus = "success";
+      return ingredient;
+    }
+    const initialUnit = ingredient.unit;
+    const initialAmount = ingredient.amount;
+    // This ref is used here to avoid unwrapping of references
+    const unit = ref(ingredient.unit);
+    ingredient.unit = unit;
 
-		const { data, status } = await useFetch("/api/units", {
-			method: "get",
-			query: { fromUnit: initialUnit, toUnit: unit, quantity: initialAmount },
-			key: initialUnit + unit + initialAmount,
-		});
-		ingredient.requestStatus = status;
-		ingredient.amount = data;
-		const columns = [
-			{ field: "ingredient", header: "Ingredient" },
-			{ field: "amount", header: "Amount" },
-			{ field: "type", header: "Type" },
-			{ field: "category", header: "Category" },
-		];
+    const { data, status } = await useFetch("/api/units", {
+      method: "get",
+      query: { fromUnit: initialUnit, toUnit: unit, quantity: initialAmount },
+      key: initialUnit + unit + initialAmount,
+    });
+    ingredient.requestStatus = status;
+    ingredient.amount = data;
+    const columns = [
+      { field: "ingredient", header: "Ingredient" },
+      { field: "amount", header: "Amount" },
+      { field: "type", header: "Type" },
+      { field: "category", header: "Category" },
+    ];
 
-		return ingredient;
-	}),
+    return ingredient;
+  }),
 );
 
 const massUnits = [...Object.values(MassUnit)];
 const volumeUnits = [...Object.values(VolumeUnit)];
 
-
 function switchAddReaction(comment) {
-	if (comment.showReaction) {
-		comment.showReaction = false;
-	} else {
-		comment.showReaction = true;
-	}
+  if (comment.showReaction) {
+    comment.showReaction = false;
+  } else {
+    comment.showReaction = true;
+  }
 }
 
 function getSeverity(time) {
-	if (time < 30) {
-		return "success";
-	} else if (time < 60) {
-		return "warning";
-	} else {
-		return "danger";
-	}
+  if (time < 30) {
+    return "success";
+  } else if (time < 60) {
+    return "warning";
+  } else {
+    return "danger";
+  }
 }
 
 function getColorDifficulty(difficulty) {
-	if (difficulty === "Easy") {
-		return "success";
-	} else if (difficulty === "Medium") {
-		return "warning";
-	} else {
-		return "danger";
-	}
+  if (difficulty === "Easy") {
+    return "success";
+  } else if (difficulty === "Medium") {
+    return "warning";
+  } else {
+    return "danger";
+  }
 }
 
 const addComment = ref();
 
 async function comment() {
-	let comment = addComment.value;
+  let comment = addComment.value;
 
-	let commentData = {
-		comment: comment,
-		commentAnswer: "",
-		user: loggedInUser,
-		likes: "0",
-		recipe: id,
-	};
+  let commentData = {
+    comment: comment,
+    commentAnswer: "",
+    user: loggedInUser,
+    likes: "0",
+    recipe: id,
+  };
 
-	const { postComment } = await $fetch("/api/comments", {
-		method: "post",
-		body: commentData,
-	});
+  const { postComment } = await $fetch("/api/comments", {
+    method: "post",
+    body: commentData,
+  });
 
-	const user = await $fetch(`/api/users/${commentData.user}`);
-	commentData.user = user.name;
-	comments.value.unshift(commentData);
+  const user = await $fetch(`/api/users/${commentData.user}`);
+  commentData.user = user.name;
+  comments.value.unshift(commentData);
 
-	//TODO: clear the input bar
+  //TODO: clear the input bar
 }
 
 //const recipyName
