@@ -611,13 +611,13 @@ a {
 
 :deep(.p-toolbar-group-center) {
     flex: 1 1;
-    min-width: 25em;
+    min-width: 20em;
 }
 :deep(.p-toolbar-group-center > div) {
     margin: 0px auto;
 }
 
-@media screen and (max-width: 785px) {
+@media screen and (max-width: 888px) {
     :deep(.p-toolbar-group-center) {
         flex: 0 0 100%;
         order: -1;
