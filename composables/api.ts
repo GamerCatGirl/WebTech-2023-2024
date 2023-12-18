@@ -279,7 +279,7 @@ const recipeRoutes: Route[] = [
             deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
             recipe: "string",
             deleteKey5: "==COMMENT==// The ID of the user that made this recipe.",
-            user: "string",
+            user: { id: "string", name: "string" },
             thumbnail: "string",
             deleteKey2: "==COMMENT==// Time required to make this recipe, in minutes.",
             time: "int",
