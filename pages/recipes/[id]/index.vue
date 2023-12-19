@@ -475,7 +475,7 @@ const hours = Math.floor((recipy.time ?? 0) / 60);
 const minutes = (recipy.time ?? 0) % 60;
 const cookTime = (hours ? hours + "h" : "") + (minutes ? minutes + "m" : "");
 
-const location = [recipy.longitude, recipy.lattitude];
+const location = [recipy.longitude, recipy.latitude];
 
 const map = ref();
 function invalidateMap() {

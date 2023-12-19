@@ -4,7 +4,7 @@ import { Meal, Difficulty, Ingredient } from "~/composables/recipes";
 
 const randomPasswordSize = 20;
 function createRandomPassword(size: number): string {
-    return crypto.randomBytes(size).toString('ascii')
+    return crypto.randomBytes(size).toString("ascii");
 }
 
 const users = [
@@ -14,7 +14,7 @@ const users = [
         email: "user1@email.com",
         emailVerified: new Date(),
         image: "",
-        country: "fr"
+        country: "fr",
     },
     {
         id: crypto.randomUUID(),
@@ -22,7 +22,7 @@ const users = [
         email: "user2@email.com",
         emailVerified: new Date(),
         image: "",
-        country: "be"
+        country: "be",
     },
     {
         id: crypto.randomUUID(),
@@ -30,7 +30,7 @@ const users = [
         email: "user3@email.com",
         emailVerified: new Date(),
         image: "",
-        country: "be"
+        country: "be",
     },
 ];
 
@@ -62,7 +62,7 @@ const usersWithCredentials = [
         emailVerified: new Date(),
         image: "",
         country: "be",
-    }
+    },
 ];
 
 const recipes = [
@@ -71,7 +71,7 @@ const recipes = [
         description:
             "This is the most amazing recipe I have ever tasted, it is a recipe that tastes amazing and this is a short description of that recipe. I think you would love this recipe. (recipe not yet made, please be pacient)",
         longitude: 51,
-        lattitude: 4,
+        latitude: 4,
         name: "Frieten met Stoofvlees (BE) - Fries with stewed meat (ENG)",
         recipe: "1. ...\n2. ...\n3. ...",
         thumbnail: "/FrietenMetStoofvlees.webp",
@@ -86,7 +86,7 @@ const recipes = [
         id: crypto.randomUUID(),
         description: "desc2",
         longitude: 50,
-        lattitude: 50,
+        latitude: 50,
         name: "name2",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",
@@ -101,7 +101,7 @@ const recipes = [
         id: crypto.randomUUID(),
         description: "description to make the Tiramisu coming soon...",
         longitude: 43,
-        lattitude: 12,
+        latitude: 12,
         name: "Tiramisu",
         thumbnail: "/Tiramisu.png",
         recipe: "1. ...\n2. ...\n3. ...",

@@ -419,7 +419,7 @@ const [time, timeAttrs] = defineField("time");
 const [mealType, mealTypeAttrs] = defineField("type");
 const [difficulty, difficultyAttrs] = defineField("difficulty");
 const [longitude] = defineField("longitude");
-const [lattitude] = defineField("lattitude");
+const [latitude] = defineField("latitude");
 watch(
   [hours, minutes],
   () => (time.value = (hours.value ?? 0) * 60 + (minutes.value ?? 0)),
@@ -428,13 +428,13 @@ watch(
 watch([foodMarkerShow, showMarker, positionFoodMarker, marker], ()=> {
 	if (foodMarkerShow.value) {
 	  longitude.value = positionFoodMarker.value[0]
-	  lattitude.value = positionFoodMarker.value[1]
+	  latitude.value = positionFoodMarker.value[1]
 	} else if(showMarker.value) {
 	  longitude.value = marker.value[0]
-	  lattitude.value = marker.value[1]
+	  latitude.value = marker.value[1]
 	} else {
 	  longitude.value = undefined
-	  lattitude.value = undefined
+	  latitude.value = undefined
 	}
 }, {deep: true})
 
@@ -452,7 +452,7 @@ if (props.editRecipe) {
   time.value = editRecipe.time;
   mealType.value = editRecipe.type;
   difficulty.value = editRecipe.difficulty;
-  positionFoodMarker.value = [editRecipe.longitude, editRecipe.lattitude]
+  positionFoodMarker.value = [editRecipe.longitude, editRecipe.latitude]
   foodMarkerShow.value = true;
   ingredients.value = [];
   for (const ingredient of editRecipe.ingredients as ingredientsDB[]) {
@@ -525,7 +525,7 @@ async function save() {
     });
     tabIndex.value = 2;
     return;
-	} else if (!lattitude.value || !longitude.value) {
+	} else if (!latitude.value || !longitude.value) {
     toast.add({
       severity: "error",
       detail: "Please set the location of your recipe.",
@@ -559,7 +559,7 @@ async function save() {
     const sendRecipe = {
       name: name.value,
 	  longitude,
-	  lattitude,
+	  latitude,
       ingredients: sendIngredients,
       description: description.value,
       recipe: recipe.value,

@@ -168,7 +168,7 @@ const recipeRoutes: Route[] = [
                     id: "string",
                     name: "string",
                     longitude: "number",
-                    lattitude: "number",
+                    latitude: "number",
                     description: "string",
                     deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
                     recipe: "string",
@@ -241,7 +241,7 @@ const recipeRoutes: Route[] = [
                     {
                         name: "APIRecipe",
                         longitude: 11,
-                        lattitude: 11,
+                        latitude: 11,
                         description:
                             "This is the amazing description of your recipe, that we are going to add using our amazing API.",
                         recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
@@ -278,7 +278,7 @@ const recipeRoutes: Route[] = [
             id: "string",
             name: "string",
             longitude: "number",
-            lattitude: "number",
+            latitude: "number",
             description: "string",
             deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
             recipe: "string",
@@ -337,7 +337,7 @@ const recipeRoutes: Route[] = [
                 "==COMMENT==// Note that values like `ID`, `user` and `createdAt` should NOT be speciffied in the body, these will be added automatically.",
             name: "string",
             longitude: "number",
-            lattitude: "number",
+            latitude: "number",
             deleteKey4: "==COMMENT==// The length of your description should be at least 50 characters.",
             description: "string",
             deleteKey1:
@@ -378,7 +378,7 @@ const recipeRoutes: Route[] = [
                     {
                         name: "APIRecipe",
                         longitude: 11,
-                        lattitude: 11,
+                        latitude: 11,
                         description:
                             "This is the amazing description of your recipe, that we are going to add using our amazing API.",
                         recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
@@ -510,7 +510,7 @@ const userRoutes: Route[] = [
                 id: "string",
                 name: "string",
                 longitude: "number",
-                lattitude: "number",
+                latitude: "number",
                 description: "string",
                 deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
                 recipe: "string",
