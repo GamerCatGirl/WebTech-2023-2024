@@ -6,6 +6,13 @@ const randomPasswordSize = 20;
 function createRandomPassword(size: number): string {
     return crypto.randomBytes(size).toString("ascii");
 }
+const salt = "yxpOGDda72YdP6ZhJoZOWKEfrhta8eSknKG6DdMmkczyQAzDWEAD45y2lDuPm4dxNTfGQQGS4DLdX8aUV4oB5ghBPfixqhwv";
+function hash(msg: string) {
+    const hashBuffer = crypto.createHash("SHA-256").update(msg).update(salt).digest();
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    console.log("t", msg);
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 const users = [
     {
@@ -32,36 +39,46 @@ const users = [
         image: "",
         country: "be",
     },
+    {
+        //TODO: create special admin rights for app
+        id: crypto.randomUUID(),
+        name: "admin",
+        email: "admin@food.be",
+        emailVerified: new Date(),
+        image: "",
+        country: "be"
+    },
+    {
+        id: crypto.randomUUID(),
+        name: "userTesting1",
+        email: "user5@email.com",
+        emailVerified: new Date(),
+        image: "",
+        country: "tr"
+    },
+    {
+        id: crypto.randomUUID(),
+        name: "Merlijn",
+        email: "user6@email.com",
+        emailVerified: new Date(),
+        image: "",
+        country: "be"
+    }
 ];
 
 const usersWithCredentials = [
     {
-        //TODO: make special admin rights in app
-        id: 1,
-        name: "admin",
-        password: createRandomPassword(randomPasswordSize), //generates random password
-        email: "randomUser2@email.com",
-        emailVerified: new Date(),
-        image: "",
-        country: "nl",
+        //admin account
+        id: users[3].id,
+        password: hash("admin123."),
     },
     {
-        id: crypto.randomUUID(),
-        name: "randomUser2",
-        password: createRandomPassword(randomPasswordSize),
-        email: "randomUser2@email.com",
-        emailVerified: new Date(),
-        image: "",
-        country: "nl",
+        id: users[4].id,
+        password: hash(createRandomPassword(randomPasswordSize)),//generates random password and hashes it
     },
     {
-        id: crypto.randomUUID(),
-        name: "elyTesting",
-        password: createRandomPassword(randomPasswordSize),
-        email: "randomUser3@email.com",
-        emailVerified: new Date(),
-        image: "",
-        country: "be",
+        id: users[5].id,
+        password: hash(createRandomPassword(randomPasswordSize)),
     },
 ];
 
@@ -206,4 +223,4 @@ const ingredients = [
     },
 ];
 
-export const seedData = { users, recipes, ratings, ingredients, usersWithCredentials };
+export const seedData = { users };

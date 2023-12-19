@@ -28,7 +28,6 @@ var input = ref(emptyInput())
 //post request
 async function register() {
     if (input.value.password == passwordConfirmation.value) {
-        console.log(input.value.password + "" + passwordConfirmation);
         const body = await $fetch("/api/users/registration", {
             method: "post",
             body: input.value,
