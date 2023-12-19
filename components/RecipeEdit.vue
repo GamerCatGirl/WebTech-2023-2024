@@ -452,6 +452,7 @@ if (props.editRecipe) {
   time.value = editRecipe.time;
   mealType.value = editRecipe.type;
   difficulty.value = editRecipe.difficulty;
+  thumbnail.value = editRecipe.thumbnail;
   positionFoodMarker.value = [editRecipe.longitude, editRecipe.latitude]
   foodMarkerShow.value = true;
   ingredients.value = [];
