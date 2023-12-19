@@ -1,4 +1,6 @@
-export default defineEventHandler((event) => {
+import { sql } from "drizzle-orm";
+
+export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     if (!event.context.params) {
         throw createError({
@@ -9,8 +11,23 @@ export default defineEventHandler((event) => {
     const id = event.context.params.id;
     const recipeName = query.name?.valueOf();
 
-    return database.query.recipes.findMany({
-        where: (recipe, { and, eq, like }) =>
-            recipeName ? and(eq(recipe.user, id), like(recipe.name, recipeName.toString())) : eq(recipe.user, id),
-    });
+    console.log(query.amount);
+    if (query.amount?.valueOf())
+        return (
+            await database.query.recipes
+                .findMany({
+                    columns: {},
+                    extras: { count: sql`COUNT(*)`.as("count") },
+                    where: (recipe, { and, eq, like }) =>
+                        recipeName
+                            ? and(eq(recipe.user, id), like(recipe.name, recipeName.toString()))
+                            : eq(recipe.user, id),
+                })
+                .execute()
+        )[0].count;
+    else
+        return database.query.recipes.findMany({
+            where: (recipe, { and, eq, like }) =>
+                recipeName ? and(eq(recipe.user, id), like(recipe.name, recipeName.toString())) : eq(recipe.user, id),
+        });
 });

@@ -490,6 +490,15 @@ const userRoutes: Route[] = [
         route: "/api/users/[ID]/recipes",
         explanation:
             "Get all the recipes of a specified user. If you want to search through these recipes you should use the API route `/api/recipes` with the `user` query added.",
+        params: [
+            {
+                name: "amount",
+                type: "boolean",
+                default: "false",
+                description:
+                    "If this is set, only the amount of recipes that a given user has will be returned, and no actuall recipes will be given.",
+            },
+        ],
         returnType: [
             {
                 id: "string",
