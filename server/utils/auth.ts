@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { H3Event, EventHandlerRequest } from "h3";
 import { getServerSession } from "#auth";
 
+const salt = "yxpOGDda72YdP6ZhJoZOWKEfrhta8eSknKG6DdMmkczyQAzDWEAD45y2lDuPm4dxNTfGQQGS4DLdX8aUV4oB5ghBPfixqhwv";
+
 // https://stackoverflow.com/questions/18338890/are-there-any-sha-256-javascript-implementations-that-are-generally-considered-t/48161723#48161723
 /**
  * Generate a secure has from a string.
@@ -12,11 +14,15 @@ import { getServerSession } from "#auth";
  * @returns The hashed string
  */
 export async function hash(msg: string) {
-    const msgBuffer = new TextEncoder().encode(msg);
     // hash the message
-    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+    const hashBuffer = crypto.createHash("SHA-256").update(msg).update(salt).digest();
+
+    // const msgBuffer = new TextEncoder().encode(msg);
+
+    // const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
     // convert ArrayBuffer to Array
     const hashArray = Array.from(new Uint8Array(hashBuffer));
+    console.log("t", msg);
     // convert bytes to hex string
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
