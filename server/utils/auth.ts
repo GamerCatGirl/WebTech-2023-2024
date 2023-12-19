@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { H3Event, EventHandlerRequest } from "h3";
 import { getServerSession } from "#auth";
 
-const salt = "yxpOGDda72YdP6ZhJoZOWKEfrhta8eSknKG6DdMmkczyQAzDWEAD45y2lDuPm4dxNTfGQQGS4DLdX8aUV4oB5ghBPfixqhwv";
+const defaultSalt = "yxpOGDda72YdP6ZhJoZOWKEfrhta8eSknKG6DdMmkczyQAzDWEAD45y2lDuPm4dxNTfGQQGS4DLdX8aUV4oB5ghBPfixqhwv";
 
 // https://stackoverflow.com/questions/18338890/are-there-any-sha-256-javascript-implementations-that-are-generally-considered-t/48161723#48161723
 /**
@@ -13,16 +13,30 @@ const salt = "yxpOGDda72YdP6ZhJoZOWKEfrhta8eSknKG6DdMmkczyQAzDWEAD45y2lDuPm4dxNT
  * @param msg - The string to hash
  * @returns The hashed string
  */
-export async function hash(msg: string) {
+export function hash(msg: string) {
     // hash the message
-    const hashBuffer = crypto.createHash("SHA-256").update(msg).update(salt).digest();
+    const hashBuffer = crypto.createHash("SHA-256").update(msg).update(defaultSalt).digest();
 
-    // const msgBuffer = new TextEncoder().encode(msg);
-
-    // const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
     // convert ArrayBuffer to Array
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    console.log("t", msg);
+    // convert bytes to hex string
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+// /**
+//  * Generate a secure has from a string with a given salt.
+//  * This uses the `SHA-256` algorithm.
+//  *
+//  * @async
+//  * @param msg - The string to hash
+//  * @returns The hashed string
+//  */
+export function saltHash(msg: string, salt: string) {
+    // hash the message
+    const hashBuffer = crypto.createHash("SHA-256").update(msg).update(defaultSalt).update(salt).digest();
+
+    // convert ArrayBuffer to Array
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
     // convert bytes to hex string
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
@@ -54,7 +68,7 @@ async function authenticateApiKey(event: H3Event<EventHandlerRequest>) {
     const query = getQuery(event);
     if (!query || !query.apiKey) return undefined;
     const key = query.apiKey as string;
-    const keyHash = await hash(key);
+    const keyHash = hash(key);
     const user = await database.query.apiKey.findFirst({
         where: ({ key }, { eq }) => eq(key, keyHash),
     });
