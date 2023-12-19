@@ -13,7 +13,7 @@ export const comments = sqliteTable("comment", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     comment: text("comment").notNull(),
-    likes: text("likes"),
+    likes: integer("likes"),
     // On what comment is this replying
     replied: text("replied").references(() => comments.id),
     userId: text("user")
