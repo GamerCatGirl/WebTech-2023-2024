@@ -284,7 +284,7 @@
           v-for="comment in comments"
           style="padding-bottom: 1rem; padding-top: 1rem"
         >
-          <Card style="background-color: #67527c; padding: 0rem">
+          <Card style="background-color: #ecddfc; padding: 0rem">
             <template #title>
               <Avatar
                 v-if="comment.user?.image"
@@ -297,7 +297,7 @@
               <Button
                 :label="comment.user.name"
                 @click="goToProfile(comment.user.id)"
-                style="opacity: 1"
+                style="opacity: 1; color: #553DE6;"
                 severity="info"
                 text
               />
@@ -315,10 +315,10 @@
             </template>
 
             <template #content>
-              <span class="amountStyle" style="color: white">{{
+              <span class="amountStyle" style="color: #553DE6">{{
                 comment.likes
               }}</span>
-              <span style="color: white; margin-left: 4rem">
+              <span style="color: #553DE6; margin-left: 4rem">
                 {{ comment.comment }}
               </span>
             </template>
@@ -350,7 +350,7 @@
                       v-show="comment.addReaction"
                       v-model="comment.addReactionInput"
                       rows="1"
-                      style="width: 60vw; margin-bottom: 1rem"
+                      style="width: 60vw; margin-bottom: 1rem; margin-right: 1rem;"
                     />
                     <Button
                       label="Cancel"
