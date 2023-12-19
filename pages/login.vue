@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { getProviders} from "next-auth/react"
 definePageMeta({
   middleware: "auth",
   auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
@@ -6,6 +7,14 @@ definePageMeta({
 const { signIn } = useAuth();
 const route = useRoute();
 const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/";
+
+function emptyInput() {
+    return {
+        username: "",
+        password: "",
+      }
+}
+const input = ref(emptyInput())
 </script>
 
 <template>
@@ -23,13 +32,13 @@ const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/";
           class="flex flex-wrap justify-content-center align-items-center gap-2"
         >
           <label class="w-6rem">Username</label>
-          <InputText id="username" type="text" class="w-12rem" />
+          <InputText v-model="input.username" type="text" class="w-12rem" />
         </div>
         <div
           class="flex flex-wrap justify-content-center align-items-center gap-2"
         >
           <label class="w-6rem">Password</label>
-          <InputText id="password" type="password" class="w-12rem" />
+          <InputText v-model="input.password" type="password" class="w-12rem" />
         </div>
 
         <!--Login -->
@@ -37,6 +46,7 @@ const callbackUrl = (route.query.callbackUrl?.valueOf() as string) ?? "/";
           label="Login"
           icon="pi pi-user"
           class="w-10rem mx-auto"
+          @click="signIn('credentials', {username:input.username, password:input.password})"
         ></Button>
 
         <!--Register-->

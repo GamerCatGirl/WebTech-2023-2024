@@ -223,4 +223,4 @@ const ingredients = [
     },
 ];
 
-export const seedData = { users };
+export const seedData = { users, recipes, ratings, ingredients, usersWithCredentials };
