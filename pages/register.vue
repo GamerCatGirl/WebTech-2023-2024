@@ -58,36 +58,38 @@ fetchCountryJSON();
     <div class="editOverview flex flex-column md:flex-row" style="margin:auto;">
         <div class="editFields flex flex-column align-items-center justify-content-center gap-3 py-5" style="margin:auto;">
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
-                <div v-if="true" class="errorMessage"></div>
+                <div v-if="false" class="errorMessage"></div>
                 <label for="new-name" class="w-6rem">Name</label>
-                <InputText v-if="true" v-model="input.name" type="text" required class="p-invalid" />
-                <InputText v-else v-model="input.name" type="text" required />
-                <InlineMessage class="errorMessage">Name is Required!</InlineMessage>
+                <InputText v-if="false" v-model="input.name" type="text" required class="p-invalid" />
+                <InputText v-else v-model="input.name" class="inputBoxRegister" type="text" required />
+                <!--<InlineMessage class="errorMessage">Name is Required!</InlineMessage>-->
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <div v-if="false" class="errorMessage"></div>
                 <label class="w-6rem">Username</label>
-                <InputText type="text" required />
+                <InputText type="text" class="inputBoxRegister" required />
                 <InlineMessage v-if="false" class="errorMessage">Username is Required!</InlineMessage>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">E-mail address</label>
                 <!--TODO: email form validation-->
-                <InputText v-model="input.email" type="email" required />
+                <InputText v-model="input.email" type="email" class="inputBoxRegister" required />
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Password</label>
-                <Password v-model="input.password" type="text" toggleMask required>
+                <Password v-model="input.password" type="text" class="inputBoxRegister" toggleMask required>
                 </Password>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Confirm password</label>
-                <Password v-model="passwordConfirmation" type="text" :feedback="false" toggleMask required>
+                <Password v-model="passwordConfirmation" type="text" class="inputBoxRegister" :feedback="false" toggleMask
+                    required>
                 </Password>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Choose your country</label>
-                <Dropdown v-model="input.country" :options="countries" placeholder="Select a Country">
+                <Dropdown v-model="input.country" :options="countries" class="inputBoxRegister"
+                    placeholder="Select a Country">
                 </Dropdown>
             </div>
             <div>

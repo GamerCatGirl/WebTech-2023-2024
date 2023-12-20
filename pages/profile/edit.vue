@@ -80,7 +80,7 @@ fetchCountryFlag();
         </div>
         <div class=" editElement flex flex-row align-items-center justify-content-space-between">
             Change country
-            <Dropdown :options="countries" placeholder="Select a Country">
+            <Dropdown style="width:250px" :options="countries" placeholder="Select a Country">
             </Dropdown>
         </div>
         <div class="editElement flex flex-row align-items-center justify-content-center">
