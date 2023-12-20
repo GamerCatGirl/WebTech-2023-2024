@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Toolbar class="mt-3">
+    <Toolbar class="mt-3 mb-3">
       <template #start>
         <Image :src="recipy.thumbnail" alt="Thumbnail" height="70" preview />
         <div class="ml-2">
