@@ -1,7 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import FacebookProvider from "next-auth/providers/facebook";
-import CredentialsProvider from "next-auth/providers/credentials"
+import CredentialsProvider from "next-auth/providers/credentials";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { NuxtAuthHandler } from "#auth";
 import { users, usersWithCredentials } from "@/database/schema";
@@ -12,12 +12,19 @@ export default NuxtAuthHandler({
         signIn: "/login",
     },
     callbacks: {
-        session: ({ session, user }) => {
-            if (session?.user) {
-                session.user.id = user.id;
+        jwt: ({ token, user }) => {
+            if (user) {
+                token.user = { id: user.id, name: user.name, image: user.image };
             }
+            return token;
+        },
+        session: ({ session, token }) => {
+            session.user = token.user;
             return session;
         },
+    },
+    session: {
+        strategy: "jwt",
     },
     // @ts-expect-error
     adapter: DrizzleAdapter(database),
@@ -37,32 +44,30 @@ export default NuxtAuthHandler({
             clientId: process.env.FACEBOOK_CLIENT_ID,
             clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         }),
-        //should allow users to login with username + password
-        //@ts-ignore
+        // @ts-expect-error
         CredentialsProvider.default({
             credentials: {
-                username: { label: "username", type: "string" },
-                password: { label: "password", type: "string" }
+                username: { label: "username", type: "text" },
+                password: { label: "password", type: "password" },
             },
-            async authorize(credentials) {
-                //logic for authenticating credentials from database
-                //let user = null;
-                const saltedPassword = await hash(credentials.password);
-                console.log(saltedPassword);
-                const user = await database.select({ ...usersWithCredentials, id: users.id, name: users.name })
+            name: "credentials",
+            async authorize(credentials: any) {
+                // logic for authenticating credentials from database
+                // let user = null;
+                const saltedPassword = hash(credentials.password);
+                const user = await database
+                    .select({ id: users.id, name: users.name })
                     .from(users)
                     .leftJoin(usersWithCredentials, eq(users.id, usersWithCredentials.id))
                     .where(isNotNull(usersWithCredentials.password))
                     .where(eq(credentials.username, users.name))
-                    .where(eq(saltedPassword, usersWithCredentials.password));
-                if (user.length == 1) {
-                    console.log("test1")
-                    return user;
+                    .where(eq(usersWithCredentials.password, saltedPassword));
+                if (user.length === 1) {
+                    return user[0];
                 } else {
-                    console.log("test2")
-                    return Error("user not found");
+                    return null;
                 }
-            }
-        })
-    ]
+            },
+        }),
+    ],
 });
