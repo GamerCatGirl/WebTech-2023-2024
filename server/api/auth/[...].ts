@@ -4,6 +4,8 @@ import FacebookProvider from "next-auth/providers/facebook";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { NuxtAuthHandler } from "#auth";
+import { users, usersWithCredentials } from "@/database/schema";
+import { eq, isNotNull } from "drizzle-orm";
 
 export default NuxtAuthHandler({
     pages: {
@@ -36,20 +38,31 @@ export default NuxtAuthHandler({
             clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
         }),
         //should allow users to login with username + password
-        /*CredentialsProvider({
+        //@ts-ignore
+        CredentialsProvider.default({
             credentials: {
-                username: { label: "username", type: "text" },
-                password: { label: "password", type: "password" }
+                username: { label: "username", type: "string" },
+                password: { label: "password", type: "string" }
             },
             async authorize(credentials) {
                 //logic for authenticating credentials from database
-                const user = { id: "1", }//placeholder for now! should replace with logic
-                if (user) {
-                    return user
+                //let user = null;
+                const saltedPassword = await hash(credentials.password);
+                console.log(saltedPassword);
+                const user = await database.select({ ...usersWithCredentials, id: users.id, name: users.name })
+                    .from(users)
+                    .leftJoin(usersWithCredentials, eq(users.id, usersWithCredentials.id))
+                    .where(isNotNull(usersWithCredentials.password))
+                    .where(eq(credentials.username, users.name))
+                    .where(eq(saltedPassword, usersWithCredentials.password));
+                if (user.length == 1) {
+                    console.log("test1")
+                    return user;
                 } else {
-                    return null //login failed
+                    console.log("test2")
+                    return Error("user not found");
                 }
             }
-        })*/
+        })
     ]
 });

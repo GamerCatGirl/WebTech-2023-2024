@@ -46,7 +46,7 @@ export const recipes = sqliteTable("recipe", {
         .primaryKey()
         .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-	lattitude: real("lattitude").notNull(),
+	latitude: real("latitude").notNull(),
 	longitude: real("longitude").notNull(),
     description: text("description").notNull(),
     // The actual recipe explanation
@@ -99,7 +99,7 @@ export const insertRecipeSchema = createInsertSchema(recipes, {
         toTrimmed(),
         minLength(5, "The name of your recipe should be longer than 5 characters"),
     ]),
-	lattitude: number("Please specify the lattitude."),
+	latitude: number("Please specify the latitude."),
 	longitude: number("Please specify the longitude."),
     description: string("Please add a description.", [
         toTrimmed(),

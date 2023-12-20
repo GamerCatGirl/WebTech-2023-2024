@@ -133,7 +133,7 @@ const searchFollowers = ref();
 const searchFollwing = ref();
 
 console.log(user)
-const amountRecipes = ref(2);
+const { data: amountRecipes } = await useFetch(`/api/users/${id}/recipes`, {query: {amount: true}});
 
 const followData = await useFetch(`/api/followers/${user?.value.id}`);
 
@@ -244,7 +244,7 @@ async function changeFollow() {
 
         <div class="chunk">
           <div class="infoStatic">
-            <b> {{ amountRecipes }} </b> recipes
+		  <b> {{ amountRecipes }} </b> recipe{{amountRecipes === 1 ? "" : "s"}}
           </div>
           <div class="info" @click="showFollowers()">
             <b> {{ amountFollowers }} </b> followers
