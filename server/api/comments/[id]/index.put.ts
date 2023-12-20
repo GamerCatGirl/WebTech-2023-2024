@@ -1,9 +1,8 @@
 import { comments } from "~/database/recipe";
-import { likedComments, InsertLikedComments} from "~/database/auth";
-import { eq } from "drizzle-orm";
+import { likedComments, InsertLikedComments } from "~/database/auth";
+import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
-
   if (!event.context.params) {
     throw createError({
       statusCode: 400,
@@ -11,9 +10,11 @@ export default defineEventHandler(async (event) => {
     });
   }
   const id = event.context.params.id;
-  const comment = await readBody(event); 
-	
-
+  const comment = await readBody(event);
+  await authenticate(event, () => {
+    return comment.userThatLiked;
+  });
+  
   const updateComment = async (likesToUpdate) => {
     await database
       .update(comments)
@@ -22,44 +23,48 @@ export default defineEventHandler(async (event) => {
   };
 
   const InsertLikedComment = async (data: InsertLikedComments) => {
-	  return database.insert(likedComments).values(data);
-  }
+    return database.insert(likedComments).values(data);
+  };
 
-  const deleteLikedComment = 0;
-  const changeLikedComment = 0;
 
   updateComment(comment.LikeAmount);
 
-  // TODO: post error if user is not given  
-
   let post: InsertLikedComments = {
-	  dislike: 0,
-	  user: comment.userThatLiked,
-	  comment:"" +  id,
+    dislike: 0,
+    user: comment.userThatLiked,
+    comment: "" + id,
+  };
+
+  if (!comment.changeLike && !comment.cancel) {
+    if (comment.dislike) {
+      post.dislike = 1;
+      InsertLikedComment(post);
+    } else {
+      InsertLikedComment(post);
+    }
+
+    // TODO: not tested yet 
+  } else if (comment.changeLike) { //comment change from like to dislike or the other way around
+    console.log("change like");
+    if (comment.dislike) { //change from like to dislike
+	   await database
+	   	.update(likedComments)
+		.set({	dislike: 1 })
+		.where(and(eq(likedComments.comment, id),eq(likedComments.user, comment.userThatLiked) ));
+    } else {
+	    //change from dislike to like 
+	    await database
+	    	.update(likedComments)
+		.set({ dislike: 0})
+		.where(eq(likedComments.comment, id));
+    }
+  } else if (comment.cancel) { //like is canceled
+    console.log("cancel like");
+	await database.delete(likedComments).where(eq(likedComments.comment, id));
+
+  } else {
+    return false;
   }
 
-  if (!comment.changeLike && !comment.cancel){
-	  if (comment.dislike){
-		  post.dislike = 1; 
-		  InsertLikedComment(post)
-	  } else {
-		  InsertLikedComment(post)
-	  }
-  } else if (comment.changeLike){
-	  console.log("change like");
-	  if (comment.dislike){
-		  // TODO: change dislike to true 
-	  } else {
-		  // TODO: change dislike to false
-	  }
-  } else if (comment.cancel){
-	  console.log("cancel like");
-	  // TODO: delete like/dislike from database 
-  } else {
-	  return false;
-  }	
-
-  return true; 
-
-
+  return true;
 });
