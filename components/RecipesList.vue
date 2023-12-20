@@ -152,7 +152,7 @@ const data = await props.getRecipes(
 /** The recipes that mach the current search and sort parameters */
 const recipes: Ref<(Recipe & { userName: string | undefined; locationArr: [number, number] })[]> = computed(() =>
     data.value.recipes.map((recipe) => {
-		recipe.location = [recipe.longitude, recipe.lattitude];
+		recipe.location = [recipe.longitude, recipe.latitude];
 		return recipe;
     })
 );

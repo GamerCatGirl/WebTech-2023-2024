@@ -173,7 +173,8 @@ const recipeRoutes: Route[] = [
                 {
                     id: "string",
                     name: "string",
-                    location: "string",
+                    longitude: "number",
+                    latitude: "number",
                     description: "string",
                     deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
                     recipe: "string",
@@ -207,7 +208,8 @@ const recipeRoutes: Route[] = [
             deleteKey7:
                 "==COMMENT==// Note that values like `ID`, `user` and `createdAt` should NOT be speciffied in the body, these will be added automatically.",
             name: "string",
-            location: "string",
+            longitude: "number",
+            latitude: "number",
             deleteKey4: "==COMMENT==// The length of your description should be at least 50 characters.",
             description: "string",
             deleteKey1:
@@ -244,7 +246,8 @@ const recipeRoutes: Route[] = [
                 body: JSON.stringify(
                     {
                         name: "APIRecipe",
-                        location: "location",
+                        longitude: 11,
+                        latitude: 11,
                         description:
                             "This is the amazing description of your recipe, that we are going to add using our amazing API.",
                         recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
@@ -280,7 +283,8 @@ const recipeRoutes: Route[] = [
         returnType: {
             id: "string",
             name: "string",
-            location: "string",
+            longitude: "number",
+            latitude: "number",
             description: "string",
             deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
             recipe: "string",
@@ -338,7 +342,8 @@ const recipeRoutes: Route[] = [
             deleteKey7:
                 "==COMMENT==// Note that values like `ID`, `user` and `createdAt` should NOT be speciffied in the body, these will be added automatically.",
             name: "string",
-            location: "string",
+            longitude: "number",
+            latitude: "number",
             deleteKey4: "==COMMENT==// The length of your description should be at least 50 characters.",
             description: "string",
             deleteKey1:
@@ -378,7 +383,8 @@ const recipeRoutes: Route[] = [
                 body: JSON.stringify(
                     {
                         name: "APIRecipe",
-                        location: "location",
+                        longitude: 11,
+                        latitude: 11,
                         description:
                             "This is the amazing description of your recipe, that we are going to add using our amazing API.",
                         recipe: "This is how you make this amazing recipe, that you can definitely actually make and is not an example because that would be stupid to actually add it.",
@@ -496,11 +502,21 @@ const userRoutes: Route[] = [
         route: "/api/users/[ID]/recipes",
         explanation:
             "Get all the recipes of a specified user. If you want to search through these recipes you should use the API route `/api/recipes` with the `user` query added.",
+        params: [
+            {
+                name: "amount",
+                type: "boolean",
+                default: "false",
+                description:
+                    "If this is set, only the amount of recipes that a given user has will be returned, and no actuall recipes will be given.",
+            },
+        ],
         returnType: [
             {
                 id: "string",
                 name: "string",
-                location: "string",
+                longitude: "number",
+                latitude: "number",
                 description: "string",
                 deleteKey1: "==COMMENT==// The steps necessary to make the recipe.",
                 recipe: "string",

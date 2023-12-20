@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Toolbar class="mt-3">
+    <Toolbar class="mt-3 mb-3">
       <template #start>
         <Image :src="recipy.thumbnail" alt="Thumbnail" height="70" preview />
         <div class="ml-2">
@@ -475,7 +475,7 @@ const hours = Math.floor((recipy.time ?? 0) / 60);
 const minutes = (recipy.time ?? 0) % 60;
 const cookTime = (hours ? hours + "h" : "") + (minutes ? minutes + "m" : "");
 
-const location = [recipy.longitude, recipy.lattitude];
+const location = [recipy.longitude, recipy.latitude];
 
 const map = ref();
 function invalidateMap() {
