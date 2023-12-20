@@ -1,4 +1,4 @@
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     if (!event.context.params) {
         throw createError({
             statusCode: 400,
@@ -7,8 +7,11 @@ export default defineEventHandler((event) => {
     }
 
     const id = event.context.params.id as string;
-    return database.query.comments.findFirst({
+    const result = await  database.query.comments.findFirst({
         where: (comment, { eq }) => eq(comment.id, id),
         with: { replies: { with: { user: { columns: { name: true, id: true } } } } },
     });
+
+
+    return result;
 });

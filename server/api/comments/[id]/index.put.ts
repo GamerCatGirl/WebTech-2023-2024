@@ -30,6 +30,8 @@ export default defineEventHandler(async (event) => {
 
   updateComment(comment.LikeAmount);
 
+  // TODO: post error if user is not given  
+
   let post: InsertLikedComments = {
 	  dislike: 0,
 	  user: comment.userThatLiked,
@@ -53,14 +55,11 @@ export default defineEventHandler(async (event) => {
   } else if (comment.cancel){
 	  console.log("cancel like");
 	  // TODO: delete like/dislike from database 
-  }
+  } else {
+	  return false;
+  }	
 
-  console.log("done")
-
-
-
-
-
+  return true; 
 
 
 });
