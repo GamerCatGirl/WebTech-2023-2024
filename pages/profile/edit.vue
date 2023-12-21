@@ -44,11 +44,6 @@ const { defineField } = useForm({
     validationSchema: toTypedSchema(insertUserSchema)
 });
 
-
-const [id] = defineField('name');
-const [email, emailVerified] = defineField("email");
-const [image] = defineField("image");
-
 async function saveChanges() {
     const sendUser = {
         name: input.value.userName,
