@@ -5,7 +5,6 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/valibot";
 
 /*TODO:
-- submit changes
 - change username in database
 - change country in database
 - fix layout (css )
@@ -41,8 +40,8 @@ async function fetchUserData() {
     }
 }
 
-const {defineField } = useForm({
-	validationSchema: toTypedSchema(insertUserSchema)
+const { defineField } = useForm({
+    validationSchema: toTypedSchema(insertUserSchema)
 });
 
 
@@ -52,11 +51,9 @@ const [image] = defineField("image");
 
 async function saveChanges() {
     const sendUser = {
-        id,
         name: input.value.userName,
-        email, emailVerified, image,
-        country: input.value.countryKey
-    }
+        country: input.value.countryKey,
+    };
     const body = await $fetch(`/api/users/${input.value.userID}/edit`, {
         method: "post",
         body: sendUser,

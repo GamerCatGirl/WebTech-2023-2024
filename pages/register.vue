@@ -39,7 +39,7 @@ async function register() {
 </script>
 
 <template>
-    <div class="editOverview flex flex-column md:flex-row" style="margin:auto;">
+    <div class="editOverview flex flex-column md:flex-row w-full" style="margin:auto;">
         <div class="editFields flex flex-column align-items-center justify-content-center gap-3 py-5" style="margin:auto;">
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <div v-if="false" class="errorMessage"></div>

@@ -18,18 +18,18 @@ export default defineEventHandler(async (event) => {
     if (!user) throw createError({ statusCode: 400, message: `Cannot find user with ID: '${userID}'` });
 
     const body = await readBody(event);
-    if (body.userName.length === 0) {
+    if (body.name.length === 0) {
         throw createError({ statusCode: 400, message: "Please specify a valid username" });
     }
-
+    if (body.country == null) {
+        throw createError({ statusCode: 400, message: "Please chose a country" })
+    }
     //ZORGT VOOR DE ERROR
     let updateUser: InsertUsers = { ...parse(insertUserSchema, body), id: userID }
-    return updateUser;
-    /*
 
     await database.transaction(async (tx) => {
-        await tx.update(users).set(updateUser).where(eq(user.id, userID));
+        await tx.update(users).set(updateUser).where(eq(users.id, userID));
     });
     return true;
-    */
+
 });
