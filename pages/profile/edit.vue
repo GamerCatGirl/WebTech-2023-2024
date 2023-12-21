@@ -15,9 +15,10 @@ definePageMeta({
 });
 const { data } = useAuth();
 const userIcon: string = data.value?.user?.image ?? "";
+const userID = data.value?.user?.id;
 
 const countryName = ref("");
-const input = ref({ userName: data.value?.user?.name, userID: data.value?.user?.id, countryKey: null });
+const input = ref({ userName: await fetchUserName(), countryKey: await fetchCountryKey() });
 function setCountryFlag() {
     return fetchCountryFlag(input.value.countryKey);
 }
@@ -27,36 +28,30 @@ function checkIfCountrySelected(): Boolean {
 };
 
 function checkForUserIcon(): Boolean {
-    return input.value.userID != null;
+    return userID != null;
 }
 
-async function fetchUserData() {
-    const body = await $fetch(`/api/users/${input.value.userID}`, {
-        method: "get"
-    })
-    if (body) {
-        input.value.countryKey = body?.country;
-        countryName.value = fetchCountryValue(input.value.countryKey);
-    }
+async function fetchCountryKey() {
+    const body = await useFetch(`/api/users/${userID}`);
+    return body.data.value.country;
 }
 
-const { defineField } = useForm({
-    validationSchema: toTypedSchema(insertUserSchema)
-});
+async function fetchUserName() {
+    const body = await useFetch(`/api/users/${userID}`);
+    return body.data.value.name;
+}
 
 async function saveChanges() {
     const sendUser = {
         name: input.value.userName,
         country: input.value.countryKey,
     };
-    const body = await $fetch(`/api/users/${input.value.userID}/edit`, {
+    const body = await $fetch(`/api/users/${userID}/edit`, {
         method: "post",
         body: sendUser,
     });
-    console.log(body);
 }
-
-fetchUserData();
+//fetchUserData();
 </script>
 
 <template>

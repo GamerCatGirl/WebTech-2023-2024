@@ -30,6 +30,6 @@ export default defineEventHandler(async (event) => {
     await database.transaction(async (tx) => {
         await tx.update(users).set(updateUser).where(eq(users.id, userID));
     });
-    return true;
+    return updateUser;
 
 });
