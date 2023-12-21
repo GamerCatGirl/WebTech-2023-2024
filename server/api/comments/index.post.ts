@@ -41,8 +41,6 @@ export default defineEventHandler(async (event) => {
 
   body.userId = body.user;
 
-  console.log(body);
-
   await putComments(body);
   return true;
 });

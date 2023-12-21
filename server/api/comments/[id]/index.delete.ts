@@ -18,7 +18,8 @@ export default defineEventHandler(async (event) => {
   }
 
   //check if user is logged in
-  await authenticate(event, () => {return comment.userID});
+  const user = await authenticate(event, undefined);
+  comment.userID = user;
 
 
 

@@ -10,12 +10,26 @@ export default defineEventHandler(async (event) => {
     });
   }
   const id = event.context.params.id;
-  const comment = await readBody(event);
-  await authenticate(event, () => {
-    return comment.userThatLiked;
+  if (!id) throw createError({ statusCode: 400, message: "ID is not defined" });
+
+  // test if id exists
+  const commentExists = await database.query.comments.findFirst({
+    where: (comment, { eq }) => eq(comment.id, id),
   });
-  
+
+  if (!commentExists) {
+    throw createError({ statusCode: 400, message: "Comment does not exist" });
+  }
+
+  const comment = await readBody(event);
+  const user = await authenticate(event, undefined);
+
+
+  comment.userThatLiked = user;
+  console.log(comment);
+
   const updateComment = async (likesToUpdate) => {
+    console.log(likesToUpdate);
     await database
       .update(comments)
       .set({ likes: likesToUpdate.toString() })
@@ -25,7 +39,6 @@ export default defineEventHandler(async (event) => {
   const InsertLikedComment = async (data: InsertLikedComments) => {
     return database.insert(likedComments).values(data);
   };
-
 
   updateComment(comment.LikeAmount);
 
@@ -43,25 +56,32 @@ export default defineEventHandler(async (event) => {
       InsertLikedComment(post);
     }
 
-    // TODO: not tested yet 
-  } else if (comment.changeLike) { //comment change from like to dislike or the other way around
+    // TODO: not tested yet
+  } else if (comment.changeLike) {
+    //comment change from like to dislike or the other way around
     console.log("change like");
-    if (comment.dislike) { //change from like to dislike
-	   await database
-	   	.update(likedComments)
-		.set({	dislike: 1 })
-		.where(and(eq(likedComments.comment, id),eq(likedComments.user, comment.userThatLiked) ));
+    if (comment.dislike) {
+      //change from like to dislike
+      await database
+        .update(likedComments)
+        .set({ dislike: 1 })
+        .where(
+          and(
+            eq(likedComments.comment, id),
+            eq(likedComments.user, comment.userThatLiked),
+          ),
+        );
     } else {
-	    //change from dislike to like 
-	    await database
-	    	.update(likedComments)
-		.set({ dislike: 0})
-		.where(eq(likedComments.comment, id));
+      //change from dislike to like
+      await database
+        .update(likedComments)
+        .set({ dislike: 0 })
+        .where(eq(likedComments.comment, id));
     }
-  } else if (comment.cancel) { //like is canceled
+  } else if (comment.cancel) {
+    //like is canceled
     console.log("cancel like");
-	await database.delete(likedComments).where(eq(likedComments.comment, id));
-
+    await database.delete(likedComments).where(eq(likedComments.comment, id));
   } else {
     return false;
   }

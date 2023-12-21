@@ -628,19 +628,22 @@ const commentRoutes: Route[] = [
         explanation: "Get the comment and his replies when given its id in routing",
         route: "/api/comments/[ID]",
         returnType: {
+	    id: "string",
             comment: "string",
             likes: "int",
             replied: "null | string",
-            user: "string", //this needs to be deleted
-            recipe: "string --- maybe recplace this to recipe/[id]/comment.post.ts",
+            userId: "string", //this needs to be deleted
+            recipe: "string",
             replies: [
                 {
+		    id: "string",
                     comment: "string",
                     likes: "int",
                     replied: "string",
-                    user: "string", //this needs to be deleted
-                    recipe: "you need to put here a recipe ID --- maybe recplace this to recipe/[id]/comment.post.ts",
-                    replies: [],
+                    user: {
+			    name: "string",
+			    id: "string",
+		    }, //this needs to be deleted
                 },
 
                 "...",
@@ -659,7 +662,6 @@ const commentRoutes: Route[] = [
         returnType: "boolean",
         bodyType: {
             likeAmount: "int",
-            userThatLiked: "string",
             changeLike: "boolean",
             cancel: "boolean",
             dislike: "int",
@@ -670,8 +672,7 @@ const commentRoutes: Route[] = [
             body: {
                 body: JSON.stringify(
                     {
-                        likeAmount: "56",
-                        userThatLiked: "---this vervangen door logged in user ---",
+                        LikeAmount: "56",
                         changeLike: "false",
                         cancel: "false", //this needs to be deleted
                         dislike: "0",
@@ -691,25 +692,11 @@ const commentRoutes: Route[] = [
         returnType: "void",
         example: {
             url: "/api/comments/[ID]",
+            run: { res: ref() },
         },
     },
 ];
 
-const likeRoutes: ApiRoute[] = [
-    {
-        title: "Likes",
-        routes: [
-            {
-                method: "POST",
-                title: "Add like",
-                explanation: "",
-                route: "/api/comments/[ID]/likes",
-                returnType: "boolean",
-                example: { url: "/api/comments/[ID]/likes" },
-            },
-        ],
-    },
-];
 
 const followerRoutes: Route[] = [
     {
@@ -742,7 +729,7 @@ export const apiRoutes: ApiRoute[] = [
     { title: "Status", routes: statusRoute },
     { title: "Recipes", routes: recipeRoutes, subRoutes: ratingRoutes },
     { title: "Users", routes: userRoutes },
-    { title: "Comments", routes: commentRoutes, subRoutes: likeRoutes },
+    { title: "Comments", routes: commentRoutes},
     { title: "Followers", routes: followerRoutes },
     { title: "Units", routes: unitRoutes },
 ];
