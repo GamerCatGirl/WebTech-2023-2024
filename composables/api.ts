@@ -598,8 +598,7 @@ const commentRoutes: Route[] = [
             deleteKey3: "==COMMENT==// The amount of likes is initialised on zero --- TODO!",
             likes: "int",
             deleteKey4: "==COMMENT==// Only added when it is a response on another message",
-            replied: "string",
-            userId: "string -- this needs to be deleted", //this needs to be deleted
+            commentAnswer: "string",
             deleteKey5: "==COMMENT==// Give the id of the recipe where the comment belongs to",
             recipe: "string",
         },
@@ -612,9 +611,8 @@ const commentRoutes: Route[] = [
                     {
                         comment: "This is an amezing recipe!",
                         likes: "0",
-                        replied: "",
-                        user: "string -- this needs to be deleted", //this needs to be deleted
-                        recipe: "you need to put here a recipe ID --- maybe recplace this to recipe/[id]/comment.post.ts",
+                        commentAnswer: "",
+                        recipe: "4574cbbd-3cf0-402b-948e-9dc12fc05e53",
                     },
                     null,
                     4

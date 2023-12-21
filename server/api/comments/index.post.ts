@@ -8,9 +8,8 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
   //
-  await authenticate(event, () => {
-    return body.user;
-  });
+  const userID = await authenticate(event, undefined);
+  body.user = userID;
 
   if (body.comment == "") {
     throw createError({
@@ -19,7 +18,15 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (body.replied) {
+  const recipeExists = await database.query.recipes.findFirst({
+	  where: (recipe, {eq}) => eq(recipe.id, body.recipe)
+  })
+
+  if (!recipeExists){
+	throw createError({statusCode: 404, message: "Recipe not found"})
+  }
+
+  if (body.commentAnswer) {
     const result = await database.query.comments.findFirst({
       where: (comment, { eq }) => eq(comment.id, body.replied),
       with: {
@@ -28,11 +35,13 @@ export default defineEventHandler(async (event) => {
     });
 
     if (!result){
-    	throw createError({statusCode:400, message: "Comment to reply on not found"})
+    	throw createError({statusCode:404, message: "Comment to reply on not found"})
     }
   }
 
   body.userId = body.user;
+
+  console.log(body);
 
   await putComments(body);
   return true;
