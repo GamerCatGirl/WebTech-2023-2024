@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import { countries, fetchChosenCountryKey } from "~/composables/countryAPI";
 /* TODO:
 - make password confirmation check
-- take chosen country's key 
-- register user in db
 - inline errors: only appear when wrong data posted
 - inline errors: hide and use good layout
 - make frontend mobile friendly!
@@ -11,7 +10,7 @@ definePageMeta({
     middleware: "auth",
     auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
 });
-//TODO: make generic for both 
+
 const passwordConfirmation: Ref<string> = ref("");
 function emptyInput() {
     return {
@@ -24,6 +23,7 @@ function emptyInput() {
     }
 }
 var input = ref(emptyInput())
+const country = ref({});
 
 //post request
 async function register() {
@@ -32,26 +32,10 @@ async function register() {
             method: "post",
             body: input.value,
         });
-        console.log("finsihed!");
+        input.value = emptyInput()
     }
     //TODO: when request fails: let user try again
 }
-
-const countries: Ref<Array<any>> = ref([]);
-
-//TODO: make dictionary that stores country keys
-//countries are sorted by countryCode and not name
-async function fetchCountryJSON() {
-    const target = 'https://flagcdn.com/en/codes.json';
-    const response = await fetch(target);
-    const countryData = await response.json();
-    for (const [key, value] of Object.entries(countryData)) {
-        countries.value.push(value);
-    }
-}
-
-//gets executed when page is fully mounted
-fetchCountryJSON();
 </script>
 
 <template>
@@ -88,7 +72,9 @@ fetchCountryJSON();
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Choose your country</label>
-                <Dropdown v-model="input.country" :options="countries" class="inputBoxRegister"
+                <Dropdown v-model="country"
+                    @update:model-value="(newVal: string) => { input.country = fetchChosenCountryKey(newVal[1]); country.value = newVal[1]; }"
+                    :options="Object.entries(countries)" :optionLabel="(item) => item[1]" class="inputBoxRegister"
                     placeholder="Select a Country">
                 </Dropdown>
             </div>

@@ -1,5 +1,6 @@
 import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core"
-
+import { createInsertSchema } from "drizzle-valibot";
+import { minLength, string, undefined_, length } from "valibot";
 import type { AdapterAccount } from "@auth/core/adapters"
 import crypto from "crypto";
 import { comments } from "../database/recipe"
@@ -15,13 +16,13 @@ export const users = sqliteTable("user", {
 })
 
 export const follower = sqliteTable("follower", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => crypto.randomUUID()),
-	idFollower: text("id follower")
-		.notNull(),
-	idFollowing: text("id following")
-		.notNull(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  idFollower: text("id follower")
+    .notNull(),
+  idFollowing: text("id following")
+    .notNull(),
 })
 
 export type Followers = InferSelectModel<typeof follower>;
@@ -94,3 +95,16 @@ export const verificationTokens = sqliteTable(
 
 export type usersDB = InferSelectModel<typeof users>;
 export type InsertUsers = InferInsertModel<typeof users>;
+
+export const insertUserSchema = createInsertSchema(users, {
+  id: undefined_("No ID should be specified."),
+  name: string("Please give a valid userName a name to your recipe", [
+    minLength(4, "The name of the username should be longer than 4 characters"),
+  ]),
+  email: undefined_("No email should be specified."),
+  emailVerified: undefined_("No emailVerified should be specified."),
+  image: undefined_("No image should be specified."),
+  country: string("Please chose a country", [
+    length(2, "Give a valid countryKey")
+  ])
+})
