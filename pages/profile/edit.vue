@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { countries, fetchChosenCountryKey, fetchCountryFlag, fetchCountryValue } from "~/composables/countryAPI";
+import { countries, fetchChosenCountryKey, fetchCountryFlag } from "~/composables/countryAPI";
 import { insertUserSchema } from '~/database/auth';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/valibot";
+
 
 /*TODO:
 - change username in database
@@ -16,15 +17,17 @@ definePageMeta({
 const { data } = useAuth();
 const userIcon: string = data.value?.user?.image ?? "";
 const userID = data.value?.user?.id;
+const userData = ref({ name: await fetchUserName(), country: await fetchCountryKey() })
+const error = ref(null);//errormessage
 
 const countryName = ref("");
-const input = ref({ userName: await fetchUserName(), countryKey: await fetchCountryKey() });
+const input = ref({ userName: userData.value.name, countryKey: userData.value.country });
 function setCountryFlag() {
-    return fetchCountryFlag(input.value.countryKey);
+    return fetchCountryFlag(userData.value.country);
 }
 
 function checkIfCountrySelected(): Boolean {
-    return input.value.countryKey != null;
+    return userData.value.country != null;
 };
 
 function checkForUserIcon(): Boolean {
@@ -50,8 +53,11 @@ async function saveChanges() {
         method: "post",
         body: sendUser,
     });
+    if (body) {
+        userData.value.name = body.name;
+        userData.value.country = body.country;
+    }
 }
-//fetchUserData();
 </script>
 
 <template>
@@ -78,8 +84,8 @@ async function saveChanges() {
         </div>
         <div class=" editElement flex flex-row align-items-center justify-content-space-between">
             Change country
-            <Dropdown style="width:250px" placeholder="Select a Country" v-model="input.countryName"
-                @update:model-value="(newVal: string) => { input.countryKey = fetchChosenCountryKey(newVal[1]); countryName = newVal[1]; }"
+            <Dropdown style="width:250px" placeholder="Select a Country" v-model="countryName"
+                @update:model-value="(newVal: string) => { input.countryKey = fetchChosenCountryKey(newVal[1]); countryName.value = newVal[1]; }"
                 :options="Object.entries(countries)" :optionLabel="(item) => item[1]">
             </Dropdown>
         </div>
