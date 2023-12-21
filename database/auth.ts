@@ -3,7 +3,6 @@ import { createInsertSchema } from "drizzle-valibot";
 import { minLength, string, undefined_, length } from "valibot";
 import type { AdapterAccount } from "@auth/core/adapters"
 import crypto from "crypto";
-import { comments } from "../database/recipe"
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 
 export const users = sqliteTable("user", {
@@ -32,24 +31,6 @@ export const apiKey = sqliteTable("apiKey", {
   key: text("id").notNull().primaryKey(),
   user: text("user").references(() => users.id).notNull(),
 })
-
-///// LIKED comments ///// 
-export const likedComments = sqliteTable("liked comments", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  dislike: integer("dislike"),
-  user: text("user_id")
-    .references(() => users.id)
-    .notNull(),
-  comment: text("comment_id")
-    .references(() => comments.id)
-    .notNull(),
-})
-
-export type LikedComments = InferSelectModel<typeof likedComments>;
-export type InsertLikedComments = InferInsertModel<typeof likedComments>;
-
 
 export const accounts = sqliteTable(
   "account",

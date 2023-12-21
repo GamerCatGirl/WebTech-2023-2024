@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { ConsoleLogWriter } from 'drizzle-orm';
-import { check } from 'drizzle-orm/sqlite-core';
 import { countries, fetchChosenCountryKey, fetchCountryFlag, fetchCountryValue } from "~/composables/countryAPI";
-import { any } from 'valibot';
 import { insertUserSchema } from '~/database/auth';
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/valibot";
@@ -45,13 +42,14 @@ async function fetchUserData() {
 }
 
 const {defineField } = useForm({
-    validationSchema: toTypedSchema(insertUserSchema)
+	validationSchema: toTypedSchema(insertUserSchema)
 });
 
-/*const [id] = defineField('name');
+
+const [id] = defineField('name');
 const [email, emailVerified] = defineField("email");
 const [image] = defineField("image");
-*/
+
 async function saveChanges() {
     const sendUser = {
         id,
@@ -70,7 +68,7 @@ fetchUserData();
 </script>
 
 <template>
-    <div class="editOverview flex flex-column align-items-center">
+    <div class="editOverview flex flex-column align-items-center w-full">
         <div>
             <h1>Editing User Settings </h1>
         </div>

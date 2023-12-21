@@ -1,6 +1,5 @@
-import { likedComments, InsertLikedComments } from "~/database/auth";
-
 /*
+import { likedComments, InsertLikedComments } from "~/database/auth";
 
 
 ---- THIS file can be deleted, (I tested it, but not 100% sure - so if you can test )

@@ -1,5 +1,4 @@
-import { comments } from "~/database/recipe";
-import { likedComments, InsertLikedComments } from "~/database/auth";
+import { comments, likedComments, InsertLikedComments } from "~/database/recipe";
 import { eq, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {

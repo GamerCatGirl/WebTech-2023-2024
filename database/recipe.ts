@@ -27,6 +27,23 @@ export const comments = sqliteTable("comment", {
 export type Comment = InferSelectModel<typeof comments>;
 export type InsertComment = InferInsertModel<typeof comments>;
 
+///// LIKED comments ///// 
+export const likedComments = sqliteTable("liked comments", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  dislike: integer("dislike"),
+  user: text("user_id")
+    .references(() => users.id)
+    .notNull(),
+  comment: text("comment_id")
+    .references(() => comments.id)
+    .notNull(),
+})
+
+export type LikedComments = InferSelectModel<typeof likedComments>;
+export type InsertLikedComments = InferInsertModel<typeof likedComments>;
+
 ///////////////////////////////
 export const commentsRelations = relations(comments, ({ one, many }) => ({
     recipe: one(recipes, { fields: [comments.recipe], references: [recipes.id] }),
