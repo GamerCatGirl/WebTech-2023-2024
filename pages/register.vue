@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useToast } from "primevue/usetoast";
 import { countries, fetchChosenCountryKey } from "~/composables/countryAPI";
+import { } from "~/composables/userValidation";
+
 /* TODO:
 - make password confirmation check
 - inline errors: only appear when wrong data posted
@@ -10,7 +13,14 @@ definePageMeta({
     middleware: "auth",
     auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
 });
-
+const toast = useToast();
+/** Check if inputs are valid according to the specified regex. 
+ * Intially all values are false, because the user starts off empty.
+ * @returns true if input is valid
+ * @returns false if input is invalid
+*/
+const inputValidation = ref({ name: false, email: false, password: false, country: false })
+let firstChangeHappened: boolean = false;
 const passwordConfirmation: Ref<string> = ref("");
 function emptyInput() {
     return {
@@ -19,22 +29,59 @@ function emptyInput() {
         password: "",
         image: "",
         country: ""
-
     }
 }
+const countryName = ref("");
 var input = ref(emptyInput())
-const country = ref({});
 
-//post request
+function registerFirstChange() {
+    firstChangeHappened = true;
+}
+function onUsernameChange(newName: string) {
+    registerFirstChange()
+    inputValidation.value.name = checkValidUsername(newName);
+}
+function onEmailChange(newEmail: string) {
+    registerFirstChange();
+    inputValidation.value.email = checkValidEmail(newEmail);
+}
+function onPasswordChange(newPassword: string) {
+    registerFirstChange();
+    inputValidation.value.password = checkValidPassword(newPassword);
+}
+function onCountryChange() {
+    registerFirstChange();
+    inputValidation.value.country = true;
+}
+
 async function register() {
     if (input.value.password == passwordConfirmation.value) {
-        const body = await $fetch("/api/users/registration", {
-            method: "post",
-            body: input.value,
-        });
-        input.value = emptyInput()
+        if (input.value.name && input.value.country && input.value.email && input.value.password && firstChangeHappened) {
+            console.log("test1");
+            const body = await $fetch("/api/users/registration", {
+                method: "post",
+                body: input.value,
+            });
+            navigateTo("/login");
+            toast.add({
+                severity: "success",
+                detail: "You have successfully registered. You can now log in.",
+                life: 4000
+            })
+        } else {
+            toast.add({
+                severity: "error",
+                detail: "You entered wrong information. Please, try again.",
+                life: 4000
+            })
+        }
+    } else {
+        toast.add({
+            severity: "error",
+            detail: "Passwords do not match. Please try again.",
+            life: 3000
+        })
     }
-    //TODO: when request fails: let user try again
 }
 </script>
 
@@ -42,26 +89,29 @@ async function register() {
     <div class="editOverview flex flex-column md:flex-row w-full" style="margin:auto;">
         <div class="editFields flex flex-column align-items-center justify-content-center gap-3 py-5" style="margin:auto;">
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
-                <div v-if="false" class="errorMessage"></div>
-                <label for="new-name" class="w-6rem">Name</label>
-                <InputText v-if="false" v-model="input.name" type="text" required class="p-invalid" />
-                <InputText v-else v-model="input.name" class="inputBoxRegister" type="text" required />
-                <!--<InlineMessage class="errorMessage">Name is Required!</InlineMessage>-->
-            </div>
-            <div class="flex flex-wrap justify-content-center align-items-center gap-2">
-                <div v-if="false" class="errorMessage"></div>
+                <div v-if="!inputValidation.name && firstChangeHappened" class="errorMessage"></div>
                 <label class="w-6rem">Username</label>
-                <InputText type="text" class="inputBoxRegister" required />
-                <InlineMessage v-if="false" class="errorMessage">Username is Required!</InlineMessage>
+                <InputText type="text" class="inputBoxRegister"
+                    :class='{ "p-invalid": !inputValidation.name && firstChangeHappened }' required v-model="input.name"
+                    @update:model-value="(newName: string) => onUsernameChange(newName)" />
+                <InlineMessage v-if="!inputValidation.name && firstChangeHappened" class="errorMessage">Valid username is
+                    required!
+                </InlineMessage>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
+                <div v-if="!inputValidation.email && firstChangeHappened" class="errorMessage"></div>
                 <label class="w-6rem">E-mail address</label>
-                <!--TODO: email form validation-->
-                <InputText v-model="input.email" type="email" class="inputBoxRegister" required />
+                <InputText v-model="input.email" type="email" class="inputBoxRegister"
+                    :class='{ "p-invalid": !inputValidation.email && firstChangeHappened }' required
+                    @update:model-value="(newEmail: string) => onEmailChange(newEmail)" />
+                <InlineMessage v-if="!inputValidation.email && firstChangeHappened" class="errorMessage">Valid e-mail is required!
+                </InlineMessage>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Password</label>
-                <Password v-model="input.password" type="text" class="inputBoxRegister" toggleMask required>
+                <Password v-model="input.password" type="text" class="inputBoxRegister"
+                    :class='{ "p-invalid": !inputValidation.password && firstChangeHappened }' toggleMask required
+                    @update:model-value="(newPassword: string) => onPasswordChange(newPassword)">
                 </Password>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
@@ -72,10 +122,10 @@ async function register() {
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
                 <label class="w-6rem">Choose your country</label>
-                <Dropdown v-model="country"
-                    @update:model-value="(newVal: string) => { input.country = fetchChosenCountryKey(newVal[1]); country.value = newVal[1]; }"
+                <Dropdown v-model="countryName"
+                    @update:model-value="(newVal: string) => { onCountryChange(), input.country = newVal[0]; countryName.value = newVal[1]; }"
                     :options="Object.entries(countries)" :optionLabel="(item) => item[1]" class="inputBoxRegister"
-                    placeholder="Select a Country">
+                    :class="{ 'p-invalid': !inputValidation.country && firstChangeHappened }" placeholder="Select a Country">
                 </Dropdown>
             </div>
             <div>
@@ -88,5 +138,4 @@ async function register() {
 </template>
 
 <style>
-@import '~/assets/css/profile/edit.css'
-</style>
+@import '~/assets/css/profile/edit.css'</style>

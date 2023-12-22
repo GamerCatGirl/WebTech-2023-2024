@@ -1,24 +1,18 @@
 <script setup lang="ts">
 import { countries, fetchChosenCountryKey, fetchCountryFlag } from "~/composables/countryAPI";
-import { insertUserSchema } from '~/database/auth';
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/valibot";
-
-
-/*TODO:
-- change username in database
-- change country in database
-- fix layout (css )
-*/
+import { useToast } from "primevue/usetoast";
+import { } from "~/composables/userValidation";
 
 definePageMeta({
     middleware: "auth",
 });
 const { data } = useAuth();
+let changesSubmitted: boolean = true;
 const userIcon: string = data.value?.user?.image ?? "";
 const userID = data.value?.user?.id;
 const userData = ref({ name: await fetchUserName(), country: await fetchCountryKey() })
-const error = ref(null);//errormessage
+const toast = useToast();
+let validName: Boolean = true;
 
 const countryName = ref("");
 const input = ref({ userName: userData.value.name, countryKey: userData.value.country });
@@ -45,19 +39,48 @@ async function fetchUserName() {
 }
 
 async function saveChanges() {
-    const sendUser = {
-        name: input.value.userName,
-        country: input.value.countryKey,
-    };
-    const body = await $fetch(`/api/users/${userID}/edit`, {
-        method: "post",
-        body: sendUser,
-    });
-    if (body) {
-        userData.value.name = body.name;
-        userData.value.country = body.country;
+    if (validName) {
+        const sendUser = {
+            name: input.value.userName,
+            country: input.value.countryKey,
+        };
+        const body = await $fetch(`/api/users/${userID}/edit`, {
+            method: "post",
+            body: sendUser,
+        });
+        if (body) {
+            userData.value.name = body.name;
+            userData.value.country = body.country;
+            toast.add({
+                severity: "success",
+                detail: "Changes have been succesfully submitted!",
+                life: 3000,
+            })
+            changesSubmitted = true;
+        }
+    } else {
+        toast.add({
+            severity: "error",
+            detail: "Please submit a valid new username.",
+            life: 3000,
+        })
     }
 }
+
+function onUsernameChange(newName: string) {
+    validName = checkValidUsername(newName);
+    if (validName) {
+        input.value.userName = newName;
+        changesSubmitted = false;
+    }
+}
+
+onBeforeRouteLeave((to, from) => {
+    if (!changesSubmitted) {
+        const res = confirm("Do you really want to leave? You have unsaved changes.")
+        if (!res) return false;
+    }
+});
 </script>
 
 <template>
@@ -79,7 +102,8 @@ async function saveChanges() {
         </div>
         <div class="editElement flex flex-row align-items-center justify-content-space-between">
             Change username
-            <InputText v-model="input.userName" id="new-username" placeholder="new username" class="inputBox">
+            <InputText v-model="input.userName" id="new-username" placeholder="new username" class="inputBox"
+                :class="{ 'p-invalid': !validName }" @update:model-value="(newName: string) => onUsernameChange(newName)">
             </InputText>
         </div>
         <div class=" editElement flex flex-row align-items-center justify-content-space-between">
