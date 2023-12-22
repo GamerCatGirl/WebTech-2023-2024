@@ -18,7 +18,7 @@
         Imagine a world where every dish whispers tales of ancient traditions,
         where flavors dance on your tongue like a symphony of cultures, and
         where every culinary creation is a masterpiece born from the heart.
-        Welcome to [website name], a digital haven where the culinary world
+        Welcome to Good Food, a digital haven where the culinary world
         unfolds before your very eyes, inviting you to share and discover meals.
       </div>
     </div>
@@ -96,7 +96,7 @@
       </div>
 
       <div class="text-paragraph">
-        "I've learned so much about different cultures through [website name].
+        "I've learned so much about different cultures through Good Food.
         I've tried dishes I never would have tried before, and I've found some
         new favorites."
       </div>
@@ -114,7 +114,7 @@
       <div class="title-paragraph title-paragraph-center">Zui, South korea</div>
 
       <div class="text-paragraph">
-        "I'm always looking for new recipe ideas, and [website name] is the
+        "I'm always looking for new recipe ideas, and Good Food is the
         perfect place to find them. I've found some really delicious recipes
         that I would never have thought of on my own."
       </div>
@@ -133,7 +133,7 @@
       <div class="title-paragraph title-paragraph-center">vanja, sweden</div>
 
       <div class="text-paragraph">
-        "I love connecting with other foodies on [website name]. We share
+        "I love connecting with other foodies on Good Food. We share
         recipes, tips, and tricks, and we've made some great friends."
       </div>
     </div>
