@@ -3,7 +3,6 @@
   <div class="titlepage">Exploring food throughout the world</div>
   <div class="subtitle">Discover local recipes from around the world</div>
 
-  <!-- TODO: put button in center -->
   <div class="w-full">
 	<div class="mx-auto w-fit">
 	  <Button><NuxtLink to="/recipes">Discover recipes</NuxtLink></Button> 
@@ -142,7 +141,6 @@
   </div>
 </template>
 
-<!-- TODO: make image go under text when screen gets smaller -->
 <style>
 .titlepage {
   font-family: "Newsreader";

@@ -144,113 +144,6 @@
           </div>
         </div>
       </TabPanel>
-
-      <!-- merge  
-                    <div class="flex gap-1 reactionButtons">
-                        // like button 
-                        <Button
-                            :disabled="!user"
-                            icon="pi pi-caret-up"
-                            class="voteButton"
-                            :severity="comment.severityLike"
-                            @click="like(comment)"
-                        />
-                        // amount of likes 
-
-                        <span class="amountStyle text-2xl">{{ comment.likes }}</span>
-                        // dislike button 
-
-                        <Button
-                            :disabled="!user"
-                            icon="pi pi-caret-down"
-                            class="voteButton mr-2 mb-auto"
-                            :severity="comment.severityDislike"
-                            @click="dislike(comment)"
-                        />
-
-                        //-TODO: flex right doesn't work here
-
-                        <Textarea
-                            v-show="comment.addReaction"
-                            v-model="comment.addReactionInput"
-                            rows="1"
-                            cols="90"
-                            auto-resize
-                        />
-                        <Button
-                            v-if="comment.reactions?.length > 0 && !comment.addReaction"
-                            label="reactions"
-                            icon="pi pi-angle-down"
-                            class="reactionButton"
-                            outlined
-                            @click="switchAddReaction(comment)"
-                        />
-
-                        <Button
-                            v-show="comment.addReaction"
-                            label="Cancel"
-                            severity="warning"
-                            class="reactionButton"
-                            @click="comment.addReaction = false"
-                        />
-                        <Button
-                            :disabled="!user"
-                            class="reactionButton"
-                            label="Answer"
-                            @click="clickOnCommandButton(comment)"
-                        />
-
-                        <Button
-                            v-if="user === comment.user.id"
-                            label="Delete"
-                            class="reactionButton"
-                            severity="danger"
-                            @click="deleteComment(comment.id, comments, comment.idx)"
-                        />
-                    </div>
-
-                    <div v-for="reaction in comment.reactions" v-show="comment.showReaction">
-                        <Divider align="left gap-3" type="solid">
-                            // like button 
-                            <Button
-                                :disabled="!user"
-                                icon="pi pi-caret-up"
-                                :severity="reaction.severityLike"
-                                class="voteButton mr-1"
-                                @click="like(reaction)"
-                            />
-                            // amount of likes 
-
-                            <span class="amountStyle text-2xl">{{ reaction.likes }}</span>
-                            // dislike button
-                            <Button
-                                :disabled="!user"
-                                icon="pi pi-caret-down"
-                                :severity="reaction.severityDislike"
-                                class="voteButton ml-1"
-                                @click="dislike(reaction)"
-                            />
-
-                            <b class="ml-2">{{ reaction.user.name }}</b
-                            >: {{ reaction.comment }}
-
-                            <Button
-                                v-if="reaction.deleteButton"
-                                label="Delete"
-                                severity="danger"
-                                class="mb-auto reactionButton"
-                                @click="deleteComment(reaction.id, comment.reactions, reaction.idx)"
-                            />
-                        </Divider>
-                    </div>
-                </div>
-            </TabPanel>
-        </TabView>
-    </div>
-    -->
-
-      <!-- TODO: put vertical bar in card and in the right a pin on the map of the recipy -->
-      <!-- TODO: fix the layout of this horizontal bar -->
       <TabPanel header="Comments">
         <div v-if="user">
           <p class="fts-3 mb-2 text-xl">Rate this recipe:</p>
@@ -335,16 +228,9 @@
                     text
                     rounded
                   />
-
-                  <!-- amount of likes -->
-
-                  <!-- dislike button -->
-
-                  <!-- answer button -->
                 </div>
 
                 <div>
-                  <!--TODO: flex right doesn't work here-->
                   <div class="gap-3">
                     <Textarea
                       v-show="comment.addReaction"
@@ -638,11 +524,8 @@ async function deleteComment(commentID, vect, idx) {
 }
 
 async function setupReaction() {
-  console.log("setup");
 
   let userLikes = await $fetch(`/api/users/${loggedInUser}/liked`);
-
-  console.log(userLikes[0]);
 
   comments.value.map(async (comment, index) => {
     comment.showReaction = false;
@@ -651,23 +534,17 @@ async function setupReaction() {
     comment.severityLike = "Primary";
     comment.logedInUser = loggedInUser;
 
-    console.log(comment.user);
-
     if (comment.user.id == comment.logedInUser) {
       comment.deleteButton = true;
     }
 
     let idexToDelete = undefined;
 
-    console.log(comment.id);
-
     userLikes.map((element, index) => {
       if (element.comment == comment.id) {
-        console.log("comment is in table");
         if (element.dislike == 1) {
           comment.severityDislike = "danger";
         } else if (element.dislike == 0) {
-          console.log("comment is liked");
           comment.severityLike = "success";
         }
         idexToDelete = index;
@@ -704,7 +581,6 @@ async function setupReaction() {
 
     //test
     comment.reactions = reactions.replies;
-    console.log(comment.severityLike);
   });
 }
 
@@ -800,16 +676,12 @@ async function comment() {
     body: commentData,
   });
 
-  // TODO: get id comment to activate repost 
-
   const user = await $fetch(`/api/users/${commentData.user}`);
   commentData.user = user;
   comments.value.unshift(commentData);
 
   addComment.value = "";
 }
-
-//const recipyName
 </script>
 
 <style scoped>

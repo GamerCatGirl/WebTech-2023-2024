@@ -28,3 +28,5 @@ todo.txt
 public/images/*
 
 pages/registertest.vue
+server/api/users/hashedPassword.get.ts
+pages/test.vue

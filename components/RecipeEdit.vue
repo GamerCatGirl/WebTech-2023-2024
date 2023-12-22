@@ -40,7 +40,6 @@
           class="mr-2"
           @click="deleteRecipe"
         />
-        <!-- TODO: Warn user when leaving the page before saving -->
       </template>
     </Toolbar>
   </div>
@@ -360,7 +359,6 @@ const props = defineProps<{
 function setupMap(map) {
   map.on("click", (mouseEvent) => {
     if (moveMarker) {
-			console.log(mouseEvent.latlng)
 			const pos = mouseEvent.latlng
       positionFoodMarker.value = [pos.lat, pos.lng];
       foodMarkerShow.value = true;
@@ -487,7 +485,6 @@ function getLocation() {
 
 getLocation();
 
-// TODO: edit recipe update markers 
 
 function getEmptyIngredient() {
   const { errors, defineField, validate } = useForm({
@@ -517,7 +514,6 @@ function getEmptyIngredient() {
 async function save() {
 
   let validated = await validate();
-	console.log("1")
   if (validated.valid && ingredients.value.length === 0) {
     toast.add({
       severity: "error",
@@ -544,7 +540,6 @@ async function save() {
     const val = await ingredient.validate();
     if (validated.valid) validated = val;
   }
-	console.log("4")
 
   if (validated.valid) {
     const sendIngredients = ingredients.value.map((ingredient, index) => {
@@ -615,11 +610,6 @@ async function save() {
     }, 100);
   }
 }
-
-// TODO: you cannot upload multiple mealtypes to database
-
-// let scoreRecipe = 0;
-// const inputs = ref([newDummy()]);
 
 const onUpload = (event: any) => {
   thumbnail.value = event.xhr.response;

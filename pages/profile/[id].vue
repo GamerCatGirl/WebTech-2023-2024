@@ -131,7 +131,6 @@ const followingVisible = ref(false);
 const followersVisible = ref(false);
 const searchFollowers = ref();
 
-console.log(user)
 const { data: amountRecipes } = await useFetch(`/api/users/${id}/recipes`, {query: {amount: true}});
 
 const followData = await useFetch(`/api/followers/${user?.value.id}`);
@@ -253,7 +252,6 @@ async function changeFollow() {
             header="Followers"
             class="popupWindow"
           >
-            <!-- TODO: search -->
             <span class="p-input-icon-left search">
               <i class="pi pi-search" />
               <InputText
@@ -263,7 +261,6 @@ async function changeFollow() {
               />
             </span>
 
-            <!-- TODO profile -->
             <div v-for="follower in followersData">
               <div class="chunk">
                 <div class="profileInfoSmall">
@@ -298,7 +295,6 @@ async function changeFollow() {
             header="Following"
             class="popupWindow"
           >
-            <!-- TODO: search -->
             <span class="p-input-icon-left search">
               <i class="pi pi-search" />
               <InputText
@@ -308,8 +304,6 @@ async function changeFollow() {
               />
             </span>
 
-            <!-- TODO profile -->
-            <!-- TODO profile -->
             <div v-for="follower in followingData">
               <div class="chunk">
                 <div class="profileInfoSmall">
@@ -357,7 +351,6 @@ async function changeFollow() {
           "
         />
 
-        <!-- TODO: verander naar unfollow als je die persoon al volgt -->
         <Button
           v-else
           :icon="iconFollowButton"

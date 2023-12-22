@@ -25,10 +25,8 @@ export default defineEventHandler(async (event) => {
 
 
   comment.userThatLiked = user;
-  console.log(comment);
 
   const updateComment = async (likesToUpdate) => {
-    console.log(likesToUpdate);
     await database
       .update(comments)
       .set({ likes: likesToUpdate.toString() })
@@ -55,10 +53,8 @@ export default defineEventHandler(async (event) => {
       InsertLikedComment(post);
     }
 
-    // TODO: not tested yet
   } else if (comment.changeLike) {
     //comment change from like to dislike or the other way around
-    console.log("change like");
     if (comment.dislike) {
       //change from like to dislike
       await database
@@ -79,7 +75,6 @@ export default defineEventHandler(async (event) => {
     }
   } else if (comment.cancel) {
     //like is canceled
-    console.log("cancel like");
     await database.delete(likedComments).where(eq(likedComments.comment, id));
   } else {
     return false;

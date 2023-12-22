@@ -627,7 +627,7 @@ const commentRoutes: Route[] = [
       deleteKey2: "==COMMENT==// comment is the text that the user published",
       comment: "string",
       deleteKey3:
-        "==COMMENT==// The amount of likes is initialised on zero --- TODO!",
+        "==COMMENT==// The amount of likes is initialised on zero!",
       likes: "int",
       deleteKey4:
         "==COMMENT==// Only added when it is a response on another message",

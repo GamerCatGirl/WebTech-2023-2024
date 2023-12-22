@@ -50,7 +50,6 @@ function onCountryChange() {
 async function register() {
     if (input.value.password == passwordConfirmation.value) {
         if (input.value.name && input.value.country && input.value.email && input.value.password && firstChangeHappened) {
-            console.log("test1");
             try {
                 await $fetch("/api/users/registration", {
                     method: "post",
@@ -69,7 +68,6 @@ async function register() {
                     detail: e.data.message,
                     life: 4000
                 })
-                console.log("test2");
             }
         } else {
             toast.add({

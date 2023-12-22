@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
     const id = event.context.params.id;
     const recipeName = query.name?.valueOf();
 
-    console.log(query.amount);
     if (query.amount?.valueOf())
         return (
             await database.query.recipes
