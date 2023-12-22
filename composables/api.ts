@@ -576,7 +576,7 @@ const unitRoutes: Route[] = [
     method: "GET",
     title: "Convert unit",
     explanation:
-      "Convert a quantity from one unit to another. The units you are converting between should be of the same type. They should for example both express mass. This api uses `https://clinicaltables.nlm.nih.gov/` internally, so if you want to know more you can go to that site. If you want to see what units are supported you can go here `https://clinicaltables.nlm.nih.gov/apidoc/ucum/v3/doc.html`",
+      "Convert a quantity from one unit to another. The units you are converting between should be of the same type. They should for example both express mass. This api uses `https://ucum.nlm.nih.gov/` internally, so if you want to know more you can go to that site. If you want to see what units are supported you can go here `https://clinicaltables.nlm.nih.gov/apidoc/ucum/v3/doc.html`",
     route: "/api/units",
     returnType: "int",
     params: [
@@ -694,6 +694,7 @@ const commentRoutes: Route[] = [
     explanation: "Change the amount of likes of a comment",
     route: "/api/comments/[ID]",
     returnType: "boolean",
+	authRequired: true,
     bodyType: {
       likeAmount: "int",
       changeLike: "boolean",
@@ -702,7 +703,7 @@ const commentRoutes: Route[] = [
     },
     example: {
       url: "/api/comments/[ID]",
-      run: { res: ref() },
+      run: { res: ref(), apiKey: "" },
       body: {
         body: JSON.stringify(
           {
@@ -725,9 +726,10 @@ const commentRoutes: Route[] = [
       "Delete the current comment, it likes, and it replies (with again their likes)",
     route: "/api/comments/[ID]",
     returnType: "void",
+	authRequired: true,
     example: {
       url: "/api/comments/[ID]",
-      run: { res: ref() },
+      run: { res: ref(), apiKey: "" },
     },
   },
 ];
@@ -742,9 +744,10 @@ const followerRoutes: Route[] = [
       idFollowing: "string",
     },
     returnType: "boolean",
+	authRequired: true,
     example: {
       url: "/api/followers",
-      run: { res: ref() },
+      run: { res: ref(), apiKey: "" },
 
       body: {
         body: JSON.stringify(
@@ -767,9 +770,10 @@ const followerRoutes: Route[] = [
       idFollowing: "string",
     },
     returnType: "boolean",
+	authRequired: true,
     example: {
       url: "/api/followers",
-      run: { res: ref() },
+      run: { res: ref(), apiKey: "" },
       body: {
         body: JSON.stringify(
           {
