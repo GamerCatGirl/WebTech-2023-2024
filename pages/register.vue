@@ -26,7 +26,7 @@ function emptyInput() {
         name: "",
         email: "",
         password: "",
-        image: "",
+        image: null,
         country: ""
     }
 }
@@ -56,20 +56,31 @@ function onCountryChange() {
 async function register() {
     if (input.value.password == passwordConfirmation.value) {
         if (input.value.name && input.value.country && input.value.email && input.value.password && firstChangeHappened) {
-            await $fetch("/api/users/registration", {
-                method: "post",
-                body: input.value,
-            });
-            navigateTo("/login");
-            toast.add({
-                severity: "success",
-                detail: "You have successfully registered. You can now log in.",
-                life: 4000
-            })
+            console.log("test1");
+            try {
+                await $fetch("/api/users/registration", {
+                    method: "post",
+                    body: input.value,
+                });
+                navigateTo("/login");
+                toast.add({
+                    severity: "success",
+                    detail: "You have successfully registered. You can now log in.",
+                    life: 4000
+                })
+            }
+            catch (e) {
+                toast.add({
+                    severity: "error",
+                    detail: e.data.message,
+                    life: 4000
+                })
+                console.log("test2");
+            }
         } else {
             toast.add({
                 severity: "error",
-                detail: "You entered wrong information. Please, try again.",
+                detail: "You forgot to enter some information.",
                 life: 4000
             })
         }
@@ -102,7 +113,8 @@ async function register() {
                 <InputText v-model="input.email" type="email" class="inputBoxRegister"
                     :class='{ "p-invalid": !inputValidation.email && firstChangeHappened }' required
                     @update:model-value="(newEmail: string) => onEmailChange(newEmail)" />
-                <InlineMessage v-if="!inputValidation.email && firstChangeHappened" class="errorMessage">Valid e-mail is required!
+                <InlineMessage v-if="!inputValidation.email && firstChangeHappened" class="errorMessage">Valid e-mail is
+                    required!
                 </InlineMessage>
             </div>
             <div class="flex flex-wrap justify-content-center align-items-center gap-2">
@@ -123,7 +135,8 @@ async function register() {
                 <Dropdown v-model="countryName"
                     @update:model-value="(newVal: string) => { onCountryChange(), input.country = newVal[0]; countryName.value = newVal[1]; }"
                     :options="Object.entries(countries)" :optionLabel="(item) => item[1]" class="inputBoxRegister"
-                    :class="{ 'p-invalid': !inputValidation.country && firstChangeHappened }" placeholder="Select a Country">
+                    :class="{ 'p-invalid': !inputValidation.country && firstChangeHappened }"
+                    placeholder="Select a Country">
                 </Dropdown>
             </div>
             <div>
@@ -136,4 +149,5 @@ async function register() {
 </template>
 
 <style>
-@import '~/assets/css/profile/edit.css'</style>
+@import '~/assets/css/profile/edit.css'
+</style>

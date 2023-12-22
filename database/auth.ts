@@ -1,6 +1,6 @@
 import { integer, sqliteTable, text, primaryKey } from "drizzle-orm/sqlite-core"
 import { createInsertSchema } from "drizzle-valibot";
-import { minLength, string, undefined_, length } from "valibot";
+import { minLength, string, undefined_, length, email } from "valibot";
 import type { AdapterAccount } from "@auth/core/adapters"
 import crypto from "crypto";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
@@ -87,5 +87,20 @@ export const insertUserSchema = createInsertSchema(users, {
   image: undefined_("No image should be specified."),
   country: string("Please chose a country", [
     length(2, "Give a valid countryKey")
+  ])
+})
+
+export const insertNewUserSchema = createInsertSchema(users, {
+  id: string("No ID specified! Give a unique one."),
+  name: string("Please give a valid userName a name to your recipe", [
+    minLength(4, "The name of the username should be longer than 4 characters"),
+  ]),
+  email: string("The input must be an e-mail", [
+    minLength(3, "The email seems to be too short."),
+    email("Please specify a valid e-mail.")]),
+  emailVerified: undefined_("No emailVerified should be specified."),
+  image: undefined_("No image should be specified."),
+  country: string("Please chose a country", [
+    length(2, "Give a valid countryKey!")
   ])
 })
