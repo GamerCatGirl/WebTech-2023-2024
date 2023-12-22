@@ -2,12 +2,6 @@
 import { useToast } from "primevue/usetoast";
 import { countries } from "~/composables/countryAPI";
 
-/* TODO:
-- make password confirmation check
-- inline errors: only appear when wrong data posted
-- inline errors: hide and use good layout
-- make frontend mobile friendly!
-*/
 definePageMeta({
     middleware: "auth",
     auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
