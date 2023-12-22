@@ -1,8 +1,5 @@
-import crypto from "crypto";
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { sqliteTable, text, foreignKey } from "drizzle-orm/sqlite-core";
-import { users } from "./auth";
-import { Column } from "#build/components";
+import { sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const usersWithCredentials = sqliteTable("usersWithCredentials", {
     id: text("id").notNull().primaryKey(),

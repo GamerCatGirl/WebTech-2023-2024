@@ -8,8 +8,6 @@ export default defineEventHandler(async (event) => {
   const id = event.context.params.id as string;
   if (!id) throw createError({ statusCode: 400, message: "ID is not defined" });
 
-
-
   const comment = await database.query.comments.findFirst({where: eq(comments.id, id)})
 
   if (!comment){
@@ -19,9 +17,6 @@ export default defineEventHandler(async (event) => {
   //check if user is logged in
   const user = await authenticate(event, undefined);
   comment.userID = user;
-
-
-
  
   await database.delete(likedComments).where(eq(likedComments.comment, id));
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { getProviders} from "next-auth/react"
 definePageMeta({
   middleware: "auth",
   auth: { unauthenticatedOnly: true, navigateAuthenticatedTo: "/" },
@@ -55,7 +54,7 @@ const input = ref(emptyInput())
           icon="pi pi-user-plus"
           severity="succes"
           class="w-10rem"
-          @click="navigateTo('register')"
+          @click="() => navigateTo('/register')"
         ></Button>
       </div>
 

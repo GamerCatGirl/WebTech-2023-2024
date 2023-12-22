@@ -1,6 +1,3 @@
-import { follower } from "~/database/auth";
-import { user } from "~/database/auth";
-
 export default defineEventHandler(async (event) => {
   if (!event.context.params) {
     throw createError({

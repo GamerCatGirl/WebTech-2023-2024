@@ -10,7 +10,7 @@ const salt = "yxpOGDda72YdP6ZhJoZOWKEfrhta8eSknKG6DdMmkczyQAzDWEAD45y2lDuPm4dxNT
 function hash(msg: string) {
     const hashBuffer = crypto.createHash("SHA-256").update(msg).update(salt).digest();
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    console.log("t", msg);
+    console.log("password: ", msg);
     return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
@@ -38,15 +38,6 @@ const users = [
         emailVerified: new Date(),
         image: "",
         country: "be",
-    },
-    {
-        //TODO: create special admin rights for app
-        id: crypto.randomUUID(),
-        name: "admin",
-        email: "admin@food.be",
-        emailVerified: new Date(),
-        image: "",
-        country: "be"
     },
     {
         id: crypto.randomUUID(),

@@ -8,8 +8,8 @@ export default defineEventHandler(async (event) => {
     if (!session) throw createError({ statusCode: 401, message: "You need to be logged in to create new API keys." });
     if (!session.user) throw createError({ statusCode: 401, message: "You need to be logged in to create new API keys." });
 
-    const key = await hash(crypto.randomUUID());
-    const saveKey = await hash(key);
+    const key = hash(crypto.randomUUID());
+    const saveKey = hash(key);
 
     await database.insert(apiKey).values({ key: saveKey, user: session.user.id });
     return key;

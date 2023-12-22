@@ -130,7 +130,6 @@ watch(apiKeysVisible, () => (apiKey.value = ""));
 const followingVisible = ref(false);
 const followersVisible = ref(false);
 const searchFollowers = ref();
-const searchFollwing = ref();
 
 console.log(user)
 const { data: amountRecipes } = await useFetch(`/api/users/${id}/recipes`, {query: {amount: true}});
@@ -187,11 +186,6 @@ async function unfollow(userID) {
   });
 
   location.reload();
-}
-
-async function deleteFollower(userID) {
-  // TODO:
-  0;
 }
 
 async function changeFollow() {

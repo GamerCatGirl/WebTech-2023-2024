@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useToast } from "primevue/usetoast";
-import { countries, fetchChosenCountryKey } from "~/composables/countryAPI";
-import { } from "~/composables/userValidation";
+import { countries } from "~/composables/countryAPI";
 
 /* TODO:
 - make password confirmation check
@@ -57,8 +56,7 @@ function onCountryChange() {
 async function register() {
     if (input.value.password == passwordConfirmation.value) {
         if (input.value.name && input.value.country && input.value.email && input.value.password && firstChangeHappened) {
-            console.log("test1");
-            const body = await $fetch("/api/users/registration", {
+            await $fetch("/api/users/registration", {
                 method: "post",
                 body: input.value,
             });
