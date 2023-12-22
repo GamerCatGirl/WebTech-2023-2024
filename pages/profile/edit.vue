@@ -109,7 +109,7 @@ onBeforeRouteLeave((to, from) => {
         <div class=" editElement flex flex-row align-items-center justify-content-space-between">
             Change country
             <Dropdown style="width:250px" placeholder="Select a Country" v-model="countryName"
-                @update:model-value="(newVal: string) => { input.countryKey = fetchChosenCountryKey(newVal[1]); countryName.value = newVal[1]; }"
+                @update:model-value="(newVal: string) => { input.countryKey = fetchChosenCountryKey(newVal[1]); countryName.value = newVal[1]; changesSubmitted = false;}"
                 :options="Object.entries(countries)" :optionLabel="(item) => item[1]">
             </Dropdown>
         </div>
