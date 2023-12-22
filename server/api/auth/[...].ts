@@ -24,6 +24,7 @@ export default NuxtAuthHandler({
         },
     },
     session: {
+        // JWT is used here, because AuthJS does not allow to use session tokens and the database when you are using the credentials provider
         strategy: "jwt",
     },
     // @ts-expect-error

@@ -151,11 +151,12 @@ npm run test
 
 ## .env
 
+This is only necessary if you want to be able to log in through OAuth, otherwise you can skip this step.
+
 Make a `.env` file in your root folder,
 this file should contain the following variable definitions.
 ```sh
-GOOGLE_CLIENT_ID=__CLIENT_ID__
-GOOGLE_CLIENT_SECRET=__CLIENT_SECRET__
-DATABASE_URL=__DATABASE_URL__
+GITHUB_CLIENT_ID="[CLIENT_ID]"
+GITHUB_CLIENT_SECRET="[CLIENT_SECRET]"
 ```
-You can get your google client ID and secret [here](https://developers.google.com/identity/oauth2/web/guides/get-google-api-clientid), and for `DATABASE_URL`, you can use the default value of `./sqlite.db`
+To see how to get your GitHub client ID and secret you can refer [here](https://authjs.dev/getting-started/providers/oauth-tutorial#2-configuring-oauth-provider)
